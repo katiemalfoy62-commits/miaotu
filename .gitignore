@@ -1,0 +1,14 @@
+node_modules/
+dist/
+output/
+.claude/
+.env
+.env.*
+*.local
+.DS_Store
+Thumbs.db
+.miaotu-server.pid
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
