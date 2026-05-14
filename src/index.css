@@ -15,8 +15,8 @@
   }
 
   .dark body {
-    background-color: #1A1612;
-    color: #F0E8DC;
+    background-color: #1F1F1F;
+    color: #F2F2F2;
   }
 }
 
@@ -89,10 +89,10 @@
 
   .dark .app-bg::before {
     background:
-      radial-gradient(circle at 12% 12%, rgba(232, 168, 112, 0.15), transparent 25rem),
-      radial-gradient(circle at 82% 18%, rgba(94, 151, 130, 0.12), transparent 24rem),
-      radial-gradient(circle at 56% 92%, rgba(200, 98, 42, 0.11), transparent 34rem),
-      linear-gradient(135deg, #15110d 0%, #1b1510 42%, #111512 100%);
+      radial-gradient(circle at 16% 8%, rgba(255,255,255,0.035), transparent 26rem),
+      radial-gradient(circle at 84% 16%, rgba(118, 142, 132, 0.06), transparent 28rem),
+      radial-gradient(circle at 52% 96%, rgba(209, 138, 82, 0.055), transparent 34rem),
+      linear-gradient(135deg, #1f1f1f 0%, #202020 48%, #1b1b1b 100%);
   }
 
   .home-shell {
@@ -4021,4 +4021,329 @@ button:hover .interviewer-clay {
   font-weight: 760;
   line-height: 1.7;
   white-space: pre-wrap;
+}
+
+/* Neutral night mode pass */
+.dark {
+  color-scheme: dark;
+}
+
+.dark .app-bg {
+  background: #1f1f1f;
+}
+
+.dark .card,
+.dark .clay-hero-panel,
+.dark .clay-side-card,
+.dark .clay-cat-stage-card,
+.dark .home-breakthrough-card,
+.dark .breakthrough-hero,
+.dark .breakthrough-card,
+.dark .interview-record-hero,
+.dark .interview-record-list,
+.dark .interview-record-detail,
+.dark .interview-record-empty,
+.dark .interview-setup-main,
+.dark .interview-session-main {
+  border-color: rgba(255,255,255,0.08);
+  background:
+    radial-gradient(circle at 84% 14%, rgba(255,255,255,0.05), transparent 12rem),
+    #2a2a2a;
+  box-shadow:
+    0 14px 30px rgba(0,0,0,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.dark .clay-hero-panel,
+.dark .clay-cat-stage-card,
+.dark .clay-side-card {
+  box-shadow:
+    0 10px 0 rgba(0,0,0,0.18),
+    0 22px 42px rgba(0,0,0,0.24),
+    inset 0 1px 0 rgba(255,255,255,0.07);
+}
+
+.dark .clay-hero-copy h1,
+.dark .growth-map-head h1,
+.dark .breakthrough-hero h1,
+.dark .interview-record-hero h1,
+.dark .breakthrough-card h2,
+.dark .interview-record-detail-head h2,
+.dark .interview-question-list h3,
+.dark .clay-cat-info h2 {
+  color: #f2f2f2;
+}
+
+.dark .clay-hero-copy p,
+.dark .breakthrough-hero p,
+.dark .interview-record-hero p,
+.dark .breakthrough-results p,
+.dark .breakthrough-results small,
+.dark .interview-question-list p,
+.dark .clay-cat-info p,
+.dark .growth-map-footer span,
+.dark .growth-map-progress small,
+.dark .growth-station small,
+.dark .growth-station em {
+  color: #b8b8b8;
+}
+
+.dark .eyebrow,
+.dark .section-kicker,
+.dark .breakthrough-card label,
+.dark .breakthrough-progress span,
+.dark .breakthrough-mascot span,
+.dark .interview-question-title,
+.dark .interview-question-list label,
+.dark .interview-record-detail-head strong,
+.dark .interview-record-row span {
+  color: #d18a52;
+}
+
+.dark .input-base,
+.dark input,
+.dark textarea,
+.dark .breakthrough-card textarea {
+  border-color: rgba(255,255,255,0.10);
+  background: #2f2f2f;
+  color: #f2f2f2;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder,
+.dark .input-base::placeholder,
+.dark .breakthrough-card textarea::placeholder {
+  color: #8f8f8f;
+}
+
+.dark .btn-primary {
+  background: #bd7440;
+  color: #fffaf4;
+}
+
+.dark .btn-ghost {
+  border-color: rgba(255,255,255,0.12);
+  background: #2a2a2a;
+  color: #d18a52;
+}
+
+.dark .progress-track,
+.dark .clay-mini-track,
+.dark .growth-map-progress i {
+  background: #3a3a3a;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.26);
+}
+
+.dark .progress-fill,
+.dark .clay-mini-fill,
+.dark .growth-map-progress b {
+  background: linear-gradient(90deg, #bd7440, #d9aa65);
+}
+
+.dark .module-card {
+  border-color: rgba(255,255,255,0.10);
+  background:
+    radial-gradient(circle at 86% 18%, rgba(255,255,255,0.08), transparent 8rem),
+    linear-gradient(135deg, #2c2c2c, #252525);
+  color: #f2f2f2;
+  box-shadow:
+    inset 4px 0 0 var(--module-accent, rgba(209,138,82,0.7)),
+    0 8px 0 rgba(0,0,0,0.18),
+    0 18px 32px rgba(0,0,0,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.dark .module-card:hover {
+  border-color: rgba(255,255,255,0.15);
+  box-shadow:
+    inset 4px 0 0 var(--module-accent, rgba(209,138,82,0.85)),
+    0 18px 34px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.dark .module-amber {
+  --module-accent: #d18a52;
+  color: #d18a52;
+}
+
+.dark .module-mint {
+  --module-accent: #6aa985;
+  color: #7fc59a;
+}
+
+.dark .module-lavender {
+  --module-accent: #9f83d3;
+  color: #b39be0;
+}
+
+.dark .module-sky {
+  --module-accent: #6f91c8;
+  color: #93add8;
+}
+
+.dark .module-card__shine {
+  background: radial-gradient(circle at 86% 18%, rgba(255,255,255,0.08), transparent 8rem);
+}
+
+.dark .module-icon,
+.dark .home-oldcat-entry {
+  border-color: rgba(255,255,255,0.10);
+  background:
+    radial-gradient(circle at 42% 28%, rgba(255,255,255,0.12), transparent 4rem),
+    #353535;
+  box-shadow:
+    0 9px 0 rgba(0,0,0,0.16),
+    0 15px 24px rgba(0,0,0,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.dark .clay-hero-stats,
+.dark .clay-hero-stats div,
+.dark .task-score-grid,
+.dark .growth-map-footer,
+.dark .breakthrough-results article,
+.dark .breakthrough-lock-note,
+.dark .interview-question-list article {
+  border-color: rgba(255,255,255,0.08);
+  background: #303030;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.dark .clay-hero-stats span,
+.dark .interview-record-detail-head span,
+.dark .interview-record-row small,
+.dark .interview-record-empty {
+  color: #9f9f9f;
+}
+
+.dark .clay-hero-stats strong,
+.dark .breakthrough-result-head strong {
+  color: #d18a52;
+}
+
+.dark .clay-hero-stats i,
+.dark .clay-hero-stats b {
+  background: #3a3a3a;
+}
+
+.dark .growth-map-close {
+  border-color: rgba(255,255,255,0.11);
+  background: #303030;
+  color: #d18a52;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+
+.dark .growth-route-line {
+  background: linear-gradient(90deg, rgba(209,138,82,0.76), rgba(255,255,255,0.18));
+}
+
+.dark .growth-station {
+  border-color: rgba(255,255,255,0.10);
+  background: #2d2d2d;
+  color: #b8b8b8;
+  box-shadow:
+    0 8px 0 rgba(0,0,0,0.16),
+    0 16px 28px rgba(0,0,0,0.20),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.dark .growth-station:hover,
+.dark .growth-station:focus-visible,
+.dark .growth-station.is-preview {
+  border-color: rgba(209,138,82,0.74);
+  box-shadow:
+    0 12px 0 rgba(0,0,0,0.18),
+    0 24px 42px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.dark .growth-station.is-reached {
+  background: linear-gradient(145deg, #343230, #2c2c2c);
+}
+
+.dark .growth-station.is-active {
+  border-color: #d18a52;
+  background: linear-gradient(145deg, #35302b, #2d2d2d);
+}
+
+.dark .growth-station-marker {
+  background: #3c3c3c;
+  color: #cfcfcf;
+}
+
+.dark .growth-station.is-reached .growth-station-marker {
+  background: #bd7440;
+  color: #fffaf4;
+}
+
+.dark .growth-station strong,
+.dark .growth-map-footer strong {
+  color: #f2f2f2;
+}
+
+.dark .growth-map-preview-cat {
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.10), rgba(255,255,255,0.04) 58%, transparent 72%);
+}
+
+.dark .home-breakthrough-card span,
+.dark .home-breakthrough-card small {
+  color: #d18a52;
+}
+
+.dark .home-breakthrough-card strong {
+  color: #f2f2f2;
+}
+
+.dark .breakthrough-results article > div {
+  color: #d18a52;
+}
+
+.dark .interview-message-bubble-assistant {
+  background: #2f2f2f;
+  color: #f2f2f2;
+}
+
+.dark .interview-message-bubble-user {
+  background: #bd7440;
+  color: #fffaf4;
+}
+
+.dark .interview-followup-pill {
+  background: rgba(209,138,82,0.16);
+  color: #d18a52;
+}
+
+.dark .interview-record-row:hover,
+.dark .interview-record-row.active {
+  background: #333333;
+}
+
+.dark .interview-record-row b {
+  color: #f2f2f2;
+}
+
+.dark .text-gray-700,
+.dark .text-stone-700 {
+  color: #d0d0d0 !important;
+}
+
+.dark .text-gray-600,
+.dark .text-stone-600 {
+  color: #c0c0c0 !important;
+}
+
+.dark .text-gray-500,
+.dark .text-stone-500 {
+  color: #a6a6a6 !important;
+}
+
+.dark .text-gray-400,
+.dark .text-stone-400 {
+  color: #8f8f8f !important;
+}
+
+.dark .text-gray-900,
+.dark .text-stone-900,
+.dark .text-stone-950 {
+  color: #f2f2f2 !important;
 }

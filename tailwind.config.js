@@ -15,10 +15,10 @@ export default {
         'primary': '#C8622A',
         'primary-light': '#D4A878',
         // Dark mode
-        'bg-dark': '#1A1612',
-        'card-dark': '#221E1A',
-        'border-dark': '#3A3028',
-        'primary-dark': '#E8A870',
+        'bg-dark': '#1F1F1F',
+        'card-dark': '#2A2A2A',
+        'border-dark': '#3A3A3A',
+        'primary-dark': '#D18A52',
       },
       borderRadius: {
         'xl': '1rem',
