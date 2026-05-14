@@ -201,6 +201,9 @@ Current product state:
 - Refined the growth-map tour detail state so opening the map only keeps the map highlighted against the dimmed page, with no explanatory tour card or paw pointer; returning from the map advances the tour.
 - Made the link vault and saved Old Cat chat archive close naturally like the Old Cat panel: outside click, route change, repeated launcher click, and tour-step close events all collapse them.
 - Browser QA after the natural-close update: build passed; Playwright verified map-only highlight, map return advancing the tour, and both floating panels closing on outside click plus route changes. Existing React Router future-flag warnings remain.
+- Increased guided-tour paw contrast with stronger outlines, darker pads, and layered shadow so it stays visible on warm light cards.
+- Replaced the growth-map detail highlight with a softer spotlight-only class instead of the generic tutorial frame, added route-return tour-index syncing plus repeated delayed scrolling, and inserted a dedicated Kitten Corner/treehole step after Mentor Cat closes.
+- Browser QA after this polish: build passed; Playwright verified map spotlight-only mode, route-return auto-scroll from News to Tasks, Old Cat closing before the treehole step, and the paw landing on the treehole heart. Existing React Router future-flag warnings remain.
 
 ## Notes For Next Codex
 

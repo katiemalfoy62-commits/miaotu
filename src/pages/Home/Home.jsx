@@ -160,6 +160,13 @@ const TOUR_STEPS = [
     detailBodyEn: 'Use this panel for questions and thinking help. You can also copy a prompt for GPT. The heart entry opens Kitten Corner.',
   },
   {
+    key: 'treehole',
+    titleZh: '小猫树洞也在这里',
+    titleEn: 'Kitten Corner is here too',
+    bodyZh: '老猫聊天框收起后，可以点这个爱心入口进入小猫树洞。累了、卡住了或者想整理情绪时，可以先去那里待一会儿。',
+    bodyEn: 'After Mentor Cat closes, tap this heart to enter Kitten Corner for softer support when you feel stuck or tired.',
+  },
+  {
     key: 'archive',
     titleZh: '攻破弱项和复盘',
     titleEn: 'Break through and review',
@@ -190,6 +197,7 @@ const TOUR_TARGET_SELECTORS = {
   cat: '[data-tour-target="cat-avatar"]',
   mentor: '[data-tour-target="mentor"] .home-oldcat-entry',
   mentorDetail: '.oldcat-panel',
+  treehole: '[data-tour-target="treehole"]',
   archive: '[data-tour-target="breakthrough-card"]',
   floaters: '.oldcat-memory-peek',
 }
@@ -273,6 +281,15 @@ export default function Home() {
   }, [user.settings.theme])
 
   useEffect(() => {
+    if (!showTour || user.homeTourDone === true) return
+    const savedIndex = Math.min(user.homeTourStep || 0, TOUR_STEPS.length - 1)
+    if (savedIndex !== tourIndex) {
+      setTourIndex(savedIndex)
+      setTourPhase('prompt')
+    }
+  }, [showTour, user.homeTourDone, user.homeTourStep, tourIndex])
+
+  useEffect(() => {
     document.documentElement.classList.toggle('miaotu-home-tour-active', showTour)
     document.documentElement.classList.toggle('miaotu-home-tour-settings', showTour && tourStep?.key === 'settings')
     document.documentElement.classList.toggle('miaotu-home-tour-floaters', showTour && tourStep?.key === 'floaters')
@@ -306,6 +323,14 @@ export default function Home() {
     const shouldScroll = tourStep.key !== 'floaters' || tourPhase === 'detail'
     let cancelled = false
 
+    function scrollTargetIntoView() {
+      if (cancelled) return
+      const target = document.querySelector(selector)
+      if (target && shouldScroll) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+      }
+    }
+
     function placePointer() {
       if (cancelled) return
       const target = document.querySelector(selector)
@@ -322,17 +347,14 @@ export default function Home() {
       setPawPoint({ x, y })
     }
 
-    const target = document.querySelector(selector)
-    if (target && shouldScroll) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
-    }
-
+    const scrollTimers = shouldScroll ? [60, 320, 760, 1200].map(delay => window.setTimeout(scrollTargetIntoView, delay)) : []
     const timers = [80, 420, 760].map(delay => window.setTimeout(placePointer, delay))
     window.addEventListener('resize', placePointer)
     window.addEventListener('scroll', placePointer, { passive: true })
 
     return () => {
       cancelled = true
+      scrollTimers.forEach(window.clearTimeout)
       timers.forEach(window.clearTimeout)
       window.removeEventListener('resize', placePointer)
       window.removeEventListener('scroll', placePointer)
@@ -412,7 +434,7 @@ export default function Home() {
       <section className={`clay-hero-panel ${mapOpen ? 'clay-hero-panel-map' : ''} ${tourClass('hero')}`}>
         {mapOpen && (
           <div
-            className={`growth-map-panel ${showTour && tourStep?.key === 'hero' && tourPhase === 'detail' ? 'tour-highlight tour-highlight-detail' : ''}`}
+            className={`growth-map-panel ${showTour && tourStep?.key === 'hero' && tourPhase === 'detail' ? 'tour-map-spotlight' : ''}`}
             data-tour-target="growth-map"
           >
             <div className="growth-map-head">
@@ -663,8 +685,8 @@ export default function Home() {
               </button>
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <Link to="/trehole">
-                <button className="treehole-button" title={lang === 'zh' ? '小猫树洞' : 'Kitten Corner'}>
+              <Link to="/trehole" onClick={() => continueTourAfterModule('treehole')}>
+                <button className={`treehole-button ${tourClass('treehole')}`} data-tour-target="treehole" title={lang === 'zh' ? '小猫树洞' : 'Kitten Corner'}>
                   <Heart size={17} />
                 </button>
               </Link>
