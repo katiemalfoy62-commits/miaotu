@@ -2669,6 +2669,7 @@ button:hover .interviewer-clay {
 }
 
 .home-breakthrough-card {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 4.5rem;
   align-items: center;
@@ -2679,6 +2680,23 @@ button:hover .interviewer-clay {
   background: linear-gradient(135deg, #fff2c8 0%, #fff9ec 56%, #edf7e8 100%);
   padding: 0.85rem;
   box-shadow: 0 16px 28px rgba(130, 80, 32, 0.14), inset 0 1px 0 rgba(255,255,255,0.85);
+  transform: translateY(0);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.home-breakthrough-card:hover,
+.home-breakthrough-card:focus-visible {
+  border-color: rgba(222, 151, 52, 0.86);
+  box-shadow:
+    0 9px 0 rgba(205, 172, 128, 0.16),
+    0 24px 44px rgba(130, 80, 32, 0.20),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+  transform: translateY(-4px);
+}
+
+.home-breakthrough-card:focus-visible {
+  outline: 3px solid rgba(232, 168, 112, 0.45);
+  outline-offset: 3px;
 }
 
 .home-breakthrough-card span,
@@ -2700,12 +2718,26 @@ button:hover .interviewer-clay {
   width: 4.2rem;
   height: 4.2rem;
   object-fit: contain;
+  filter: drop-shadow(0 10px 12px rgba(87, 52, 22, 0.14));
+  transform: translateY(0) scale(1);
+  transition: transform 180ms ease, filter 180ms ease;
 }
 
 .home-breakthrough-mascot.clay-mascot-breakthrough {
   width: 4.7rem;
   height: 4.7rem;
   object-fit: contain;
+  filter: drop-shadow(0 10px 12px rgba(87, 52, 22, 0.14));
+  transform: translateY(0) scale(1);
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.home-breakthrough-card:hover img,
+.home-breakthrough-card:focus-visible img,
+.home-breakthrough-card:hover .home-breakthrough-mascot,
+.home-breakthrough-card:focus-visible .home-breakthrough-mascot {
+  filter: drop-shadow(0 16px 16px rgba(87, 52, 22, 0.22));
+  transform: translateY(-3px) scale(1.07) rotate(1deg);
 }
 
 .oldcat-panel-fullscreen {
