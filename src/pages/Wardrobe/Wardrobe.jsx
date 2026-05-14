@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Check, ShoppingBag, X } from 'lucide-react'
 import useStore from '../../store/useStore'
 import { t } from '../../utils/i18n'
-import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
+import LayeredCat from '../../components/Cat/LayeredCat'
 import { SHOP_ITEMS, isItemUnlocked } from '../../data/shopItems'
 
 export default function Wardrobe() {
@@ -32,7 +32,12 @@ export default function Wardrobe() {
         <div className="eyebrow">{lang === 'zh' ? '粘土衣柜' : 'Clay wardrobe'}</div>
         <h1>{t('wardrobe', lang)}</h1>
         <div className="wardrobe-clay-display">
-          <BlinkingClayMascot type="kivi" className="wardrobe-kivi-mascot" />
+          <LayeredCat
+            catConfig={user.catConfig}
+            level={user.level}
+            equippedItems={user.equippedItems}
+            className="wardrobe-layered-cat"
+          />
         </div>
         <div className="text-center">
           <h2>{user.catConfig.name || (lang === 'zh' ? 'Kivi' : 'Kivi')}</h2>

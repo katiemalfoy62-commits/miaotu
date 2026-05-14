@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { BadgeCheck, Check, Fish, Lock, ShoppingBag, Sparkles } from 'lucide-react'
 import useStore from '../../store/useStore'
 import { t } from '../../utils/i18n'
-import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
+import LayeredCat from '../../components/Cat/LayeredCat'
 import { SHOP_CATEGORIES, SHOP_ITEMS, isItemUnlocked } from '../../data/shopItems'
 
 export default function Shop() {
@@ -106,7 +106,12 @@ export default function Shop() {
           <div className="shop-clay-preview-stage">
             <span className="shop-preview-plant" aria-hidden="true">🌱</span>
             <span className="shop-preview-fish" aria-hidden="true">🐟</span>
-            <BlinkingClayMascot type="kivi" mascotClassName="shop-clay-preview-cat" />
+            <LayeredCat
+              catConfig={user.catConfig}
+              level={user.level}
+              equippedItems={user.equippedItems}
+              className="shop-layered-cat"
+            />
           </div>
           <h2>{user.catConfig.name || 'Kivi'}</h2>
           <p>{t(user.catStage, lang)} · Lv {user.level}</p>

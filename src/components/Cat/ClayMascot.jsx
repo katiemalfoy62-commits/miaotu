@@ -1,7 +1,7 @@
 import React from 'react'
-import kiviClay from '../../assets/mascots/kivi-clay.png'
-import oldCatClay from '../../assets/mascots/oldcat-clay.png'
-import breakthroughCat from '../../assets/mascots/breakthrough-cat.png'
+import kiviClay from '../../assets/mascots/kivi-clay.webp'
+import oldCatClay from '../../assets/mascots/oldcat-clay.webp'
+import breakthroughCat from '../../assets/mascots/breakthrough-cat.webp'
 
 export default function ClayMascot({ type = 'kivi', className = '', alt = '' }) {
   const src = type === 'oldcat' ? oldCatClay : type === 'breakthrough' ? breakthroughCat : kiviClay

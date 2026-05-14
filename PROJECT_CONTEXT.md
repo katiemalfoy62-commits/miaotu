@@ -4,23 +4,30 @@
 
 Absolute path: `D:\claudecode\miaotu`
 
+GitHub repository: `https://github.com/katiemalfoy62-commits/miaotu.git`
+
+Vercel production URL: `https://miaotu-pi.vercel.app`
+
+Current branch: `master`
+
 ## What This Is
 
-Miaotu is a gamified AI product manager learning companion. It is aimed at a student / early-career product manager who wants daily AI news reading, task practice, structured thinking drills, mock interviews, growth tracking, and a warm mentor-cat companion.
+Miaotu is a gamified AI product manager learning companion for a student or early-career product manager. It helps the user build AI PM habits through daily AI news reading, commissioned practice tasks, structured thinking drills, mock interviews, targeted breakthrough drills, growth records, and a mentor-cat companion.
 
-The product style is intentionally cute but functional: a clay-style cat learning dashboard, not a generic productivity app or landing page.
+The intended experience is cute, warm, and resume-demo-friendly, but still functional: a clay-style cat learning dashboard, not a generic productivity app or marketing landing page.
 
 ## Tech Stack
 
 - Frontend: React 18 + Vite
 - Language: JavaScript / JSX
-- Routing: `react-router-dom`
-- State: Zustand with `persist`, saved in browser `localStorage` under `miaotu_store`
-- Animation/UI helpers: `framer-motion`, `lucide-react`, `clsx`
-- Charts: `recharts`
-- Styling: Tailwind CSS plus custom CSS in page/component files
 - Package manager: npm
-- AI API helper: browser-side OpenAI Chat Completions call in `src/utils/claude.js`; the exported name remains `callClaude` for compatibility with older code
+- Routing: `react-router-dom`
+- State: Zustand with `persist`, stored in browser `localStorage` under `miaotu_store`
+- UI/animation helpers: `framer-motion`, `lucide-react`, `clsx`
+- Charts: `recharts`
+- Styling: Tailwind CSS plus the large custom stylesheet in `src/index.css`
+- AI helper: browser-side OpenAI Chat Completions helper in `src/utils/claude.js`; the exported name `callClaude` is kept for compatibility
+- Deployment: GitHub repo imported into Vercel, with SPA fallback rewrite in `vercel.json`
 
 ## How To Run
 
@@ -49,13 +56,13 @@ Preview production build:
 npm run preview
 ```
 
-There are also Windows helper scripts in the project root:
+There are Windows helper scripts in the project root:
 
 - `start-miaotu.ps1`
 - `start-miaotu-hidden.vbs`
 - `stop-miaotu.ps1`
 
-In the Codex desktop environment, Node may not be on `PATH`. The build was verified with the bundled runtime:
+In the Codex desktop environment, Node may not be on `PATH`. The latest verified build command used the bundled runtime:
 
 ```powershell
 & 'C:\Users\11512\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' 'node_modules\vite\bin\vite.js' build
@@ -65,160 +72,181 @@ Tests: no automated test script is configured yet.
 
 ## Current Status
 
-The app is a working local Vite React single-page app. It has these main routes:
+The app is a working Vite React single-page app and is deployed on Vercel. Main routes include:
 
-- `/onboarding`: first-time cat setup
-- `/`: home dashboard
-- `/news`: AI news reading
+- `/onboarding`: first-time intro and cat setup
+- `/`: clay-style home dashboard
+- `/news`: AI news reading and PREP-style summaries
 - `/tasks`: daily commissioned tasks
 - `/training`: structured thinking drills
-- `/breakthrough`: targeted five-question drill, called "专项攻破"
+- `/breakthrough`: targeted five-question drill
 - `/interview` and `/interview/session`: mock interview setup/session/report
-- `/archive`, `/archive/wrongbook`, `/archive/diary`, `/archive/interviews`: growth archive, wrong book, diary, interview records
-- `/shop` and `/wardrobe`: fish-dried reward shop and outfit/wardrobe flow
-- `/settings`: API key, model mode, theme, old-cat personality, voice setting
+- `/archive`, `/archive/wrongbook`, `/archive/diary`, `/archive/interviews`: growth archive areas
+- `/shop` and `/wardrobe`: fish reward shop and outfit flow
+- `/settings`: API key, model mode, theme, mentor-cat personality, voice setting
 - `/collection`: saved question collection
 - `/trehole`: cat treehole chat
 
-Implemented product areas:
+Completed and currently visible product areas:
 
-- Clay-style home dashboard with daily cards, soft shadows, thick rounded panels, cat assets, and right-side progress widgets.
-- Clay mascot assets for Kivi, Old Cat, interviewers, UI icons, learning records, breakthrough, and floating side tools.
-- Old Cat mentor side panel with OpenAI-backed chat, fullscreen mode, GPT handoff buttons, conversation save, and saved conversation archive.
-- Floating link vault for saving article URLs and copying GPT prompts without spending API tokens in the app.
-- News page with PREP-style summaries, original-link actions, GPT prompt copy, and link vault saving.
-- Tasks page with active/completed tasks, answer submission, scoring, and learning record writing.
-- Training page with first/second answer flow, scoring, wrong book, lock state, and connection to targeted breakthrough drills.
-- Breakthrough page where the user inputs a difficult prompt and practices five same-type questions.
-- Mock interview setup/session/report with interviewer selection, timed questions, voice input support where browser speech recognition is available, GPT copy/open buttons, and interview record storage.
+- Clay-style home dashboard with large hero card, daily learning entry cards, right-side task/progress widgets, floating tools, and cat visuals.
+- Old Cat mentor panel with OpenAI-backed chat, fullscreen mode, GPT handoff buttons, conversation save, and saved conversation archive.
+- Floating link vault for saving article URLs and copying GPT prompts.
+- News page with PREP summaries, source-link actions, GPT prompt copy, and link vault saving.
+- Tasks page with active/completed tasks, answer submission, scoring, and record writing.
+- Training page with first/second answer flow, scoring, wrong book, lock state, and breakthrough connection.
+- Breakthrough page where the user inputs a hard prompt and practices five same-type questions.
+- Mock interview setup/session/report with interviewer selection, timed questions, voice input when browser speech recognition is available, GPT copy/open actions, and interview record storage.
 - Archive pages for learning records, wrong book, diary, and interview records.
-- Fish shop/wardrobe with adjusted reward economy so progression is slower and shop cannot be cleared too quickly.
-
-The local git repository is initialized and currently has the initial app committed. The current branch is `master`, and no GitHub remote is configured yet.
+- Shop/wardrobe economy and item data exist, but visual equipment overlays are not fully wired yet.
+- Homepage "爆破猫咪" card now has hover/focus lift, shadow, and mascot motion.
+- Onboarding now uses clay-style mascot visuals instead of the old flat SVG cats.
+- Onboarding copy was refreshed to describe the current modules: AI news, tasks, thinking training, breakthrough, interview simulation, growth archive, and mentor cat.
+- Onboarding breed selection was removed because breed did not visually change the cat and was not meaningful.
+- Growth map station cards now preview different transparent cat-stage images on hover/focus/click.
+- A reusable layered cat renderer is implemented. It composes base, fur, eyes, pattern, gender bow, growth-stage overlay, and equipped wearables.
+- Onboarding cat setup now has instant visual preview for fur color, eye color, pattern, and gender. Male cats do not show the fixed bow; female cats do.
+- The homepage hero, cat card, growth map previews, shop preview, and wardrobe preview now use the saved layered cat appearance.
+- A first-pass homepage guided tour is implemented: after onboarding, the homepage is dimmed and key areas are highlighted one by one with Old Cat guidance. It can be skipped and replayed from the home module area.
+- Large legacy PNG assets were converted to WebP, old unused source sheets were removed, and the generated customizer layers were converted/kept as WebP where possible.
 
 ## Important Files
 
+- `PROJECT_CONTEXT.md`: this handoff file. Keep it as the single source of context for the next Codex conversation.
 - `package.json`: scripts and dependencies.
 - `vite.config.js`: Vite React config.
-- `tailwind.config.js`: Tailwind config and design tokens.
-- `index.html`: Vite HTML entry.
+- `vercel.json`: SPA rewrite so direct route refreshes work on Vercel.
 - `src/main.jsx`: React entry point.
-- `src/App.jsx`: all route wiring.
-- `src/store/useStore.js`: central Zustand persisted app state, reward economy, learning records, link vault, breakthrough sessions, old-cat saved chats.
-- `src/utils/claude.js`: OpenAI API helper. Despite the filename and exported `callClaude` name, it calls OpenAI Chat Completions.
-- `src/components/Layout/Layout.jsx`: app shell, navbar, back button behavior, floating tools, Old Cat visibility.
-- `src/components/OldCat/OldCat.jsx`: Old Cat mentor chat panel and GPT handoff/save/fullscreen actions.
+- `src/App.jsx`: route wiring.
+- `src/store/useStore.js`: central persisted Zustand state, reward economy, learning records, link vault, breakthrough sessions, old-cat chats, shop/wardrobe state.
+- `src/utils/claude.js`: OpenAI API helper and prompt helpers.
+- `src/utils/gptPrompt.js`: GPT handoff prompt utilities.
+- `src/utils/levelCalc.js`: level/growth calculation utilities.
+- `src/components/Layout/Layout.jsx`: app shell, navbar/back behavior, floating tools, Old Cat visibility.
+- `src/components/OldCat/OldCat.jsx`: Old Cat mentor chat panel.
 - `src/components/OldCat/FloatingOldCatArchive.jsx`: saved Old Cat conversation library.
 - `src/components/LinkVault/FloatingLinkVault.jsx`: floating URL/prompt vault.
-- `src/pages/Home/Home.jsx`: main dashboard layout and entry cards.
+- `src/components/Cat/BlinkingClayMascot.jsx`: blinking clay Kivi/Old Cat mascot component currently used in several screens.
+- `src/components/Cat/LayeredCat.jsx`: layered cat renderer for customizable cat appearance and wearable overlays.
+- `src/components/Cat/ClayMascot.jsx`, `src/components/Cat/CatStageImage.jsx`: existing cat image helpers.
+- `src/pages/Onboarding/Onboarding.jsx`: onboarding intro, module copy, and cat setup form.
+- `src/pages/Home/Home.jsx`: home dashboard and growth map station preview behavior.
 - `src/pages/News/News.jsx`: news generation, PREP display, URL validation, source-link actions.
-- `src/pages/Tasks/Tasks.jsx`: commissioned task flow and completed-task review.
+- `src/pages/Tasks/Tasks.jsx`: commissioned task flow.
 - `src/pages/Training/Training.jsx`: thinking drill flow and training lock behavior.
 - `src/pages/Breakthrough/Breakthrough.jsx`: targeted five-question breakthrough practice.
 - `src/pages/Interview/Interview.jsx`: interview setup, session, timing, scoring, and report.
-- `src/pages/Archive/Archive.jsx`: growth archive overview.
-- `src/pages/Archive/InterviewRecords.jsx`: saved mock interview records.
-- `src/pages/Shop/Shop.jsx` and `src/pages/Wardrobe/Wardrobe.jsx`: fish shop and outfit handling.
-- `src/pages/Settings/Settings.jsx`: user settings.
-- `src/assets/mascots/`: Kivi, Old Cat, breakthrough cat.
-- `src/assets/ui-clay/`: clay UI icons, including news/task/training/interview, archive, diary, interview record, old-cat memory.
-- `src/assets/interviewers/`: clay interviewer cats.
-- `src/assets/cat-stages/`: staged cat artwork.
-- Some `_incoming_*` image files still exist under `src/assets/mascots/` and `src/assets/ui-clay/`; these are temporary source copies and should be cleaned up later if no longer needed.
+- `src/pages/Archive/Archive.jsx`, `src/pages/Archive/WrongBook.jsx`, `src/pages/Archive/Diary.jsx`, `src/pages/Archive/InterviewRecords.jsx`: growth archive pages.
+- `src/pages/Shop/Shop.jsx` and `src/pages/Wardrobe/Wardrobe.jsx`: fish shop and wardrobe handling.
+- `src/data/shopItems.js`: shop item definitions; terminal may show Chinese/emoji as mojibake.
+- `src/index.css`: most custom visual styling, including clay dashboard, onboarding, hover states, and growth map preview styles.
+- `src/assets/mascots/`: deployed clay mascot PNGs such as Kivi, Old Cat, breakthrough cat.
+- `src/assets/ui-clay/`: clay UI icons for modules and archive states.
+- `src/assets/interviewers/`: clay interviewer cat assets.
+- `src/assets/cat-stages/`: six growth-stage cat images plus transparent versions used for hover previews.
+- `src/assets/cat-customizer/`: layered cat WebP assets used by `LayeredCat.jsx`, including fur, eyes, patterns, stage overlays, and aligned wearables.
 
 ## Design And Product Decisions
 
-- Keep the visual direction clay-style, soft, dimensional, warm, and cat-related.
-- Do not revert to the earlier flat SVG cartoon cats.
-- Character assets should be independent transparent PNG/WebP-style assets, not cropped from one poster-like image.
-- Old Cat is a meaningful interaction entry, not decoration. On home and most pages it should remain clickable and open the mentor chat.
-- On non-home pages, keep a clear back button; the user disliked relying on browser URL navigation.
-- News summaries should be short, useful, and structured with PREP:
-  - P: clear point
-  - R: reason
-  - E: concrete example/detail
-  - P: conclusion or AI PM takeaway
-- News should prioritize reliable original article links. Do not point users to a generic company homepage when claiming it is the source.
-- The old news "style selector" UI was intentionally removed because all modes converged on the same useful PREP structure.
-- API keys are user-provided in settings/localStorage. Do not commit or hardcode a private API key.
-- GPT handoff is part of the intended product: several pages include "copy prompt" and "open GPT" actions so the user can continue deeper discussion outside the app.
-- Growth archive should be useful for review: completed tasks, training, interviews, and breakthrough sessions should save question, user answer, score, feedback, and reference answer where possible.
-- Interview feedback should emphasize expression ability and thinking structure because these directly affect interview performance.
-- Reward economy should be slow enough to support months of use. Fish and EXP should not make the user reach high level or buy the whole shop too quickly.
+- Keep the visual direction clay-style, soft, dimensional, warm, and cat-centered.
+- Do not revert clay mascots back to the earlier flat SVG cartoon cats.
+- The product should feel like an actual learning app, not a landing page.
+- The site may be linked on a resume, so first-time user guidance matters. A proper guided tour is desired because onboarding copy alone does not teach where everything is.
+- Onboarding intro copy can mostly be kept, but it should eventually lead into a guided homepage tour.
+- The homepage guided tour concept is: after onboarding, the homepage starts dimmed/gray, then one module at a time lights up with Old Cat explaining what it does and where to click.
+- Old Cat is a meaningful mentor interaction entry, not just decoration.
+- On non-home pages, keep clear back navigation.
+- News summaries should stay short, useful, and PREP-structured.
+- GPT handoff is an intended product behavior: copy prompt/open GPT actions should remain.
+- API keys are user-provided in settings/localStorage. Do not commit or hardcode private keys.
+- Growth archive should preserve enough detail for review: question, user answer, score, feedback, and reference answer where possible.
+- Interview feedback should emphasize expression ability and thinking structure.
+- Reward economy should remain slow enough for long-term use.
+- Cat customization direction is layered assets, not generating a separate full cat image for every option combination.
+- For future cat customization: male should have no bow; female should show the bow. Fur color, eye color, pattern, stage, and shop wearables should be layered.
+- Future growth-stage cats should partially inherit the user's chosen base appearance.
+- Different screen sizes should show cat layers and wardrobe overlays with stable sizing, not shifting/cropping unpredictably.
 
 ## Known Issues
 
 - No automated tests are configured.
-- The app is frontend-only. All user progress and settings are stored in browser localStorage.
-- OpenAI API calls are made directly from the browser. This is acceptable for a personal demo with user-entered keys, but it is not a production-secure architecture for shared secrets.
-- Existing users may have old localStorage schemas. Some guards exist, but migrations are incomplete. If odd UI state appears, test after clearing `miaotu_store`.
-- PowerShell may display Chinese source text as mojibake. Do not rely on terminal-rendered Chinese when editing copy; verify in a UTF-8 editor/browser.
-- Some Chinese strings in source may already appear mojibake in terminal output and should be cleaned carefully if touched.
-- News source reliability is improved by filtering generic URLs, but the app still depends on model output and does not perform robust server-side article crawling.
-- News helpers still contain internal `NEWS_STYLES` / `getNewsStylePrompt` in `src/utils/claude.js`, even though the settings UI for news style has been removed.
-- Large image assets increase build size. Recent build warned about large chunks/assets, especially clay PNGs and the JS bundle.
-- Temporary incoming image copies are still present:
-  - `src/assets/mascots/_incoming_breakthrough.png`
-  - `src/assets/ui-clay/_incoming_interview_record.png`
-  - `src/assets/ui-clay/_incoming_oldcat_memory.png`
-- Shop/wardrobe still may not fully render equipped accessories as real overlays on the cat preview.
-- Task page should be QA-tested for the reported issue where the second task answer box can become unresponsive after submitting one task.
+- The app is frontend-only; all progress/settings live in browser `localStorage`.
+- OpenAI API calls are made directly from the browser. This is acceptable for a personal demo with user-entered keys, but not secure for shared production secrets.
+- Existing users may have old `miaotu_store` schemas. Some guards exist, but migrations are incomplete. If state looks strange, test after clearing `miaotu_store`.
+- PowerShell may display Chinese and emoji source text as mojibake even when the app renders correctly. Verify copy in browser/editor instead of trusting terminal output.
+- Some source files, especially `src/data/shopItems.js`, display mojibake in terminal. Be careful when editing text there.
+- Large PNG assets still increase build size. Previously important large files included `icon-oldcat-memory.png`, `icon-interview-record.png`, `breakthrough-cat.png`, `kivi-clay.png`, and `oldcat-clay.png`.
+- Generated layered assets are wired into code now, but some overlays still need visual tuning, especially patterns, hats, and a few props.
+- The user also noticed that cat "breed" was meaningless; breed selection has been removed from onboarding.
+- Shop/wardrobe now render equipped accessories as overlays, but overlay alignment is a first pass and should be visually QA-tested.
+- Homepage growth-stage hover previews now use the layered cat, so they inherit user-selected fur/eyes/pattern. Stage overlays are still approximate.
+- Homepage guided tour is implemented as a first pass, but it needs browser QA and copy/position tuning.
+- Asset optimization is improved substantially by WebP conversion, but interviewers are still PNG and the JS bundle remains large. Future code splitting may be useful.
+- Task page should still be QA-tested for the reported issue where the second task answer box can become unresponsive after submitting one task.
 - Training lock/unlock behavior should be QA-tested against the intended rule: same question type low score three times locks it, lists the three causing questions, and unlocks only after a five-question breakthrough drill with each answer above 80.
-- Interview records created before the detailed record feature may only show summary data; old per-question answers cannot be reconstructed retroactively.
-- Vercel deployment is not finished yet. The local repo is ready, but remote GitHub push and Vercel import still need to happen.
-- SPA deployment may need a `vercel.json` rewrite for deep links if direct route refreshes 404 after deployment.
+- Interview records created before the detailed record feature may only show summary data; old per-question answers cannot be reconstructed.
 
 ## Next Tasks
 
-1. Finish GitHub/Vercel deployment:
-   - Create GitHub repo.
-   - Add remote.
-   - Current local branch is `master`; either push `master` or rename it to `main` before pushing.
-   - Import repo in Vercel.
-   - Verify homepage and deep routes.
-2. Verify interview records with a brand-new mock interview:
-   - Each question should save interviewer, question, user answer, evaluation intent, per-question score, feedback, and reference answer.
-   - The interview records page should show those details.
-3. QA the task page second-input bug after completing one task.
-4. QA the training lock and breakthrough unlock flow against the exact product rule.
-5. Optimize large PNG assets or convert selected assets to WebP.
-6. Consider adding `vercel.json` for SPA fallback routing.
-7. Clean or remove unused news-style code if the style selector is permanently removed.
-8. Add minimal automated checks or at least a smoke-test checklist for core routes.
-9. Improve source-link reliability for news, ideally with a backend/search layer later.
-10. Improve shop/wardrobe accessory preview so purchased/equipped items visibly appear on the clay cat.
+1. Visually QA the layered cat flow in a browser.
+   - Onboarding should update fur, eyes, pattern, and gender immediately.
+   - Homepage, growth map, shop, and wardrobe should all use the saved appearance.
+   - Wearable alignment should be checked item by item.
+2. Tune the first-pass homepage guided tour.
+   - Check mobile and desktop spotlight positions.
+   - Improve copy if the flow feels too long or too terse.
+   - Consider adding replay in settings as well as home.
+3. Continue asset optimization.
+   - Interviewer assets are still PNG.
+   - Consider route-level code splitting because the built JS bundle still triggers Vite's 500 kB warning.
+4. QA the task page second-input issue and training lock/unlock rules.
+5. Add a small smoke-test checklist or minimal automated checks for core routes.
 
 ## Recent Changes
 
-Recent actual changes in this project include:
+Recent committed changes:
 
-- Initialized local git repository.
-- Added `.gitignore` to keep `node_modules`, `dist`, `output`, `.claude`, environment files, logs, and local server PID files out of git.
-- Committed the initial app state.
-- Fixed a blank-screen crash on the interview page by importing `Link` in `src/pages/Interview/Interview.jsx` and guarding old persisted interview/saved-question data.
-- Tightened news URL handling in `src/pages/News/News.jsx` with source-link validation so generic homepages/news/category/tag/search URLs are not treated as original articles.
-- Replaced/confirmed user-provided clay assets for:
-  - breakthrough cat
-  - interview record icon
-  - old-cat memory/archive icon
-- Verified `vite build` succeeds after the recent code changes.
-- Prepared for GitHub/Vercel deployment discussion, but no GitHub remote is configured and the repository has not yet been pushed from this machine.
-- Added this `PROJECT_CONTEXT.md` handoff file after checking the current project structure.
+- Added `vercel.json` SPA rewrite for Vercel deployment.
+- Pushed the repo to GitHub at `https://github.com/katiemalfoy62-commits/miaotu.git`.
+- Deployed the site to Vercel at `https://miaotu-pi.vercel.app`.
+- Added hover/focus feedback to the homepage "爆破猫咪" card and its mascot image.
+- Replaced onboarding flat SVG cat usage with blinking clay mascot visuals.
+- Generated transparent versions of the six cat growth-stage images.
+- Updated the growth map so station cards preview stage cats on hover/focus/click.
+- Refreshed onboarding copy to match the current product modules.
+- Removed the onboarding breed option because it had no meaningful visual effect.
+- Cleaned several temporary incoming/source asset files that were no longer needed.
+- Verified the Vite build after the recent committed changes.
+
+Recent working-tree changes not yet committed at this handoff:
+
+- Added `src/components/Cat/LayeredCat.jsx`.
+- Added and wired WebP layered cat assets under `src/assets/cat-customizer/`.
+- Updated onboarding, home, shop, wardrobe, store defaults, and CSS for layered cats.
+- Added first-pass homepage guided tour state and UI.
+- Converted large mascot/UI PNGs to WebP and updated imports.
+- Removed unused large PNG sheets and replaced old mascot/UI PNG imports with WebP.
+- Removed unused standalone `src/assets/wearables/` draft directory.
+- Verified `vite build` succeeds after these changes.
 
 ## Notes For Next Codex
 
-- Start by reading:
-  - `src/App.jsx`
+- Start by reading this file, then inspect `git status --short` before editing.
+- Useful first files to read for the next implementation:
+  - `src/pages/Onboarding/Onboarding.jsx`
+  - `src/pages/Home/Home.jsx`
+  - `src/pages/Shop/Shop.jsx`
+  - `src/pages/Wardrobe/Wardrobe.jsx`
   - `src/store/useStore.js`
-  - `src/components/Layout/Layout.jsx`
-  - `src/components/OldCat/OldCat.jsx`
-  - the page file relevant to the user request
-- Run `git status --short` before editing. The user may have made manual changes.
-- Check `git branch --show-current` before deployment commands. At the time of this handoff the branch is `master`, not `main`.
+  - `src/data/shopItems.js`
+  - `src/index.css`
+- The next likely task is visual QA and alignment tuning for `LayeredCat.jsx`, not another asset generation pass.
+- Preview-only cat customizer PNG files were removed; actual used layers are WebP.
+- The standalone `src/assets/wearables/` draft directory was removed because aligned wearables are now under `src/assets/cat-customizer/wearables-aligned/`.
 - Use `apply_patch` for manual edits.
-- Do not fetch images from WeChat or temporary chat folders. The user explicitly said to ask for missing images instead. The current user-provided image folder is `C:\Users\11512\Desktop\猫咪图案`.
-- Do not hardcode the user's OpenAI API key. Keep API key input user-controlled.
-- If testing with Codex desktop and Node is not on PATH, use the bundled Node command shown in "How To Run".
-- If the browser shows strange old data, remember persisted state comes from localStorage key `miaotu_store`.
-- Be careful with Chinese text encoding. Terminal output may look broken even when the app renders correctly.
-- The user cares strongly about visual polish, clay consistency, mentor usefulness, reliable news links, structured thinking, and interview review value. Avoid superficial UI-only fixes when the product behavior is what matters.
+- Do not revert user changes or delete generated assets without confirming.
+- If building in Codex desktop and `npm run build` cannot find Node, use the bundled Node command listed above.
+- If Chinese text looks broken in PowerShell, do not assume the browser output is broken. Check source in an editor or verify through the app.
+- If Vercel needs an update after changes, commit and push to `master`; Vercel should redeploy from GitHub.
+- `LayeredCat.jsx` has fallback defaults for old persisted users: color `gray`, eye color `yellow`, pattern `none`, gender `female`, and no equipped items.
+- The old color/eye customization bug should now be fixed in the wired screens, but it still needs browser verification.

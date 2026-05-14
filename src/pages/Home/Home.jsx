@@ -12,16 +12,11 @@ import {
 } from 'lucide-react'
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import ClayMascot from '../../components/Cat/ClayMascot'
+import LayeredCat from '../../components/Cat/LayeredCat'
 import ClayIcon from '../../components/UI/ClayIcon'
 import useStore from '../../store/useStore'
 import { t } from '../../utils/i18n'
 import { expInCurrentLevel } from '../../utils/levelCalc'
-import stagePreview1 from '../../assets/cat-stages/clay-stage-1-transparent.png'
-import stagePreview2 from '../../assets/cat-stages/clay-stage-2-transparent.png'
-import stagePreview3 from '../../assets/cat-stages/clay-stage-3-transparent.png'
-import stagePreview4 from '../../assets/cat-stages/clay-stage-4-transparent.png'
-import stagePreview5 from '../../assets/cat-stages/clay-stage-5-transparent.png'
-import stagePreview6 from '../../assets/cat-stages/clay-stage-6-transparent.png'
 
 const MODULES = [
   {
@@ -84,13 +79,42 @@ const GROWTH_STATIONS = [
   { min: 91, max: 100, zh: '首席猫', en: 'Chief Cat', noteZh: '带着全局视角做决策', noteEn: 'Lead with strategy' },
 ]
 
-const GROWTH_STAGE_PREVIEWS = [
-  stagePreview1,
-  stagePreview2,
-  stagePreview3,
-  stagePreview4,
-  stagePreview5,
-  stagePreview6,
+const TOUR_STEPS = [
+  {
+    key: 'hero',
+    titleZh: '先看今天的总览',
+    titleEn: 'Start with today',
+    bodyZh: '这里会告诉你等级、小鱼干、任务数量和成长路线。点小猫可以查看后续阶段会变成什么样。',
+    bodyEn: 'This area shows level, fish, active tasks, and the growth route. Tap the cat to preview future stages.',
+  },
+  {
+    key: 'modules',
+    titleZh: '四个学习入口',
+    titleEn: 'Four learning doors',
+    bodyZh: '每天可以从情报站、委托任务、思维训练、面试模拟里选一个开始。它们都会沉淀到成长档案。',
+    bodyEn: 'Pick AI news, quests, thinking drills, or interview practice. Each session flows into the archive.',
+  },
+  {
+    key: 'cat',
+    titleZh: '你的专属小猫',
+    titleEn: 'Your cat companion',
+    bodyZh: '这里会显示你刚刚选择的毛色、眼睛、花纹和穿戴。以后升级也会在这里看到变化。',
+    bodyEn: 'Your saved fur, eyes, pattern, and outfits appear here, and growth stages will build on them.',
+  },
+  {
+    key: 'mentor',
+    titleZh: '找老猫问问题',
+    titleEn: 'Ask Mentor Cat',
+    bodyZh: '右侧的老猫入口可以随时打开导师对话，不懂的题、新闻、面试表达都可以继续追问。',
+    bodyEn: 'Open the mentor cat from the side panel when you want help with news, tasks, or interview answers.',
+  },
+  {
+    key: 'archive',
+    titleZh: '攻破弱项和复盘',
+    titleEn: 'Break through and review',
+    bodyZh: '爆破猫咪负责专项练习；成长档案会记录任务、错题、日记和面试，方便你回头复盘。',
+    bodyEn: 'Breakthrough drills target weak spots, while the archive keeps tasks, mistakes, diaries, and interviews.',
+  },
 ]
 
 function ModuleCard({ mod, lang, index }) {
@@ -148,11 +172,13 @@ function AbilityRow({ name, value, index }) {
 }
 
 export default function Home() {
-  const { user, tasks, stats } = useStore()
+  const { user, tasks, stats, setHomeTourDone } = useStore()
   const lang = user.settings.language
   const { current, needed, pct } = expInCurrentLevel(user.exp, user.level)
   const [mapOpen, setMapOpen] = useState(false)
   const [previewStationIndex, setPreviewStationIndex] = useState(null)
+  const [showTour, setShowTour] = useState(() => user.homeTourDone !== true)
+  const [tourIndex, setTourIndex] = useState(0)
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', user.settings.theme === 'dark')
@@ -171,10 +197,32 @@ export default function Home() {
   const safeStationIndex = currentStationIndex >= 0 ? currentStationIndex : 0
   const activePreviewIndex = previewStationIndex ?? safeStationIndex
   const activePreviewStation = GROWTH_STATIONS[activePreviewIndex]
+  const tourStep = TOUR_STEPS[tourIndex]
+
+  function closeTour(done = true) {
+    setShowTour(false)
+    if (done) setHomeTourDone(true)
+  }
+
+  function replayTour() {
+    setTourIndex(0)
+    setShowTour(true)
+    setHomeTourDone(false)
+  }
+
+  function nextTourStep() {
+    if (tourIndex >= TOUR_STEPS.length - 1) {
+      closeTour(true)
+      return
+    }
+    setTourIndex(index => index + 1)
+  }
+
+  const tourClass = (key) => showTour && tourStep?.key === key ? 'tour-highlight' : ''
 
   return (
-    <div className="home-shell clay-home">
-      <section className={`clay-hero-panel ${mapOpen ? 'clay-hero-panel-map' : ''}`}>
+    <div className={`home-shell clay-home ${showTour ? 'home-tour-active' : ''}`}>
+      <section className={`clay-hero-panel ${mapOpen ? 'clay-hero-panel-map' : ''} ${tourClass('hero')}`}>
         {mapOpen && (
           <div className="growth-map-panel">
             <div className="growth-map-head">
@@ -207,11 +255,12 @@ export default function Home() {
                     onBlur={() => setPreviewStationIndex(null)}
                     onClick={() => setPreviewStationIndex(index)}
                   >
-                    <img
-                      src={GROWTH_STAGE_PREVIEWS[index]}
-                      alt=""
+                    <LayeredCat
+                      catConfig={user.catConfig}
+                      stageIndex={index}
+                      showWearables={false}
                       className="growth-station-cat"
-                      aria-hidden="true"
+                      alt=""
                     />
                     <span className="growth-station-marker">{index + 1}</span>
                     <strong>{lang === 'zh' ? station.zh : station.en}</strong>
@@ -224,7 +273,12 @@ export default function Home() {
 
             <div className="growth-map-footer">
               <div className="growth-map-preview-cat" aria-hidden="true">
-                <img src={GROWTH_STAGE_PREVIEWS[activePreviewIndex]} alt="" />
+                <LayeredCat
+                  catConfig={user.catConfig}
+                  stageIndex={activePreviewIndex}
+                  equippedItems={user.equippedItems}
+                  alt=""
+                />
               </div>
               <div className="growth-map-stage-copy">
                 <strong>
@@ -256,7 +310,12 @@ export default function Home() {
 
         <button className="clay-hero-mascot" type="button" onClick={() => setMapOpen(true)} title={lang === 'zh' ? '查看成长地图' : 'Open growth map'}>
           <span className="clay-star clay-star-one">✦</span>
-          <BlinkingClayMascot type="kivi" interactive />
+          <LayeredCat
+            catConfig={user.catConfig}
+            level={user.level}
+            equippedItems={user.equippedItems}
+            className="hero-layered-cat"
+          />
         </button>
 
         <div className="clay-hero-stats">
@@ -278,7 +337,7 @@ export default function Home() {
 
       <div className="home-grid clay-home-grid">
         <main className="space-y-5">
-          <section>
+          <section className={tourClass('modules')}>
             <div className="mb-3 flex items-end justify-between">
               <div>
                 <div className="section-kicker">{lang === 'zh' ? '学习模块' : 'Modules'}</div>
@@ -291,6 +350,9 @@ export default function Home() {
                 {lang === 'zh' ? '连续学习 1 天' : '1 day streak'}
               </div>
             </div>
+            <button type="button" onClick={replayTour} className="tour-replay-button">
+              {lang === 'zh' ? '新手指引' : 'Tour'}
+            </button>
             <div className="grid gap-4 md:grid-cols-2">
               {MODULES.map((mod, i) => (
                 <ModuleCard key={mod.key} mod={mod} lang={lang} index={i} />
@@ -302,12 +364,17 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.32 }}
-            className="clay-cat-stage-card"
+            className={`clay-cat-stage-card ${tourClass('cat')}`}
           >
             <div className="clay-cat-scene">
               <span className="clay-stage-plant">🌱</span>
               <Link to="/wardrobe" title={t('clickToWardrobe', lang)} className="clay-cat-link">
-                <BlinkingClayMascot type="kivi" />
+                <LayeredCat
+                  catConfig={user.catConfig}
+                  level={user.level}
+                  equippedItems={user.equippedItems}
+                  className="home-layered-cat"
+                />
               </Link>
               <ClayIcon name="fish" className="clay-stage-fish-icon" alt="" />
               <Link to="/wardrobe" className="wardrobe-link">
@@ -369,7 +436,7 @@ export default function Home() {
             initial={{ opacity: 0, x: 18 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.18 }}
-            className="side-card timer-card clay-side-card"
+            className={`side-card timer-card clay-side-card ${tourClass('mentor')}`}
           >
             <div className="clay-timer-layout">
               <div className="clay-timer-copy">
@@ -406,7 +473,7 @@ export default function Home() {
             initial={{ opacity: 0, x: 18 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.28 }}
-            className="side-card growth-card clay-side-card"
+            className={`side-card growth-card clay-side-card ${tourClass('archive')}`}
           >
             <Link to="/breakthrough" className="home-breakthrough-card">
               <div>
@@ -459,6 +526,35 @@ export default function Home() {
           </motion.section>
         </aside>
       </div>
+
+      {showTour && tourStep && (
+        <>
+          <div className="home-tour-dim" aria-hidden="true" />
+          <motion.div
+            className="home-tour-card"
+            initial={{ opacity: 0, y: 18, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+          >
+            <BlinkingClayMascot type="oldcat" className="home-tour-oldcat" />
+            <div className="home-tour-copy">
+              <span>{tourIndex + 1} / {TOUR_STEPS.length}</span>
+              <h3>{lang === 'zh' ? tourStep.titleZh : tourStep.titleEn}</h3>
+              <p>{lang === 'zh' ? tourStep.bodyZh : tourStep.bodyEn}</p>
+              <div className="home-tour-actions">
+                <button type="button" onClick={() => closeTour(true)}>
+                  {lang === 'zh' ? '跳过' : 'Skip'}
+                </button>
+                <button type="button" onClick={nextTourStep}>
+                  {tourIndex >= TOUR_STEPS.length - 1
+                    ? (lang === 'zh' ? '开始学习' : 'Start')
+                    : (lang === 'zh' ? '下一步' : 'Next')}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
     </div>
   )
 }

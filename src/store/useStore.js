@@ -26,7 +26,7 @@ const defaultUser = {
   exp: 0,
   fish: 0,
   catStage: '流浪小猫',
-  catConfig: { name: '', breed: '', color: '', pattern: '', eyeColor: '', gender: '' },
+  catConfig: { name: '', focus: 'training', color: 'gray', pattern: 'none', eyeColor: 'yellow', gender: 'female' },
   equippedItems: [],
   unlockedItems: [],
   badges: [],
@@ -42,6 +42,7 @@ const defaultUser = {
   createdAt: new Date().toISOString(),
   onboardingDone: false,
   catCustomized: false,
+  homeTourDone: false,
 }
 
 const defaultStats = {
@@ -103,7 +104,11 @@ const useStore = create(
       }),
 
       setOnboardingDone: () => set((s) => ({
-        user: { ...s.user, onboardingDone: true }
+        user: { ...s.user, onboardingDone: true, homeTourDone: false }
+      })),
+
+      setHomeTourDone: (done = true) => set((s) => ({
+        user: { ...s.user, homeTourDone: done }
       })),
 
       recordActivity: () => set((s) => {

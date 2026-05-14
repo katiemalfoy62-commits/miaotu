@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
+import LayeredCat, { CAT_PATTERNS } from '../../components/Cat/LayeredCat'
 import useStore from '../../store/useStore'
 import { t } from '../../utils/i18n'
 
@@ -15,6 +16,7 @@ const STEPS = [
 const FOCUS_OPTIONS = ['news', 'tasks', 'training', 'interview', 'growth']
 const COLOR_OPTIONS = ['orange', 'gray', 'brown', 'black', 'white', 'cream']
 const EYE_OPTIONS = ['yellow', 'green', 'blue', 'amber']
+const PATTERN_OPTIONS = CAT_PATTERNS
 
 const focusLabels = {
   zh: {
@@ -43,6 +45,29 @@ const eyeLabels = {
   en: { yellow: 'Yellow', green: 'Green', blue: 'Blue', amber: 'Amber' },
 }
 
+const patternLabels = {
+  zh: {
+    none: '无花纹',
+    tabby: '虎斑',
+    spots: '斑点',
+    calico_orange: '橘花',
+    calico_black: '黑花',
+    face_mask: '面具',
+    socks_white: '白手套',
+    tail_tip: '尾巴尖',
+  },
+  en: {
+    none: 'None',
+    tabby: 'Tabby',
+    spots: 'Spots',
+    calico_orange: 'Orange calico',
+    calico_black: 'Black calico',
+    face_mask: 'Mask',
+    socks_white: 'White socks',
+    tail_tip: 'Tail tip',
+  },
+}
+
 const genderLabels = {
   zh: { male: '男生', female: '女生' },
   en: { male: 'Male', female: 'Female' },
@@ -59,6 +84,7 @@ export default function Onboarding() {
     focus: 'training',
     color: 'orange',
     eyeColor: 'green',
+    pattern: 'none',
     gender: 'female',
   })
 
@@ -169,7 +195,7 @@ export default function Onboarding() {
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
-                <BlinkingClayMascot type="kivi" className="onboarding-kivi-clay" />
+                <LayeredCat catConfig={catForm} level={1} className="onboarding-layered-cat" />
               </motion.div>
             </div>
 
@@ -223,6 +249,21 @@ export default function Onboarding() {
                     className={`rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${catForm.eyeColor === eyeColor ? 'border-primary bg-primary text-white' : 'border-border-light hover:bg-border-light dark:border-border-dark dark:hover:bg-border-dark'}`}
                   >
                     {eyeLabels[lang][eyeColor]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-1.5 text-xs font-bold text-gray-500">{lang === 'zh' ? '花纹偏好' : 'Pattern'}</div>
+              <div className="flex flex-wrap gap-2">
+                {PATTERN_OPTIONS.map(pattern => (
+                  <button
+                    key={pattern}
+                    onClick={() => setCatForm(f => ({ ...f, pattern }))}
+                    className={`rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${catForm.pattern === pattern ? 'border-primary bg-primary text-white' : 'border-border-light hover:bg-border-light dark:border-border-dark dark:hover:bg-border-dark'}`}
+                  >
+                    {patternLabels[lang][pattern]}
                   </button>
                 ))}
               </div>
