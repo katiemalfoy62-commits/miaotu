@@ -2321,7 +2321,7 @@ button:hover .interviewer-clay {
 .layered-cat__eye {
   position: absolute;
   z-index: 7;
-  width: 6.2%;
+  width: 5.8%;
   aspect-ratio: 1;
   border: 0.16rem solid rgba(49, 39, 31, 0.9);
   border-radius: 999px;
@@ -2330,13 +2330,13 @@ button:hover .interviewer-clay {
 }
 
 .layered-cat__eye--left {
-  left: 42.8%;
-  top: 34.5%;
+  left: 38.3%;
+  top: 42.2%;
 }
 
 .layered-cat__eye--right {
-  left: 52.1%;
-  top: 34.5%;
+  left: 48.4%;
+  top: 42.2%;
 }
 
 .layered-cat__eye--yellow {
@@ -2357,11 +2357,11 @@ button:hover .interviewer-clay {
 
 .layered-cat__fixed-bow {
   position: absolute;
-  left: 57.7%;
-  top: 24.2%;
+  left: 56.6%;
+  top: 30.8%;
   z-index: 8;
-  width: 11.5%;
-  height: 7.5%;
+  width: 10.4%;
+  height: 6.8%;
   filter: drop-shadow(0 0.08rem 0.08rem rgba(70, 33, 28, 0.18));
 }
 
