@@ -99,15 +99,36 @@ const TOUR_STEPS = [
     key: 'hero',
     titleZh: '今天的成长总览',
     titleEn: 'Start with today',
-    bodyZh: '这里会告诉你等级、小鱼干、任务数量。点中间的小猫，可以展开 6 站成长路线，预览后续阶段会变成什么样。',
-    bodyEn: 'This area shows level, fish, active tasks, and the growth route. Tap the cat to preview future stages.',
+    bodyZh: '这里会告诉你等级、小鱼干、任务数量。小猫是可以点击的，点它可以展开 6 站成长路线，预览后续阶段会变成什么样。',
+    bodyEn: 'This area shows level, fish, active tasks, and the growth route. The cat is clickable: tap it to preview future stages.',
   },
   {
-    key: 'modules',
-    titleZh: '四个学习入口',
-    titleEn: 'Four learning doors',
-    bodyZh: '每天可以从情报站、委托任务、思维训练、面试模拟里选一个开始。它们都会沉淀到成长档案。',
-    bodyEn: 'Pick AI news, quests, thinking drills, or interview practice. Each session flows into the archive.',
+    key: 'news',
+    titleZh: '今日情报站',
+    titleEn: 'AI news station',
+    bodyZh: '从这里读最新 AI/产品动态，适合每天快速热身。读完可以沉淀成你的产品观察和学习记录。',
+    bodyEn: 'Read fresh AI and product updates here. It is a quick daily warm-up that can become product observations and study records.',
+  },
+  {
+    key: 'tasks',
+    titleZh: '委托任务',
+    titleEn: 'Daily quests',
+    bodyZh: '这里会给你每天的 PM 小任务，用真实工作场景练需求判断、拆解和表达。',
+    bodyEn: 'Daily PM quests live here, so you can practice judgment, breakdowns, and communication in work-like scenarios.',
+  },
+  {
+    key: 'training',
+    titleZh: '思维训练',
+    titleEn: 'Thinking drills',
+    bodyZh: '这里用题目训练结构化思考。答得不好也没关系，后续会进入专项攻破和错题复盘。',
+    bodyEn: 'Practice structured thinking here. Weak answers can later feed breakthrough drills and review.',
+  },
+  {
+    key: 'interview',
+    titleZh: '面试模拟',
+    titleEn: 'Mock interview',
+    bodyZh: '这里模拟 AI 产品经理面试，会根据回答继续追问，更像真实面试里的来回交流。',
+    bodyEn: 'Practice AI PM interviews here. The interviewer follows up on your answers for a more realistic exchange.',
   },
   {
     key: 'cat',
@@ -142,7 +163,7 @@ const TOUR_STEPS = [
 function ModuleCard({ mod, lang, index, highlighted = false }) {
   return (
     <motion.div
-      className={highlighted ? 'tour-highlight tour-highlight-module' : ''}
+      className={highlighted ? `tour-highlight tour-highlight-module tour-highlight-module-${mod.key}` : ''}
       initial={{ opacity: 0, y: 18, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: index * 0.07, type: 'spring', stiffness: 260, damping: 22 }}
@@ -341,6 +362,9 @@ export default function Home() {
 
         <button className="clay-hero-mascot" type="button" onClick={() => setMapOpen(true)} title={lang === 'zh' ? '查看成长地图' : 'Open growth map'}>
           <span className="clay-star clay-star-one">✦</span>
+          <span className="cat-click-cue">
+            {lang === 'zh' ? '点我看成长路线' : 'Tap for growth map'}
+          </span>
           <LayeredCat
             catConfig={user.catConfig}
             level={user.level}
@@ -386,7 +410,7 @@ export default function Home() {
             </button>
             <div className="grid gap-4 md:grid-cols-2">
               {MODULES.map((mod, i) => (
-                <ModuleCard key={mod.key} mod={mod} lang={lang} index={i} highlighted={showTour && tourStep?.key === 'modules'} />
+                <ModuleCard key={mod.key} mod={mod} lang={lang} index={i} highlighted={showTour && tourStep?.key === mod.key} />
               ))}
             </div>
           </section>
