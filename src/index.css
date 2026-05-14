@@ -2078,16 +2078,15 @@ button:hover .interviewer-clay {
 
 .growth-station-cat {
   position: absolute;
-  right: 0.25rem;
-  top: -3.4rem;
+  right: 0.85rem;
+  top: 0.55rem;
   z-index: 5;
-  width: 5.3rem;
-  height: 5.8rem;
-  object-fit: contain;
+  width: 4.2rem;
+  height: 4.2rem;
   opacity: 0;
   pointer-events: none;
   filter: drop-shadow(0 15px 14px rgba(77, 48, 25, 0.22));
-  transform: translateY(0.7rem) scale(0.86);
+  transform: translateY(0.35rem) scale(0.86);
   transform-origin: 50% 100%;
   transition: opacity 160ms ease, transform 180ms ease, filter 180ms ease;
 }
@@ -2317,6 +2316,168 @@ button:hover .interviewer-clay {
   object-fit: contain;
   pointer-events: none;
   user-select: none;
+}
+
+.layered-cat__eye {
+  position: absolute;
+  z-index: 7;
+  width: 6.2%;
+  aspect-ratio: 1;
+  border: 0.16rem solid rgba(49, 39, 31, 0.9);
+  border-radius: 999px;
+  background: radial-gradient(circle at 55% 55%, #201713 0 19%, transparent 20%), var(--cat-eye, #e7c84a);
+  box-shadow: inset 0 0.08rem 0.12rem rgba(255,255,255,0.62), 0 0.08rem 0.12rem rgba(42, 28, 17, 0.18);
+}
+
+.layered-cat__eye--left {
+  left: 42.8%;
+  top: 34.5%;
+}
+
+.layered-cat__eye--right {
+  left: 52.1%;
+  top: 34.5%;
+}
+
+.layered-cat__eye--yellow {
+  --cat-eye: #e9c84a;
+}
+
+.layered-cat__eye--green {
+  --cat-eye: #78b66f;
+}
+
+.layered-cat__eye--blue {
+  --cat-eye: #6ea8d9;
+}
+
+.layered-cat__eye--amber {
+  --cat-eye: #c7843a;
+}
+
+.layered-cat__fixed-bow {
+  position: absolute;
+  left: 57.7%;
+  top: 24.2%;
+  z-index: 8;
+  width: 11.5%;
+  height: 7.5%;
+  filter: drop-shadow(0 0.08rem 0.08rem rgba(70, 33, 28, 0.18));
+}
+
+.layered-cat__fixed-bow::before,
+.layered-cat__fixed-bow::after {
+  content: "";
+  position: absolute;
+  top: 18%;
+  width: 46%;
+  height: 66%;
+  border-radius: 60% 40% 55% 45%;
+  background: linear-gradient(135deg, #ff94ad, #e76083);
+}
+
+.layered-cat__fixed-bow::before {
+  left: 2%;
+  transform: rotate(-24deg);
+}
+
+.layered-cat__fixed-bow::after {
+  right: 2%;
+  transform: rotate(24deg);
+}
+
+.layered-cat__fixed-bow {
+  background: radial-gradient(circle at 50% 50%, #d94d73 0 18%, transparent 19%);
+}
+
+.layered-cat__pattern {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.layered-cat__pattern--tabby::before {
+  content: "";
+  position: absolute;
+  left: 45%;
+  top: 28.8%;
+  width: 12%;
+  height: 8%;
+  border-radius: 45%;
+  background:
+    linear-gradient(90deg, transparent 0 16%, rgba(77, 49, 31, 0.34) 17% 25%, transparent 26% 39%, rgba(77, 49, 31, 0.3) 40% 48%, transparent 49% 62%, rgba(77, 49, 31, 0.28) 63% 71%, transparent 72%);
+}
+
+.layered-cat__pattern--spots::before,
+.layered-cat__pattern--calico_orange::before,
+.layered-cat__pattern--calico_black::before {
+  content: "";
+  position: absolute;
+  left: 39%;
+  top: 44%;
+  width: 25%;
+  height: 22%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 28% 32%, rgba(92, 58, 37, 0.36) 0 9%, transparent 10%),
+    radial-gradient(circle at 68% 58%, rgba(92, 58, 37, 0.28) 0 8%, transparent 9%);
+}
+
+.layered-cat__pattern--calico_orange::before {
+  background:
+    radial-gradient(circle at 25% 32%, rgba(221, 129, 51, 0.42) 0 10%, transparent 11%),
+    radial-gradient(circle at 70% 58%, rgba(255, 180, 82, 0.32) 0 9%, transparent 10%);
+}
+
+.layered-cat__pattern--calico_black::before,
+.layered-cat__pattern--face_mask::before {
+  background:
+    radial-gradient(circle at 27% 32%, rgba(45, 35, 29, 0.42) 0 11%, transparent 12%),
+    radial-gradient(circle at 69% 58%, rgba(45, 35, 29, 0.32) 0 9%, transparent 10%);
+}
+
+.layered-cat__pattern--socks_white::before {
+  content: "";
+  position: absolute;
+  left: 39%;
+  top: 65.5%;
+  width: 24%;
+  height: 8%;
+  border-radius: 0 0 999px 999px;
+  background: rgba(255, 249, 235, 0.72);
+}
+
+.layered-cat__pattern--tail_tip::before {
+  content: "";
+  position: absolute;
+  left: 67.2%;
+  top: 50.5%;
+  width: 7%;
+  height: 8%;
+  border-radius: 999px;
+  background: rgba(255, 249, 235, 0.7);
+  transform: rotate(-22deg);
+}
+
+.layered-cat__stage-badge {
+  position: absolute;
+  right: 25%;
+  bottom: 24%;
+  z-index: 9;
+  width: 13%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: rgba(255, 250, 236, 0.82);
+  box-shadow: inset 0 0 0 0.08rem rgba(201, 152, 91, 0.35), 0 0.25rem 0.55rem rgba(67, 43, 27, 0.16);
+}
+
+.layered-cat__stage-badge::after {
+  content: "";
+  position: absolute;
+  inset: 28%;
+  border-radius: inherit;
+  background: #c8622a;
 }
 
 .onboarding-layered-cat {

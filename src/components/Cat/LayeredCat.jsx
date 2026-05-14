@@ -1,31 +1,12 @@
 import React from 'react'
 import basePedestal from '../../assets/cat-customizer/base_pedestal.webp'
-import bowPinkFixed from '../../assets/cat-customizer/bow_pink_fixed.webp'
 import furOrange from '../../assets/cat-customizer/fur_orange.webp'
 import furGray from '../../assets/cat-customizer/fur_gray.webp'
 import furBrown from '../../assets/cat-customizer/fur_brown.webp'
 import furBlack from '../../assets/cat-customizer/fur_black.webp'
 import furWhite from '../../assets/cat-customizer/fur_white.webp'
 import furCream from '../../assets/cat-customizer/fur_cream.webp'
-import eyesYellow from '../../assets/cat-customizer/eyes_yellow.webp'
-import eyesGreen from '../../assets/cat-customizer/eyes_green.webp'
-import eyesBlue from '../../assets/cat-customizer/eyes_blue.webp'
-import eyesAmber from '../../assets/cat-customizer/eyes_amber.webp'
-import patternNone from '../../assets/cat-customizer/patterns/pattern_none.webp'
-import patternTabby from '../../assets/cat-customizer/patterns/pattern_tabby.webp'
-import patternSpots from '../../assets/cat-customizer/patterns/pattern_spots.webp'
-import patternCalicoOrange from '../../assets/cat-customizer/patterns/pattern_calico_orange.webp'
-import patternCalicoBlack from '../../assets/cat-customizer/patterns/pattern_calico_black.webp'
-import patternFaceMask from '../../assets/cat-customizer/patterns/pattern_face_mask.webp'
-import patternSocksWhite from '../../assets/cat-customizer/patterns/pattern_socks_white.webp'
-import patternTailTip from '../../assets/cat-customizer/patterns/pattern_tail_tip.webp'
 import stageShadow from '../../assets/cat-customizer/stages/stage_shadow_soft.webp'
-import stageStray from '../../assets/cat-customizer/stages/stage_stray.webp'
-import stageStudent from '../../assets/cat-customizer/stages/stage_student.webp'
-import stageIntern from '../../assets/cat-customizer/stages/stage_intern.webp'
-import stageJuniorPm from '../../assets/cat-customizer/stages/stage_junior_pm.webp'
-import stageSeniorPm from '../../assets/cat-customizer/stages/stage_senior_pm.webp'
-import stageChief from '../../assets/cat-customizer/stages/stage_chief.webp'
 import hatCap from '../../assets/cat-customizer/wearables-aligned/hat_cap.webp'
 import hatBeret from '../../assets/cat-customizer/wearables-aligned/hat_beret.webp'
 import bowPink from '../../assets/cat-customizer/wearables-aligned/bow_pink.webp'
@@ -52,33 +33,6 @@ const FUR_LAYERS = {
   white: furWhite,
   cream: furCream,
 }
-
-const EYE_LAYERS = {
-  yellow: eyesYellow,
-  green: eyesGreen,
-  blue: eyesBlue,
-  amber: eyesAmber,
-}
-
-const PATTERN_LAYERS = {
-  none: patternNone,
-  tabby: patternTabby,
-  spots: patternSpots,
-  calico_orange: patternCalicoOrange,
-  calico_black: patternCalicoBlack,
-  face_mask: patternFaceMask,
-  socks_white: patternSocksWhite,
-  tail_tip: patternTailTip,
-}
-
-const STAGE_LAYERS = [
-  stageStray,
-  stageStudent,
-  stageIntern,
-  stageJuniorPm,
-  stageSeniorPm,
-  stageChief,
-]
 
 const WEARABLE_LAYERS = {
   hat_cap: hatCap,
@@ -134,22 +88,22 @@ export default function LayeredCat({
 }) {
   const config = normalizeCatConfig(catConfig)
   const resolvedStageIndex = typeof stageIndex === 'number' ? stageIndex : getStageIndex(level)
-  const stageLayer = STAGE_LAYERS[resolvedStageIndex] || STAGE_LAYERS[0]
   const wearables = showWearables ? (equippedItems || []).map(item => WEARABLE_LAYERS[item.id]).filter(Boolean) : []
 
   const layers = [
     { src: stageShadow, key: 'shadow' },
     { src: basePedestal, key: 'base' },
     { src: FUR_LAYERS[config.color], key: `fur-${config.color}` },
-    { src: PATTERN_LAYERS[config.pattern], key: `pattern-${config.pattern}` },
-    { src: EYE_LAYERS[config.eyeColor], key: `eyes-${config.eyeColor}` },
-    config.gender === 'female' ? { src: bowPinkFixed, key: 'gender-bow' } : null,
-    showStage ? { src: stageLayer, key: `stage-${resolvedStageIndex}` } : null,
     ...wearables.map((src, index) => ({ src, key: `wearable-${index}` })),
   ].filter(Boolean)
 
   return (
-    <span className={`layered-cat ${className}`} style={sizeStyle(size)} role="img" aria-label={alt}>
+    <span
+      className={`layered-cat layered-cat--pattern-${config.pattern} layered-cat--stage-${showStage ? resolvedStageIndex : 0} ${className}`}
+      style={sizeStyle(size)}
+      role="img"
+      aria-label={alt}
+    >
       {layers.map(layer => (
         <img
           key={layer.key}
@@ -160,6 +114,11 @@ export default function LayeredCat({
           draggable="false"
         />
       ))}
+      <span className={`layered-cat__pattern layered-cat__pattern--${config.pattern}`} aria-hidden="true" />
+      <span className={`layered-cat__eye layered-cat__eye--left layered-cat__eye--${config.eyeColor}`} aria-hidden="true" />
+      <span className={`layered-cat__eye layered-cat__eye--right layered-cat__eye--${config.eyeColor}`} aria-hidden="true" />
+      {config.gender === 'female' && <span className="layered-cat__fixed-bow" aria-hidden="true" />}
+      {showStage && resolvedStageIndex > 0 && <span className={`layered-cat__stage-badge layered-cat__stage-badge--${resolvedStageIndex}`} aria-hidden="true" />}
     </span>
   )
 }

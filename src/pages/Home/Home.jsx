@@ -243,7 +243,7 @@ export default function Home() {
               {GROWTH_STATIONS.map((station, index) => {
                 const reached = index <= safeStationIndex
                 const active = index === safeStationIndex
-                const previewing = index === activePreviewIndex
+                const previewing = previewStationIndex === index
                 return (
                   <button
                     type="button"
