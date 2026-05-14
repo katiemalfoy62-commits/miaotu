@@ -139,9 +139,10 @@ const TOUR_STEPS = [
   },
 ]
 
-function ModuleCard({ mod, lang, index }) {
+function ModuleCard({ mod, lang, index, highlighted = false }) {
   return (
     <motion.div
+      className={highlighted ? 'tour-highlight tour-highlight-module' : ''}
       initial={{ opacity: 0, y: 18, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: index * 0.07, type: 'spring', stiffness: 260, damping: 22 }}
@@ -194,13 +195,13 @@ function AbilityRow({ name, value, index }) {
 }
 
 export default function Home() {
-  const { user, tasks, stats, setHomeTourDone } = useStore()
+  const { user, tasks, stats, setHomeTourDone, setHomeTourStep } = useStore()
   const lang = user.settings.language
   const { current, needed, pct } = expInCurrentLevel(user.exp, user.level)
   const [mapOpen, setMapOpen] = useState(false)
   const [previewStationIndex, setPreviewStationIndex] = useState(null)
   const [showTour, setShowTour] = useState(() => user.homeTourDone !== true)
-  const [tourIndex, setTourIndex] = useState(0)
+  const [tourIndex, setTourIndex] = useState(() => Math.min(user.homeTourStep || 0, TOUR_STEPS.length - 1))
   const tourStep = TOUR_STEPS[tourIndex]
 
   useEffect(() => {
@@ -237,6 +238,7 @@ export default function Home() {
 
   function replayTour() {
     setTourIndex(0)
+    setHomeTourStep(0)
     setShowTour(true)
     setHomeTourDone(false)
   }
@@ -246,7 +248,11 @@ export default function Home() {
       closeTour(true)
       return
     }
-    setTourIndex(index => index + 1)
+    setTourIndex(index => {
+      const nextIndex = index + 1
+      setHomeTourStep(nextIndex)
+      return nextIndex
+    })
   }
 
   const tourClass = (key) => showTour && tourStep?.key === key ? 'tour-highlight' : ''
@@ -362,7 +368,7 @@ export default function Home() {
 
       <div className="home-grid clay-home-grid">
         <main className="space-y-5">
-          <section className={tourClass('modules')}>
+          <section>
             <div className="mb-3 flex items-end justify-between">
               <div>
                 <div className="section-kicker">{lang === 'zh' ? '学习模块' : 'Modules'}</div>
@@ -380,7 +386,7 @@ export default function Home() {
             </button>
             <div className="grid gap-4 md:grid-cols-2">
               {MODULES.map((mod, i) => (
-                <ModuleCard key={mod.key} mod={mod} lang={lang} index={i} />
+                <ModuleCard key={mod.key} mod={mod} lang={lang} index={i} highlighted={showTour && tourStep?.key === 'modules'} />
               ))}
             </div>
           </section>

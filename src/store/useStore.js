@@ -43,6 +43,7 @@ const defaultUser = {
   onboardingDone: false,
   catCustomized: false,
   homeTourDone: false,
+  homeTourStep: 0,
 }
 
 const defaultStats = {
@@ -104,11 +105,15 @@ const useStore = create(
       }),
 
       setOnboardingDone: () => set((s) => ({
-        user: { ...s.user, onboardingDone: true, homeTourDone: false }
+        user: { ...s.user, onboardingDone: true, homeTourDone: false, homeTourStep: 0 }
       })),
 
       setHomeTourDone: (done = true) => set((s) => ({
-        user: { ...s.user, homeTourDone: done }
+        user: { ...s.user, homeTourDone: done, homeTourStep: done ? 0 : (s.user.homeTourStep || 0) }
+      })),
+
+      setHomeTourStep: (step = 0) => set((s) => ({
+        user: { ...s.user, homeTourStep: Math.max(0, step) }
       })),
 
       recordActivity: () => set((s) => {
