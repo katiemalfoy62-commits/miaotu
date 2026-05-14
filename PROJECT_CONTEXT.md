@@ -12,9 +12,9 @@ Current branch: `master`
 
 ## What This Is
 
-Miaotu is a gamified AI product manager learning companion for a student or early-career PM. It helps users build AI PM habits through AI news reading, daily practice tasks, structured thinking drills, mock interviews, targeted breakthrough drills, growth records, and an Old Cat mentor.
+Miaotu is a gamified AI product manager learning companion for students or early-career PM learners. It helps users build AI PM habits through daily AI news, PM tasks, structured thinking drills, mock interviews, targeted breakthrough practice, growth records, and an Old Cat mentor.
 
-The app is meant to be cute, warm, and resume-demo-friendly, while still feeling like a real learning product rather than a landing page.
+The app is intended to be resume-demo-friendly: cute and clay-styled, but still understandable as a real learning product when a first-time visitor opens it from a portfolio or resume link.
 
 ## Tech Stack
 
@@ -84,12 +84,15 @@ The app is a working Vite React single-page app deployed on Vercel. Main routes 
 Current product state:
 
 - Homepage uses a stable clay Kivi cat for the main companion visuals.
-- Growth route keeps six separate transparent stage-cat images for hover/focus/click previews.
+- Growth route uses six fixed transparent stage-cat images for hover/focus/click previews.
 - Onboarding no longer has fur color, eye color, pattern, breed, or gender customization.
-- Onboarding flow is now: Old Cat introduces the site, introduces core modules, explains rewards/growth stages, asks for cat name and Old Cat companion style, then enters homepage.
-- Settings only allows editing the cat name; visual appearance customization is intentionally hidden for now.
-- Homepage guided tour dims the screen and highlights key areas with Old Cat guidance. It is a first pass and should still be visually QA-tested.
-- Homepage guided tour now has six steps: daily overview, four learning entrances, cat/fish/shop, Old Cat plus Kitten Corner, breakthrough/archive, and the two right-side floating folders.
+- Onboarding flow is: Old Cat introduces the site, introduces core modules, explains rewards/growth stages, asks for cat name and Old Cat companion style, then enters homepage.
+- Settings only allows editing the cat name for the cat section; visual appearance customization is intentionally hidden for now.
+- Homepage guided tour has 9 steps: growth overview, news station, tasks, thinking drills, interview simulation, cat/fish/shop, Old Cat plus Kitten Corner, breakthrough/archive, and the two right-side floating folders.
+- Guided tour auto-scrolls the current target into view, highlights the current target, keeps it clickable, and uses a CSS-drawn paw pointer. This paw pointer is currently disliked by the user and should be redesigned.
+- The Old Cat panel, link vault panel, and saved Old Cat chat panel are lifted above the tour overlay while their steps are active so they can be operated.
+- Mock interview now attempts adaptive follow-up questions based on the user's previous answer instead of only asking a fixed next question.
+- Dark mode was revised toward a neutral, WeChat-like deep gray palette with better text contrast, but still needs visual QA across all pages.
 - Large legacy mascot PNGs were partly optimized to WebP. Interviewer PNGs and six stage PNGs are still relatively large.
 
 ## Important Files
@@ -100,22 +103,23 @@ Current product state:
 - `vercel.json`: SPA rewrite for direct route refresh on Vercel.
 - `src/main.jsx`: React entry point.
 - `src/App.jsx`: route wiring.
-- `src/store/useStore.js`: central persisted Zustand state, rewards, records, Old Cat chats, shop/wardrobe state, onboarding flags.
+- `src/store/useStore.js`: central persisted Zustand state, rewards, records, Old Cat chats, shop/wardrobe state, onboarding flags, home tour state.
 - `src/utils/claude.js`: OpenAI API helper and prompt helpers.
 - `src/utils/gptPrompt.js`: GPT handoff prompt utilities.
 - `src/utils/levelCalc.js`: level/growth calculation utilities.
 - `src/components/Layout/Layout.jsx`: app shell, navbar/back behavior, floating tools, Old Cat visibility.
-- `src/components/OldCat/OldCat.jsx`: Old Cat mentor chat panel.
-- `src/components/LinkVault/FloatingLinkVault.jsx`: floating URL/prompt vault.
+- `src/components/OldCat/OldCat.jsx`: Old Cat mentor chat panel; listens for `miaotu:open-oldcat`.
+- `src/components/OldCat/FloatingOldCatArchive.jsx`: right-side saved Old Cat chat folder.
+- `src/components/LinkVault/FloatingLinkVault.jsx`: right-side URL/prompt vault.
 - `src/components/Cat/BlinkingClayMascot.jsx`: blinking clay Kivi/Old Cat mascot.
 - `src/components/Cat/LayeredCat.jsx`: currently a stable Kivi image wrapper. Do not reintroduce visible appearance customization unless the product decision changes.
-- `src/components/Cat/CatStageImage.jsx`: existing stage helper.
 - `src/pages/Onboarding/Onboarding.jsx`: current onboarding flow and Old Cat style selection.
-- `src/pages/Home/Home.jsx`: home dashboard, growth map, and guided tour.
-- `src/pages/Settings/Settings.jsx`: settings page; cat section is now name-only.
+- `src/pages/Home/Home.jsx`: home dashboard, growth map, 9-step guided tour, auto-scroll and paw-pointer logic.
+- `src/pages/Interview/Interview.jsx`: mock interview flow, adaptive follow-up logic, interview records.
+- `src/pages/Settings/Settings.jsx`: settings page; Old Cat style options should match onboarding.
 - `src/pages/Shop/Shop.jsx` and `src/pages/Wardrobe/Wardrobe.jsx`: fish shop and wardrobe handling.
 - `src/data/shopItems.js`: shop item definitions; terminal may show Chinese/emoji as mojibake.
-- `src/index.css`: custom visual styling, including clay dashboard, onboarding, guided tour, hover states, and growth map styles.
+- `src/index.css`: custom visual styling, including clay dashboard, onboarding, guided tour, paw pointer, dark mode, hover states, and growth map styles.
 - `src/assets/mascots/`: clay mascot assets such as Kivi, Old Cat, breakthrough cat.
 - `src/assets/ui-clay/`: clay UI icons.
 - `src/assets/interviewers/`: clay interviewer cat PNGs.
@@ -134,6 +138,9 @@ Current product state:
 - Old Cat companion style is currently five options: strict mentor, interview coach, gentle encourager, senior PM, and tsundere/sharp critic.
 - Growth route should still show six different growth-stage cats.
 - Old Cat is a meaningful mentor interaction entry, not just decoration.
+- Homepage guided tour should feel like an interactive product guide: highlight what matters, allow the highlighted area to be clicked, auto-scroll to the target, and avoid blocking the area being introduced.
+- User dislikes the current text label on/near the cat and the current CSS paw pointer. The next design should use a cleaner clay-style pointer that glides like a mouse cursor from one target to the next.
+- Dark mode should be a true night mode, not a weak dimmed light mode: neutral dark grays, readable text, low saturation, and only small warm accents.
 - News summaries should stay short, useful, and PREP-structured.
 - GPT handoff is intended behavior: copy prompt/open GPT actions should remain.
 - API keys are user-provided in settings/localStorage. Do not commit or hardcode private keys.
@@ -147,7 +154,10 @@ Current product state:
 - Existing users may have old `miaotu_store` schemas with previous appearance fields. The current UI ignores them; clearing `miaotu_store` can help if state looks strange.
 - PowerShell may display Chinese/emoji source text as mojibake. Use `Get-Content -Encoding UTF8` or verify in browser/editor.
 - `src/data/shopItems.js` may display mojibake in terminal. Be careful when editing text there.
-- Homepage guided tour is improved, but still needs browser QA for spotlight alignment and copy pacing on desktop/mobile.
+- Current guided-tour paw pointer is visually poor. The user asked to replace it with a more polished clay-style cat-paw cursor and wants it to move continuously like a mouse pointer between steps.
+- A generated-image attempt for the paw pointer failed and produced an irrelevant tutorial screenshot. Do not use that generated output.
+- Homepage guided tour still needs browser QA for spotlight alignment, auto-scroll behavior, clickable targets, panel lift-over-overlay behavior, and mobile layout.
+- Dark mode still needs browser QA across pages; some pages may still have low contrast or inconsistent card colors.
 - Stage PNGs and interviewer PNGs still add build weight. Vite build warns that the main JS chunk is larger than 500 kB.
 - Shop/wardrobe economy exists, but because appearance customization is paused, wearable overlay behavior should not be emphasized until a stable design is chosen.
 - Previously attempted layered cat appearance caused severe alignment problems. Do not restart that path casually.
@@ -156,12 +166,14 @@ Current product state:
 
 ## Next Tasks
 
-1. Browser QA the simplified onboarding flow from a clean `localStorage` state.
-2. Browser QA homepage guided tour alignment on desktop and mobile.
-3. Confirm growth route hover/focus/click previews show the six stage cats cleanly.
-4. Push current changes and let Vercel redeploy.
-5. Continue asset optimization later: interviewer PNGs, stage PNGs, and route-level code splitting.
-6. QA the task page second-input issue and training lock/unlock rules.
+1. Replace the current CSS paw pointer with a better clay-style cat-paw cursor, preferably controlled in CSS/SVG for precise shape and motion. It should glide smoothly from the previous target to the next, like a mouse cursor, rather than popping.
+2. Browser QA the 9-step homepage guided tour from a clean `localStorage` state on desktop and mobile.
+3. Verify that clicking highlighted targets during the tour works and does not reset the tour step after returning home.
+4. QA Old Cat panel, link vault panel, and saved Old Cat chat panel during the tour to ensure they stay bright and operable above the overlay.
+5. Browser QA the simplified onboarding flow from a clean `localStorage` state.
+6. Continue dark-mode QA and adjust any remaining unreadable or inconsistent pages.
+7. Continue asset optimization later: interviewer PNGs, stage PNGs, and route-level code splitting.
+8. QA the task page second-input issue and training lock/unlock rules.
 
 ## Recent Changes
 
@@ -171,13 +183,22 @@ Current product state:
 - Simplified `LayeredCat.jsx` back to a stable Kivi clay image wrapper.
 - Restored growth map previews to six fixed transparent stage-cat PNGs instead of the failed layered preview approach.
 - Updated settings so the cat section only edits the cat name and no longer exposes appearance fields.
-- Improved the homepage guided tour: softer spotlight styling, locked underlying clicks during the tour, extra steps for Kitten Corner/shop/floating folders, and fixed stage-cat image squeezing with `object-fit: contain`.
-- Verified production build with the bundled Node/Vite command.
+- Improved the homepage guided tour from 6 broad steps to 9 more specific steps, including separate introductions for the four learning entrances.
+- Added guided-tour auto-scroll to the active target and kept highlighted targets clickable.
+- Added a CSS-drawn paw pointer for the guided tour, but the current visual is not acceptable and should be replaced next.
+- Removed the text cue near the homepage cat after the user found it visually awkward.
+- Lifted Old Cat/link vault/saved-chat panels above the tutorial overlay when relevant.
+- Revised dark mode toward neutral gray and improved text contrast across home, growth route, breakthrough, and interview-related views.
+- Updated mock interview logic to generate adaptive follow-up questions based on transcript and answer quality.
+- Verified production builds after recent code changes with the bundled Node/Vite command.
+- Latest pushed commits include `fb3d145 Add guided tour paw pointer`, `bd75dda Improve home tour guidance`, `baf0f0e Refine neutral dark mode`, and `4ad05f5 Add adaptive interview followups`.
 
 ## Notes For Next Codex
 
-- Start by reading this file, then inspect `src/pages/Onboarding/Onboarding.jsx`, `src/pages/Home/Home.jsx`, `src/components/Cat/LayeredCat.jsx`, `src/pages/Settings/Settings.jsx`, and `src/store/useStore.js`.
+- Start by reading this file, then inspect `src/pages/Home/Home.jsx`, `src/index.css`, `src/components/OldCat/OldCat.jsx`, `src/components/LinkVault/FloatingLinkVault.jsx`, and `src/components/OldCat/FloatingOldCatArchive.jsx`.
 - Use `Get-Content -Encoding UTF8` when reading Chinese text in PowerShell.
-- Use `git grep` to check for remaining user-facing appearance options before touching UI.
+- Use `git grep` or `Select-String` to check for remaining user-facing appearance options before touching cat customization UI.
 - Do not revive the layered cat customization work unless the user explicitly asks; it caused visible misalignment and the product decision is now to pause it.
+- For the paw pointer, prefer a code-native CSS/SVG implementation over generated bitmap output. The user wants a polished clay-like pointer and smooth target-to-target motion.
+- If testing locally in Codex desktop, Vite dev server may need the bundled Node command. If sandbox blocks esbuild child process spawning, request escalation rather than working around it.
 - After code changes, run the bundled build command shown above.
