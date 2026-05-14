@@ -160,10 +160,23 @@ const TOUR_STEPS = [
   },
 ]
 
+const TOUR_TARGET_SELECTORS = {
+  hero: '[data-tour-target="hero"]',
+  news: '[data-tour-target="news"]',
+  tasks: '[data-tour-target="tasks"]',
+  training: '[data-tour-target="training"]',
+  interview: '[data-tour-target="interview"]',
+  cat: '[data-tour-target="cat"]',
+  mentor: '[data-tour-target="mentor"] .home-oldcat-entry',
+  archive: '[data-tour-target="archive"]',
+  floaters: '.link-vault-peek',
+}
+
 function ModuleCard({ mod, lang, index, highlighted = false }) {
   return (
     <motion.div
       className={highlighted ? `tour-highlight tour-highlight-module tour-highlight-module-${mod.key}` : ''}
+      data-tour-target={mod.key}
       initial={{ opacity: 0, y: 18, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: index * 0.07, type: 'spring', stiffness: 260, damping: 22 }}
@@ -223,6 +236,7 @@ export default function Home() {
   const [previewStationIndex, setPreviewStationIndex] = useState(null)
   const [showTour, setShowTour] = useState(() => user.homeTourDone !== true)
   const [tourIndex, setTourIndex] = useState(() => Math.min(user.homeTourStep || 0, TOUR_STEPS.length - 1))
+  const [pawStyle, setPawStyle] = useState(null)
   const tourStep = TOUR_STEPS[tourIndex]
 
   useEffect(() => {
@@ -232,9 +246,52 @@ export default function Home() {
   useEffect(() => {
     document.documentElement.classList.toggle('miaotu-home-tour-active', showTour)
     document.documentElement.classList.toggle('miaotu-home-tour-floaters', showTour && tourStep?.key === 'floaters')
+    document.documentElement.classList.toggle('miaotu-home-tour-mentor', showTour && tourStep?.key === 'mentor')
     return () => {
       document.documentElement.classList.remove('miaotu-home-tour-active')
       document.documentElement.classList.remove('miaotu-home-tour-floaters')
+      document.documentElement.classList.remove('miaotu-home-tour-mentor')
+    }
+  }, [showTour, tourStep?.key])
+
+  useEffect(() => {
+    if (!showTour || !tourStep) {
+      setPawStyle(null)
+      return undefined
+    }
+
+    const selector = TOUR_TARGET_SELECTORS[tourStep.key]
+    if (!selector) return undefined
+    const shouldScroll = tourStep.key !== 'floaters'
+    let cancelled = false
+
+    function placePointer() {
+      if (cancelled) return
+      const target = document.querySelector(selector)
+      if (!target) {
+        setPawStyle(null)
+        return
+      }
+      const rect = target.getBoundingClientRect()
+      const x = Math.min(window.innerWidth - 72, Math.max(48, rect.left + rect.width * 0.72))
+      const y = Math.min(window.innerHeight - 72, Math.max(64, rect.top + rect.height * 0.44))
+      setPawStyle({ left: `${x}px`, top: `${y}px` })
+    }
+
+    const target = document.querySelector(selector)
+    if (target && shouldScroll) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+    }
+
+    const timers = [80, 420, 760].map(delay => window.setTimeout(placePointer, delay))
+    window.addEventListener('resize', placePointer)
+    window.addEventListener('scroll', placePointer, { passive: true })
+
+    return () => {
+      cancelled = true
+      timers.forEach(window.clearTimeout)
+      window.removeEventListener('resize', placePointer)
+      window.removeEventListener('scroll', placePointer)
     }
   }, [showTour, tourStep?.key])
 
@@ -360,11 +417,8 @@ export default function Home() {
           </p>
         </div>
 
-        <button className="clay-hero-mascot" type="button" onClick={() => setMapOpen(true)} title={lang === 'zh' ? '查看成长地图' : 'Open growth map'}>
+        <button className="clay-hero-mascot" type="button" onClick={() => setMapOpen(true)} title={lang === 'zh' ? '查看成长地图' : 'Open growth map'} data-tour-target="hero">
           <span className="clay-star clay-star-one">✦</span>
-          <span className="cat-click-cue">
-            {lang === 'zh' ? '点我看成长路线' : 'Tap for growth map'}
-          </span>
           <LayeredCat
             catConfig={user.catConfig}
             level={user.level}
@@ -420,6 +474,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.32 }}
             className={`clay-cat-stage-card ${tourClass('cat')}`}
+            data-tour-target="cat"
           >
             <div className="clay-cat-scene">
               <span className="clay-stage-plant">🌱</span>
@@ -492,6 +547,7 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.18 }}
             className={`side-card timer-card clay-side-card ${tourClass('mentor')}`}
+            data-tour-target="mentor"
           >
             <div className="clay-timer-layout">
               <div className="clay-timer-copy">
@@ -529,6 +585,7 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.28 }}
             className={`side-card growth-card clay-side-card ${tourClass('archive')}`}
+            data-tour-target="archive"
           >
             <Link to="/breakthrough" className="home-breakthrough-card">
               <div>
@@ -585,6 +642,14 @@ export default function Home() {
       {showTour && tourStep && (
         <>
           <div className="home-tour-dim" aria-hidden="true" />
+          {pawStyle && (
+            <div className={`tour-paw-pointer tour-paw-pointer--${tourStep.key}`} style={pawStyle} aria-hidden="true">
+              <span className="tour-paw-toe tour-paw-toe-one" />
+              <span className="tour-paw-toe tour-paw-toe-two" />
+              <span className="tour-paw-toe tour-paw-toe-three" />
+              <span className="tour-paw-pad" />
+            </div>
+          )}
           <motion.div
             className={`home-tour-card home-tour-card--${tourStep.key}`}
             initial={{ opacity: 0, y: 18, scale: 0.98 }}
