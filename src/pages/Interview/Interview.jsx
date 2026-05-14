@@ -7,7 +7,6 @@ import { callClaude, extractText, getCatPersonalityPrompt } from '../../utils/cl
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import InterviewerClay from '../../components/Interviewers/InterviewerClay'
 import { buildInterviewPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
-import PageTourGuide from '../../components/Tour/PageTourGuide'
 
 const INTERVIEWERS = [
   { mbti: 'INTJ', name: '司马', nameEn: 'Sima', color: '#2A2A2A', desc: '极度理性，只问关键问题，沉默多', descEn: 'Rational and sharp', stress: 3 },
@@ -75,7 +74,6 @@ export default function Interview() {
   const { user, interview, addInterviewResult, addFish, addExp, saveQuestion, savedQuestions = [], addLearningRecord } = useStore()
   const lang = user.settings.language
   const apiKey = user.settings.apiKey
-  const showPageTour = user.homeTourDone !== true && user.homeTourStep === 5
   const [phase, setPhase] = useState('setup')
   const [selectedDuration, setSelectedDuration] = useState(30)
   const [selectedInterviewer, setSelectedInterviewer] = useState(INTERVIEWERS[2])
@@ -364,8 +362,7 @@ ${q.answer || '未作答'}
 
   if (phase === 'setup') {
     return (
-      <>
-        <div className={`interview-setup-shell ${showPageTour ? 'page-tour-highlight' : ''}`} data-tour-target="interview-page">
+        <div className="interview-setup-shell">
           <aside className="interview-record-side card">
             <div className="interview-record-side-title">面试记录</div>
             {interviewHistory.length === 0 ? (
@@ -418,15 +415,6 @@ ${q.answer || '未作答'}
           <button onClick={startInterview} className="btn-primary w-full py-3 text-base font-bold">开始面试</button>
           </div>
         </div>
-        <PageTourGuide
-          step={5}
-          targetSelector="[data-tour-target='interview-page']"
-          titleZh="这里模拟真实面试"
-          titleEn="Practice mock interviews here"
-          bodyZh="面试模拟可以选择时长和面试官，进入后会根据你的回答继续追问，结束后生成逐题复盘和成长记录。"
-          bodyEn="Choose a duration and interviewer here. The session follows up on your answers, then generates a question-by-question review."
-        />
-      </>
     )
   }
 

@@ -170,8 +170,8 @@ const TOUR_STEPS = [
     key: 'floaters',
     titleZh: '右侧两个随身文件夹',
     titleEn: 'Two side folders',
-    bodyZh: '先点右侧上方的文件夹，它会打开资料夹面板。',
-    bodyEn: 'Tap the upper side folder to open the link vault panel.',
+    bodyZh: '右侧上方是资料夹，下方是老猫对话保存库。这里先看下方文件夹，之后可以回顾保存过的老猫讨论。',
+    bodyEn: 'The upper folder saves links, and the lower one saves Mentor Cat chats. This step points to the saved-chat folder.',
     detailTitleZh: '资料和对话都可以先收起来',
     detailTitleEn: 'Save useful things here',
     detailBodyZh: '上方资料夹用来保存链接和素材；下方文件夹保存老猫对话。遇到有价值的资料和讨论，可以先放进来之后整理。',
@@ -187,15 +187,14 @@ const TOUR_TARGET_SELECTORS = {
   tasks: '[data-tour-target="tasks"]',
   training: '[data-tour-target="training"]',
   interview: '[data-tour-target="interview"]',
-  cat: '[data-tour-target="cat"]',
+  cat: '[data-tour-target="cat-avatar"]',
   mentor: '[data-tour-target="mentor"] .home-oldcat-entry',
   mentorDetail: '.oldcat-panel',
-  archive: '[data-tour-target="archive"]',
-  floaters: '.link-vault-peek',
-  floatersDetail: '.link-vault-panel',
+  archive: '[data-tour-target="breakthrough-card"]',
+  floaters: '.oldcat-memory-peek',
 }
 
-function ModuleCard({ mod, lang, index, highlighted = false }) {
+function ModuleCard({ mod, lang, index, highlighted = false, onTourOpen }) {
   return (
     <motion.div
       className={highlighted ? `tour-highlight tour-highlight-module tour-highlight-module-${mod.key}` : ''}
@@ -204,7 +203,7 @@ function ModuleCard({ mod, lang, index, highlighted = false }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: index * 0.07, type: 'spring', stiffness: 260, damping: 22 }}
     >
-      <Link to={mod.path} className="block h-full">
+      <Link to={mod.path} className="block h-full" onClick={onTourOpen}>
         <article className={`module-card ${mod.tone}`}>
           <div className="module-card__shine" />
           <div className="relative z-10 flex h-full flex-col justify-between">
@@ -276,14 +275,12 @@ export default function Home() {
     document.documentElement.classList.toggle('miaotu-home-tour-active', showTour)
     document.documentElement.classList.toggle('miaotu-home-tour-settings', showTour && tourStep?.key === 'settings')
     document.documentElement.classList.toggle('miaotu-home-tour-floaters', showTour && tourStep?.key === 'floaters')
-    document.documentElement.classList.toggle('miaotu-home-tour-floaters-detail', showTour && tourStep?.key === 'floaters' && tourPhase === 'detail')
     document.documentElement.classList.toggle('miaotu-home-tour-mentor', showTour && tourStep?.key === 'mentor')
     document.documentElement.classList.toggle('miaotu-home-tour-mentor-detail', showTour && tourStep?.key === 'mentor' && tourPhase === 'detail')
     return () => {
       document.documentElement.classList.remove('miaotu-home-tour-active')
       document.documentElement.classList.remove('miaotu-home-tour-settings')
       document.documentElement.classList.remove('miaotu-home-tour-floaters')
-      document.documentElement.classList.remove('miaotu-home-tour-floaters-detail')
       document.documentElement.classList.remove('miaotu-home-tour-mentor')
       document.documentElement.classList.remove('miaotu-home-tour-mentor-detail')
     }
@@ -295,19 +292,6 @@ export default function Home() {
       setMapOpen(false)
     }
   }, [tourStep?.key])
-
-  useEffect(() => {
-    if (!showTour || tourStep?.key !== 'floaters') return undefined
-
-    function markFloaterOpened(event) {
-      if (event.target?.closest?.('.link-vault-peek, .oldcat-memory-peek')) {
-        window.setTimeout(() => setTourPhase('detail'), 80)
-      }
-    }
-
-    document.addEventListener('click', markFloaterOpened, true)
-    return () => document.removeEventListener('click', markFloaterOpened, true)
-  }, [showTour, tourStep?.key])
 
   useEffect(() => {
     if (!showTour || !tourStep) {
@@ -330,9 +314,10 @@ export default function Home() {
       }
       const rect = target.getBoundingClientRect()
       const nearRightEdge = rect.right > window.innerWidth - 128
-      const rawX = nearRightEdge ? rect.left + rect.width * 0.18 : rect.left + rect.width * 0.74
-      const x = Math.min(window.innerWidth - 112, Math.max(52, rawX))
-      const y = Math.min(window.innerHeight - 78, Math.max(64, rect.top + rect.height * 0.42))
+      const rawX = nearRightEdge ? rect.left + rect.width * 0.5 : rect.left + rect.width * 0.74
+      const rawY = nearRightEdge ? rect.top + rect.height * 0.5 : rect.top + rect.height * 0.42
+      const x = Math.min(window.innerWidth - 40, Math.max(52, rawX))
+      const y = Math.min(window.innerHeight - 40, Math.max(64, rawY))
       setPawPoint({ x, y })
     }
 
@@ -373,6 +358,7 @@ export default function Home() {
   }
 
   function replayTour() {
+    window.dispatchEvent(new CustomEvent('miaotu:close-oldcat'))
     setTourIndex(0)
     setTourPhase('prompt')
     setMapOpen(false)
@@ -387,6 +373,7 @@ export default function Home() {
   }
 
   function nextTourStep() {
+    window.dispatchEvent(new CustomEvent('miaotu:close-oldcat'))
     if (tourIndex >= TOUR_STEPS.length - 1) {
       closeTour(true)
       return
@@ -398,6 +385,14 @@ export default function Home() {
   }
 
   const tourClass = (key) => showTour && tourStep?.key === key && tourPhase === 'prompt' ? 'tour-highlight' : ''
+
+  function continueTourAfterModule(key) {
+    if (!showTour || tourStep?.key !== key) return
+    const nextIndex = Math.min(tourIndex + 1, TOUR_STEPS.length - 1)
+    setTourIndex(nextIndex)
+    setHomeTourStep(nextIndex)
+    setTourPhase('prompt')
+  }
 
   return (
     <div className={`home-shell clay-home ${showTour ? 'home-tour-active' : ''}`}>
@@ -540,7 +535,14 @@ export default function Home() {
             </button>
             <div className="grid gap-4 md:grid-cols-2">
               {MODULES.map((mod, i) => (
-                <ModuleCard key={mod.key} mod={mod} lang={lang} index={i} highlighted={showTour && tourStep?.key === mod.key} />
+                <ModuleCard
+                  key={mod.key}
+                  mod={mod}
+                  lang={lang}
+                  index={i}
+                  highlighted={showTour && tourStep?.key === mod.key}
+                  onTourOpen={() => continueTourAfterModule(mod.key)}
+                />
               ))}
             </div>
           </section>
@@ -554,7 +556,7 @@ export default function Home() {
           >
             <div className="clay-cat-scene">
               <span className="clay-stage-plant">🌱</span>
-              <Link to="/wardrobe" title={t('clickToWardrobe', lang)} className="clay-cat-link">
+              <Link to="/wardrobe" title={t('clickToWardrobe', lang)} className="clay-cat-link" data-tour-target="cat-avatar">
                 <LayeredCat
                   catConfig={user.catConfig}
                   level={user.level}
@@ -666,7 +668,7 @@ export default function Home() {
             className={`side-card growth-card clay-side-card ${tourClass('archive')}`}
             data-tour-target="archive"
           >
-            <Link to="/breakthrough" className="home-breakthrough-card">
+            <Link to="/breakthrough" className="home-breakthrough-card" data-tour-target="breakthrough-card">
               <div>
                 <span>专项攻破</span>
                 <strong>爆破猫咪</strong>
@@ -750,9 +752,11 @@ export default function Home() {
               <h3>{lang === 'zh' ? activeTourTitleZh : activeTourTitleEn}</h3>
               <p>{lang === 'zh' ? activeTourBodyZh : activeTourBodyEn}</p>
               <div className="home-tour-actions">
-                <button type="button" onClick={() => closeTour(true)}>
-                  {lang === 'zh' ? '跳过' : 'Skip'}
-                </button>
+                {tourStep.key === 'settings' && (
+                  <button type="button" onClick={nextTourStep}>
+                    {lang === 'zh' ? '先跳过' : 'Skip for now'}
+                  </button>
+                )}
                 <button type="button" onClick={nextTourStep}>
                   {tourIndex >= TOUR_STEPS.length - 1
                     ? (lang === 'zh' ? '开始学习' : 'Start')

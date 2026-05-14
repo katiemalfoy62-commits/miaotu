@@ -4,7 +4,6 @@ import { ChevronDown, ChevronUp, Copy, ExternalLink, MessageCircle, Plus } from 
 import useStore from '../../store/useStore'
 import { callClaude, extractText, getNewsStylePrompt } from '../../utils/claude'
 import { buildLinkPrompt, copyText } from '../../utils/gptPrompt'
-import PageTourGuide from '../../components/Tour/PageTourGuide'
 
 function isReliableUrl(url) {
   if (!url) return false
@@ -155,7 +154,6 @@ function NewsItem({ item, index }) {
 export default function News() {
   const { user, addExp, recordActivity } = useStore()
   const lang = user.settings.language
-  const showPageTour = user.homeTourDone !== true && user.homeTourStep === 2
   const [news, setNews] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -193,8 +191,7 @@ export default function News() {
   }
 
   return (
-    <>
-      <div className={`flex gap-5 ${showPageTour ? 'page-tour-highlight' : ''}`} data-tour-target="news-page">
+      <div className="flex gap-5">
         <div className="flex-1 min-w-0 space-y-4">
           <div className="flex items-center justify-between">
             <h1 className="section-title text-xl">今日情报站</h1>
@@ -215,15 +212,6 @@ export default function News() {
           </div>
         </aside>
       </div>
-      <PageTourGuide
-        step={2}
-        targetSelector="[data-tour-target='news-page']"
-        titleZh="这里读 AI 新闻"
-        titleEn="Read AI news here"
-        bodyZh="进入情报站后，可以获取 AI 行业动态，展开每条新闻看 PREP 导读，也可以复制 GPT Prompt 或存入资料夹。"
-        bodyEn="Inside the news station, fetch AI updates, expand each item for a PREP guide, copy a GPT prompt, or save useful links."
-      />
-    </>
   )
 }
 

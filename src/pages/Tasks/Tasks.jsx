@@ -6,7 +6,6 @@ import { callClaude, extractText, getCatPersonalityPrompt } from '../../utils/cl
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import ClayIcon from '../../components/UI/ClayIcon'
 import { buildTaskPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
-import PageTourGuide from '../../components/Tour/PageTourGuide'
 
 const MOCK_TASKS = [
   { type: 'qa', question: '请解释什么是大语言模型（LLM），它和传统 NLP 模型有什么本质区别？', difficulty: 'easy', curriculum: 'AI 基础认知' },
@@ -217,7 +216,6 @@ function CompletedDetail({ task, onClose }) {
 export default function Tasks() {
   const { user, tasks, setActiveTasks, completeTask, addExp, addFish, addLearningRecord } = useStore()
   const lang = user.settings.language
-  const showPageTour = user.homeTourDone !== true && user.homeTourStep === 3
   const [claiming, setClaiming] = useState(false)
   const [currentTaskIdx, setCurrentTaskIdx] = useState(0)
   const [selectedCompleted, setSelectedCompleted] = useState(null)
@@ -287,8 +285,7 @@ export default function Tasks() {
   const activeTasks = tasks.active || []
 
   return (
-    <>
-      <div className={`max-w-2xl mx-auto space-y-5 ${showPageTour ? 'page-tour-highlight' : ''}`} data-tour-target="tasks-page">
+      <div className="max-w-2xl mx-auto space-y-5">
         <div className="flex items-center justify-between">
           <h1 className="section-title text-xl">委托任务</h1>
           <button onClick={claimTasks} disabled={claiming} className="btn-primary flex items-center gap-2">
@@ -347,15 +344,6 @@ export default function Tasks() {
           </div>
         </div>
       </div>
-      <PageTourGuide
-        step={3}
-        targetSelector="[data-tour-target='tasks-page']"
-        titleZh="这里领取委托任务"
-        titleEn="Claim daily quests here"
-        bodyZh="在委托任务里领取每日 PM 练习，提交答案后老猫会给结构、逻辑和改进建议，也会把记录沉淀进成长档案。"
-        bodyEn="Claim daily PM quests here. After you submit, Mentor Cat scores structure and logic, then saves the record into your archive."
-      />
-    </>
   )
 }
 

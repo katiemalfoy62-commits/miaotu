@@ -2784,46 +2784,6 @@ button:hover .interviewer-clay {
   backdrop-filter: grayscale(0.45) blur(1.2px);
 }
 
-.page-tour-dim {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background:
-    radial-gradient(circle at 50% 38%, rgba(255, 250, 238, 0.08), transparent 30rem),
-    rgba(45, 38, 32, 0.50);
-  backdrop-filter: grayscale(0.45) blur(1.2px);
-}
-
-.page-tour-highlight {
-  position: relative;
-  z-index: 1002;
-  border-radius: 1.5rem;
-  box-shadow:
-    0 0 0 3px rgba(255, 252, 242, 0.96),
-    0 0 0 7px rgba(212, 147, 86, 0.32),
-    0 18px 48px rgba(82, 55, 32, 0.28),
-    inset 0 1px 0 rgba(255,255,255,0.92) !important;
-}
-
-.page-tour-card {
-  position: fixed;
-  left: 50%;
-  bottom: 1.25rem;
-  z-index: 1003;
-  width: min(35rem, calc(100vw - 2rem));
-  border: 1px solid rgba(217, 189, 147, 0.92);
-  border-radius: 1.5rem;
-  background: rgba(255, 250, 241, 0.97);
-  padding: 1rem;
-  box-shadow: 0 28px 80px rgba(35, 24, 15, 0.32), inset 0 1px 0 rgba(255,255,255,0.95);
-  transform: translateX(-50%);
-}
-
-.dark .page-tour-card {
-  border-color: rgba(117, 101, 85, 0.9);
-  background: rgba(48, 44, 40, 0.98);
-}
-
 .settings-tour-highlight {
   position: relative;
   z-index: 1002;

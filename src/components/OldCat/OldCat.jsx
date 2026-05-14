@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Send, Mic, MicOff, Copy, ExternalLink, Check, Maximize2, Minimize2, Save } from 'lucide-react'
 import BlinkingClayMascot from '../Cat/BlinkingClayMascot'
@@ -8,6 +9,7 @@ import { t } from '../../utils/i18n'
 import { buildOldCatPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
 
 export default function OldCat({ visible = true, disabledReason = null, hideLauncher = false }) {
+  const location = useLocation()
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState('teacher') // 'teacher' | 'companion'
   const [messages, setMessages] = useState([])
@@ -20,6 +22,7 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
   const [savedChat, setSavedChat] = useState(false)
   const bottomRef = useRef(null)
   const recogRef = useRef(null)
+  const panelRef = useRef(null)
 
   const { user, addExp, addFish, saveOldCatChat } = useStore()
   const lang = user.settings.language
@@ -31,9 +34,39 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
     const openOldCat = () => {
       if (!disabledReason) setOpen(true)
     }
+    const closeOldCat = () => {
+      setOpen(false)
+      setFullscreen(false)
+    }
     window.addEventListener('miaotu:open-oldcat', openOldCat)
-    return () => window.removeEventListener('miaotu:open-oldcat', openOldCat)
+    window.addEventListener('miaotu:close-oldcat', closeOldCat)
+    return () => {
+      window.removeEventListener('miaotu:open-oldcat', openOldCat)
+      window.removeEventListener('miaotu:close-oldcat', closeOldCat)
+    }
   }, [disabledReason])
+
+  useEffect(() => {
+    setOpen(false)
+    setFullscreen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!open) return undefined
+
+    function closeOnOutsidePointer(event) {
+      if (panelRef.current?.contains(event.target)) return
+      setOpen(false)
+      setFullscreen(false)
+    }
+
+    document.addEventListener('mousedown', closeOnOutsidePointer)
+    document.addEventListener('touchstart', closeOnOutsidePointer, { passive: true })
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsidePointer)
+      document.removeEventListener('touchstart', closeOnOutsidePointer)
+    }
+  }, [open])
 
   // Companion-mode keywords
   const companionKeywords = ['迷茫', '不知道', '难过', '累了', '放弃', '崩溃', '失落', '焦虑', 'confused', 'lost', 'tired', 'sad', 'anxious']
@@ -185,6 +218,7 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={panelRef}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}

@@ -154,9 +154,8 @@ Current product state:
 - Existing users may have old `miaotu_store` schemas with previous appearance fields. The current UI ignores them; clearing `miaotu_store` can help if state looks strange.
 - PowerShell may display Chinese/emoji source text as mojibake. Use `Get-Content -Encoding UTF8` or verify in browser/editor.
 - `src/data/shopItems.js` may display mojibake in terminal. Be careful when editing text there.
-- Current guided-tour paw pointer is visually poor. The user asked to replace it with a more polished clay-style cat-paw cursor and wants it to move continuously like a mouse pointer between steps.
 - A generated-image attempt for the paw pointer failed and produced an irrelevant tutorial screenshot. Do not use that generated output.
-- Homepage guided tour still needs browser QA for spotlight alignment, auto-scroll behavior, clickable targets, panel lift-over-overlay behavior, and mobile layout.
+- Homepage guided tour still needs mobile QA for spotlight alignment and card placement.
 - Dark mode still needs browser QA across pages; some pages may still have low contrast or inconsistent card colors.
 - Stage PNGs and interviewer PNGs still add build weight. Vite build warns that the main JS chunk is larger than 500 kB.
 - Shop/wardrobe economy exists, but because appearance customization is paused, wearable overlay behavior should not be emphasized until a stable design is chosen.
@@ -166,9 +165,9 @@ Current product state:
 
 ## Next Tasks
 
-1. Continue browser QA for the 9-step homepage guided tour from a clean `localStorage` state, especially mobile and panel interaction details.
-2. Verify that clicking highlighted targets during the tour works and does not reset the tour step after returning home.
-3. QA Old Cat panel, link vault panel, and saved Old Cat chat panel during the tour to ensure they stay bright and operable above the overlay.
+1. Continue mobile browser QA for the 10-step homepage guided tour from a clean `localStorage` state.
+2. QA the settings API Key step again after any future settings layout changes.
+3. QA Old Cat, link vault, and saved Old Cat chat panels after any future overlay or z-index changes.
 4. Browser QA the simplified onboarding flow from a clean `localStorage` state.
 5. Continue dark-mode QA and adjust any remaining unreadable or inconsistent pages.
 6. Continue asset optimization later: interviewer PNGs, stage PNGs, and route-level code splitting.
@@ -195,6 +194,9 @@ Current product state:
 - Browser QA after the pointer update: clean onboarding-to-home path on desktop, homepage tour steps 1/5/9 captured, and console showed 0 errors after the updater fix. Existing React Router future-flag warnings remain.
 - Updated the homepage tour interaction model so selected steps have two phases: first highlight the clickable entry, then after the user clicks it, highlight the opened detail area. Implemented this for the hero cat/growth map, Mentor Cat panel, and right-side link vault panel. The paw prompt is now a normal clay paw without a cursor tip.
 - Added API Key setup as step 2 of the first-time guide: Home highlights the top-right settings gear, Settings highlights the OpenAI API Key field, and users can return home to continue the guide. News, tasks, training, and interview tour steps now support click-through page guides that highlight the core page area before returning home to continue.
+- Removed the module-page tour overlays for News, Tasks, Training, and Interview so those pages open normally during the guide; clicking the highlighted home module now advances the guide state before navigation.
+- Limited the "先跳过" action to the API Key setup step, retargeted tour paws to the kitten image, breakthrough card, and lower saved-chat folder, and made the Old Cat panel close on outside click, route changes, and tour-step changes.
+- Browser QA after this refinement: build passed; Playwright verified module pages have no guide overlay/skip button, paw targets align on desktop, and Old Cat closes on outside click plus route change. Existing React Router future-flag warnings remain.
 
 ## Notes For Next Codex
 
