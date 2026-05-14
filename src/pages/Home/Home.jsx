@@ -16,6 +16,12 @@ import ClayIcon from '../../components/UI/ClayIcon'
 import useStore from '../../store/useStore'
 import { t } from '../../utils/i18n'
 import { expInCurrentLevel } from '../../utils/levelCalc'
+import stagePreview1 from '../../assets/cat-stages/clay-stage-1-transparent.png'
+import stagePreview2 from '../../assets/cat-stages/clay-stage-2-transparent.png'
+import stagePreview3 from '../../assets/cat-stages/clay-stage-3-transparent.png'
+import stagePreview4 from '../../assets/cat-stages/clay-stage-4-transparent.png'
+import stagePreview5 from '../../assets/cat-stages/clay-stage-5-transparent.png'
+import stagePreview6 from '../../assets/cat-stages/clay-stage-6-transparent.png'
 
 const MODULES = [
   {
@@ -78,6 +84,15 @@ const GROWTH_STATIONS = [
   { min: 91, max: 100, zh: '首席猫', en: 'Chief Cat', noteZh: '带着全局视角做决策', noteEn: 'Lead with strategy' },
 ]
 
+const GROWTH_STAGE_PREVIEWS = [
+  stagePreview1,
+  stagePreview2,
+  stagePreview3,
+  stagePreview4,
+  stagePreview5,
+  stagePreview6,
+]
+
 function ModuleCard({ mod, lang, index }) {
   return (
     <motion.div
@@ -137,6 +152,7 @@ export default function Home() {
   const lang = user.settings.language
   const { current, needed, pct } = expInCurrentLevel(user.exp, user.level)
   const [mapOpen, setMapOpen] = useState(false)
+  const [previewStationIndex, setPreviewStationIndex] = useState(null)
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', user.settings.theme === 'dark')
@@ -153,6 +169,8 @@ export default function Home() {
   const catName = user.catConfig.name || (lang === 'zh' ? 'Kivi' : 'Kivi')
   const currentStationIndex = GROWTH_STATIONS.findIndex(station => user.level >= station.min && user.level <= station.max)
   const safeStationIndex = currentStationIndex >= 0 ? currentStationIndex : 0
+  const activePreviewIndex = previewStationIndex ?? safeStationIndex
+  const activePreviewStation = GROWTH_STATIONS[activePreviewIndex]
 
   return (
     <div className="home-shell clay-home">
@@ -177,13 +195,24 @@ export default function Home() {
               {GROWTH_STATIONS.map((station, index) => {
                 const reached = index <= safeStationIndex
                 const active = index === safeStationIndex
+                const previewing = index === activePreviewIndex
                 return (
                   <button
                     type="button"
                     key={station.en}
-                    className={`growth-station ${reached ? 'is-reached' : ''} ${active ? 'is-active' : ''}`}
-                    onClick={() => active && setMapOpen(false)}
+                    className={`growth-station ${reached ? 'is-reached' : ''} ${active ? 'is-active' : ''} ${previewing ? 'is-preview' : ''}`}
+                    onMouseEnter={() => setPreviewStationIndex(index)}
+                    onMouseLeave={() => setPreviewStationIndex(null)}
+                    onFocus={() => setPreviewStationIndex(index)}
+                    onBlur={() => setPreviewStationIndex(null)}
+                    onClick={() => setPreviewStationIndex(index)}
                   >
+                    <img
+                      src={GROWTH_STAGE_PREVIEWS[index]}
+                      alt=""
+                      className="growth-station-cat"
+                      aria-hidden="true"
+                    />
                     <span className="growth-station-marker">{index + 1}</span>
                     <strong>{lang === 'zh' ? station.zh : station.en}</strong>
                     <small>Lv {station.min}-{station.max}</small>
@@ -194,10 +223,16 @@ export default function Home() {
             </div>
 
             <div className="growth-map-footer">
-              <BlinkingClayMascot type="kivi" className="growth-map-kivi" interactive onClick={() => setMapOpen(false)} />
-              <div>
-                <strong>{catName} · Lv {user.level}</strong>
-                <span>{lang === 'zh' ? `当前站点：${GROWTH_STATIONS[safeStationIndex].zh}` : `Current stop: ${GROWTH_STATIONS[safeStationIndex].en}`}</span>
+              <div className="growth-map-preview-cat" aria-hidden="true">
+                <img src={GROWTH_STAGE_PREVIEWS[activePreviewIndex]} alt="" />
+              </div>
+              <div className="growth-map-stage-copy">
+                <strong>
+                  {previewStationIndex === null
+                    ? `${catName} · Lv ${user.level}`
+                    : `${lang === 'zh' ? activePreviewStation.zh : activePreviewStation.en} · Lv ${activePreviewStation.min}-${activePreviewStation.max}`}
+                </strong>
+                <span>{lang === 'zh' ? `当前预览：${activePreviewStation.zh}` : `Preview: ${activePreviewStation.en}`}</span>
               </div>
               <div className="growth-map-progress">
                 <i><b style={{ width: `${pct}%` }} /></i>
