@@ -17,6 +17,12 @@ import ClayIcon from '../../components/UI/ClayIcon'
 import useStore from '../../store/useStore'
 import { t } from '../../utils/i18n'
 import { expInCurrentLevel } from '../../utils/levelCalc'
+import stagePreview1 from '../../assets/cat-stages/clay-stage-1-transparent.png'
+import stagePreview2 from '../../assets/cat-stages/clay-stage-2-transparent.png'
+import stagePreview3 from '../../assets/cat-stages/clay-stage-3-transparent.png'
+import stagePreview4 from '../../assets/cat-stages/clay-stage-4-transparent.png'
+import stagePreview5 from '../../assets/cat-stages/clay-stage-5-transparent.png'
+import stagePreview6 from '../../assets/cat-stages/clay-stage-6-transparent.png'
 
 const MODULES = [
   {
@@ -79,6 +85,15 @@ const GROWTH_STATIONS = [
   { min: 91, max: 100, zh: '首席猫', en: 'Chief Cat', noteZh: '带着全局视角做决策', noteEn: 'Lead with strategy' },
 ]
 
+const GROWTH_STAGE_PREVIEWS = [
+  stagePreview1,
+  stagePreview2,
+  stagePreview3,
+  stagePreview4,
+  stagePreview5,
+  stagePreview6,
+]
+
 const TOUR_STEPS = [
   {
     key: 'hero',
@@ -98,8 +113,8 @@ const TOUR_STEPS = [
     key: 'cat',
     titleZh: '你的专属小猫',
     titleEn: 'Your cat companion',
-    bodyZh: '这里会显示你刚刚选择的毛色、眼睛、花纹和穿戴。以后升级也会在这里看到变化。',
-    bodyEn: 'Your saved fur, eyes, pattern, and outfits appear here, and growth stages will build on them.',
+    bodyZh: '这里会显示你的小猫名字、等级和经验进度。继续学习，就能沿着成长路线解锁新的阶段。',
+    bodyEn: 'This area shows your cat name, level, and EXP progress. Keep learning to unlock new growth stages.',
   },
   {
     key: 'mentor',
@@ -255,12 +270,11 @@ export default function Home() {
                     onBlur={() => setPreviewStationIndex(null)}
                     onClick={() => setPreviewStationIndex(index)}
                   >
-                    <LayeredCat
-                      catConfig={user.catConfig}
-                      stageIndex={index}
-                      showWearables={false}
-                      className="growth-station-cat"
+                    <img
+                      src={GROWTH_STAGE_PREVIEWS[index]}
                       alt=""
+                      className="growth-station-cat"
+                      aria-hidden="true"
                     />
                     <span className="growth-station-marker">{index + 1}</span>
                     <strong>{lang === 'zh' ? station.zh : station.en}</strong>
@@ -273,12 +287,7 @@ export default function Home() {
 
             <div className="growth-map-footer">
               <div className="growth-map-preview-cat" aria-hidden="true">
-                <LayeredCat
-                  catConfig={user.catConfig}
-                  stageIndex={activePreviewIndex}
-                  equippedItems={user.equippedItems}
-                  alt=""
-                />
+                <img src={GROWTH_STAGE_PREVIEWS[activePreviewIndex]} alt="" />
               </div>
               <div className="growth-map-stage-copy">
                 <strong>

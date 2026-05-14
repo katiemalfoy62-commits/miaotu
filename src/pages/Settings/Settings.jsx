@@ -170,25 +170,21 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Cat appearance */}
+      {/* Cat profile */}
       <div className="card p-5 space-y-3">
-        <div className="font-bold text-sm">{t('catAppearance', lang)}</div>
+        <div className="font-bold text-sm">{lang === 'zh' ? '小猫资料' : 'Cat profile'}</div>
         {user.catCustomized ? (
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">{user.catConfig.name || (lang === 'zh' ? '已自定义' : 'Customized')}</span>
-            <button onClick={() => setCustomizing(true)} className="btn-ghost text-sm">{t('recustomizeCat', lang)}</button>
+            <span className="text-sm text-gray-500">{user.catConfig.name || 'Kivi'}</span>
+            <button onClick={() => setCustomizing(true)} className="btn-ghost text-sm">{lang === 'zh' ? '修改名字' : 'Edit name'}</button>
           </div>
         ) : (
-          <button onClick={() => setCustomizing(true)} className="btn-primary w-full">{lang === 'zh' ? '自定义小猫' : 'Customize Cat'}</button>
+          <button onClick={() => setCustomizing(true)} className="btn-primary w-full">{lang === 'zh' ? '设置小猫名字' : 'Set cat name'}</button>
         )}
         {customizing && (
           <div className="space-y-3 pt-2 border-t border-border-light dark:border-border-dark">
             {[
-              { key: 'name', label: lang === 'zh' ? '名字' : 'Name', placeholder: lang === 'zh' ? '给猫咪取个名字' : 'Cat name', type: 'text' },
-              { key: 'breed', label: lang === 'zh' ? '品种' : 'Breed', placeholder: 'orange / british / ragdoll / black / calico', type: 'text' },
-              { key: 'color', label: lang === 'zh' ? '颜色' : 'Color', placeholder: 'orange / gray / brown / black / white / cream', type: 'text' },
-              { key: 'eyeColor', label: lang === 'zh' ? '眼睛颜色' : 'Eye Color', placeholder: 'yellow / green / blue / amber', type: 'text' },
-              { key: 'gender', label: lang === 'zh' ? '性别' : 'Gender', placeholder: 'male / female', type: 'text' },
+              { key: 'name', label: lang === 'zh' ? '名字' : 'Name', placeholder: lang === 'zh' ? '给小猫取个名字...' : 'Cat name', type: 'text' },
             ].map(f => (
               <div key={f.key}>
                 <div className="text-xs font-semibold text-gray-500 mb-1">{f.label}</div>
@@ -202,7 +198,17 @@ export default function Settings() {
               </div>
             ))}
             <div className="flex gap-2">
-              <button onClick={() => { setCatConfig(catDraft); setCustomizing(false) }} className="btn-primary flex-1">{t('save', lang)}</button>
+              <button
+                onClick={() => {
+                  const nextName = catDraft.name?.trim() || 'Kivi'
+                  setCatConfig({ name: nextName, focus: user.catConfig?.focus || 'training' })
+                  setCatDraft(d => ({ ...d, name: nextName }))
+                  setCustomizing(false)
+                }}
+                className="btn-primary flex-1"
+              >
+                {t('save', lang)}
+              </button>
               <button onClick={() => setCustomizing(false)} className="btn-ghost px-4">{t('cancel', lang)}</button>
             </div>
           </div>

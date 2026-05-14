@@ -26,7 +26,7 @@ const defaultUser = {
   exp: 0,
   fish: 0,
   catStage: '流浪小猫',
-  catConfig: { name: '', focus: 'training', color: 'gray', pattern: 'none', eyeColor: 'yellow', gender: 'female' },
+  catConfig: { name: '', focus: 'training' },
   equippedItems: [],
   unlockedItems: [],
   badges: [],
