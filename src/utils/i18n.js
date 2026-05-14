@@ -121,13 +121,11 @@ const zh = {
   资深PM猫: '资深PM猫',
   首席猫: '首席猫',
   // Personalities
-  personality_mom: '像妈妈一样',
   personality_teacher: '像好老师一样',
+  personality_coach: '面试教练型',
   personality_friend: '像朋友一样',
-  personality_mentor: '像导师一样',
-  personality_boss: '像老板一样',
-  personality_colleague: '像同事一样',
-  personality_toxic: '毒蛇模式',
+  personality_senior: '产品前辈型',
+  personality_tsundere: '傲娇毒舌型',
 }
 
 const en = {
@@ -232,13 +230,11 @@ const en = {
   初级PM猫: 'Junior PM Cat',
   资深PM猫: 'Senior PM Cat',
   首席猫: 'Chief Cat',
-  personality_mom: 'Like a Mom',
   personality_teacher: 'Like a Teacher',
+  personality_coach: 'Interview Coach',
   personality_friend: 'Like a Friend',
-  personality_mentor: 'Like a Mentor',
-  personality_boss: 'Like a Boss',
-  personality_colleague: 'Like a Colleague',
-  personality_toxic: 'Toxic Mode',
+  personality_senior: 'Senior PM',
+  personality_tsundere: 'Tsundere Critic',
 }
 
 export function t(key, lang = 'zh') {

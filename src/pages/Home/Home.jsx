@@ -97,9 +97,9 @@ const GROWTH_STAGE_PREVIEWS = [
 const TOUR_STEPS = [
   {
     key: 'hero',
-    titleZh: '先看今天的总览',
+    titleZh: '今天的成长总览',
     titleEn: 'Start with today',
-    bodyZh: '这里会告诉你等级、小鱼干、任务数量和成长路线。点小猫可以查看后续阶段会变成什么样。',
+    bodyZh: '这里会告诉你等级、小鱼干、任务数量。点中间的小猫，可以展开 6 站成长路线，预览后续阶段会变成什么样。',
     bodyEn: 'This area shows level, fish, active tasks, and the growth route. Tap the cat to preview future stages.',
   },
   {
@@ -111,17 +111,17 @@ const TOUR_STEPS = [
   },
   {
     key: 'cat',
-    titleZh: '你的专属小猫',
+    titleZh: '小猫、小鱼干和商城',
     titleEn: 'Your cat companion',
-    bodyZh: '这里会显示你的小猫名字、等级和经验进度。继续学习，就能沿着成长路线解锁新的阶段。',
-    bodyEn: 'This area shows your cat name, level, and EXP progress. Keep learning to unlock new growth stages.',
+    bodyZh: '这里会显示小猫名字、等级和经验进度。完成学习会获得小鱼干，小鱼干可以去装扮商店慢慢解锁衣柜内容。',
+    bodyEn: 'This area shows your cat name, level, and EXP. Learning earns fish, and fish can unlock shop and wardrobe items.',
   },
   {
     key: 'mentor',
-    titleZh: '找老猫问问题',
+    titleZh: '老猫导师和小猫树洞',
     titleEn: 'Ask Mentor Cat',
-    bodyZh: '右侧的老猫入口可以随时打开导师对话，不懂的题、新闻、面试表达都可以继续追问。',
-    bodyEn: 'Open the mentor cat from the side panel when you want help with news, tasks, or interview answers.',
+    bodyZh: '右上角的小老猫可以随时打开导师对话；左下角爱心是小猫树洞，用来放下暂时没想清楚的想法和情绪。',
+    bodyEn: 'Open Mentor Cat from the right card for questions. The heart opens Kitten Corner for thoughts that are not ready yet.',
   },
   {
     key: 'archive',
@@ -129,6 +129,13 @@ const TOUR_STEPS = [
     titleEn: 'Break through and review',
     bodyZh: '爆破猫咪负责专项练习；成长档案会记录任务、错题、日记和面试，方便你回头复盘。',
     bodyEn: 'Breakthrough drills target weak spots, while the archive keeps tasks, mistakes, diaries, and interviews.',
+  },
+  {
+    key: 'floaters',
+    titleZh: '右侧两个随身文件夹',
+    titleEn: 'Two side folders',
+    bodyZh: '右侧上方是链接/素材百宝袋，下方是老猫对话保存库。看到有价值的资料和讨论，可以先收进去，之后再整理。',
+    bodyEn: 'The top side folder is the link vault, and the lower one saves Mentor Cat chats. Store useful links and discussions for later review.',
   },
 ]
 
@@ -194,10 +201,20 @@ export default function Home() {
   const [previewStationIndex, setPreviewStationIndex] = useState(null)
   const [showTour, setShowTour] = useState(() => user.homeTourDone !== true)
   const [tourIndex, setTourIndex] = useState(0)
+  const tourStep = TOUR_STEPS[tourIndex]
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', user.settings.theme === 'dark')
   }, [user.settings.theme])
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('miaotu-home-tour-active', showTour)
+    document.documentElement.classList.toggle('miaotu-home-tour-floaters', showTour && tourStep?.key === 'floaters')
+    return () => {
+      document.documentElement.classList.remove('miaotu-home-tour-active')
+      document.documentElement.classList.remove('miaotu-home-tour-floaters')
+    }
+  }, [showTour, tourStep?.key])
 
   const now = new Date()
   const midnight = new Date(now)
@@ -212,7 +229,6 @@ export default function Home() {
   const safeStationIndex = currentStationIndex >= 0 ? currentStationIndex : 0
   const activePreviewIndex = previewStationIndex ?? safeStationIndex
   const activePreviewStation = GROWTH_STATIONS[activePreviewIndex]
-  const tourStep = TOUR_STEPS[tourIndex]
 
   function closeTour(done = true) {
     setShowTour(false)
@@ -540,7 +556,7 @@ export default function Home() {
         <>
           <div className="home-tour-dim" aria-hidden="true" />
           <motion.div
-            className="home-tour-card"
+            className={`home-tour-card home-tour-card--${tourStep.key}`}
             initial={{ opacity: 0, y: 18, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: 'spring', stiffness: 260, damping: 24 }}

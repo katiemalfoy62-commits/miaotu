@@ -89,6 +89,7 @@ Current product state:
 - Onboarding flow is now: Old Cat introduces the site, introduces core modules, explains rewards/growth stages, asks for cat name and Old Cat companion style, then enters homepage.
 - Settings only allows editing the cat name; visual appearance customization is intentionally hidden for now.
 - Homepage guided tour dims the screen and highlights key areas with Old Cat guidance. It is a first pass and should still be visually QA-tested.
+- Homepage guided tour now has six steps: daily overview, four learning entrances, cat/fish/shop, Old Cat plus Kitten Corner, breakthrough/archive, and the two right-side floating folders.
 - Large legacy mascot PNGs were partly optimized to WebP. Interviewer PNGs and six stage PNGs are still relatively large.
 
 ## Important Files
@@ -130,6 +131,7 @@ Current product state:
 - Kivi should be a stable clay cat across onboarding/home/shop/wardrobe for now.
 - Remove/hide fur color, eye color, pattern, breed, and gender choices.
 - Keep cat naming and Old Cat companion-style choice.
+- Old Cat companion style is currently five options: strict mentor, interview coach, gentle encourager, senior PM, and tsundere/sharp critic.
 - Growth route should still show six different growth-stage cats.
 - Old Cat is a meaningful mentor interaction entry, not just decoration.
 - News summaries should stay short, useful, and PREP-structured.
@@ -145,7 +147,7 @@ Current product state:
 - Existing users may have old `miaotu_store` schemas with previous appearance fields. The current UI ignores them; clearing `miaotu_store` can help if state looks strange.
 - PowerShell may display Chinese/emoji source text as mojibake. Use `Get-Content -Encoding UTF8` or verify in browser/editor.
 - `src/data/shopItems.js` may display mojibake in terminal. Be careful when editing text there.
-- Homepage guided tour is implemented but still needs browser QA for spotlight alignment and copy pacing.
+- Homepage guided tour is improved, but still needs browser QA for spotlight alignment and copy pacing on desktop/mobile.
 - Stage PNGs and interviewer PNGs still add build weight. Vite build warns that the main JS chunk is larger than 500 kB.
 - Shop/wardrobe economy exists, but because appearance customization is paused, wearable overlay behavior should not be emphasized until a stable design is chosen.
 - Previously attempted layered cat appearance caused severe alignment problems. Do not restart that path casually.
@@ -164,11 +166,12 @@ Current product state:
 ## Recent Changes
 
 - Simplified onboarding to remove visual cat customization.
-- Added Old Cat companion-style selection to onboarding and saved it to settings.
+- Added Old Cat companion-style selection to onboarding and saved it to settings; settings now uses the same five options.
 - Changed default `catConfig` to only keep `name` and `focus`.
 - Simplified `LayeredCat.jsx` back to a stable Kivi clay image wrapper.
 - Restored growth map previews to six fixed transparent stage-cat PNGs instead of the failed layered preview approach.
 - Updated settings so the cat section only edits the cat name and no longer exposes appearance fields.
+- Improved the homepage guided tour: softer spotlight styling, locked underlying clicks during the tour, extra steps for Kitten Corner/shop/floating folders, and fixed stage-cat image squeezing with `object-fit: contain`.
 - Verified production build with the bundled Node/Vite command.
 
 ## Notes For Next Codex

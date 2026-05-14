@@ -2083,6 +2083,8 @@ button:hover .interviewer-clay {
   z-index: 5;
   width: 4.2rem;
   height: 4.2rem;
+  object-fit: contain;
+  object-position: center bottom;
   opacity: 0;
   pointer-events: none;
   filter: drop-shadow(0 15px 14px rgba(77, 48, 25, 0.22));
@@ -2535,15 +2537,32 @@ button:hover .interviewer-clay {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(56, 49, 43, 0.58);
-  backdrop-filter: grayscale(0.75) blur(1.5px);
+  background:
+    radial-gradient(circle at 50% 34%, rgba(255, 250, 238, 0.08), transparent 32rem),
+    rgba(45, 38, 32, 0.50);
+  backdrop-filter: grayscale(0.45) blur(1.2px);
 }
 
 .home-tour-active .tour-highlight {
   position: relative;
   z-index: 1002;
   border-radius: 1.75rem;
-  box-shadow: 0 0 0 5px rgba(255, 246, 220, 0.95), 0 0 0 11px rgba(200, 98, 42, 0.55), 0 24px 64px rgba(33, 23, 15, 0.38) !important;
+  pointer-events: none;
+  box-shadow:
+    0 0 0 3px rgba(255, 252, 242, 0.96),
+    0 0 0 7px rgba(212, 147, 86, 0.32),
+    0 20px 60px rgba(33, 23, 15, 0.30),
+    inset 0 1px 0 rgba(255,255,255,0.92) !important;
+}
+
+.home-tour-active .tour-highlight::after {
+  content: "";
+  position: absolute;
+  inset: -0.55rem;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255, 226, 174, 0.08));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35);
 }
 
 .home-tour-card {
@@ -2561,6 +2580,28 @@ button:hover .interviewer-clay {
   padding: 1rem;
   box-shadow: 0 28px 80px rgba(35, 24, 15, 0.32), inset 0 1px 0 rgba(255,255,255,0.95);
   transform: translateX(-50%);
+}
+
+.home-tour-card--modules {
+  bottom: 1rem;
+}
+
+.home-tour-card--floaters {
+  left: auto;
+  right: 8rem;
+  transform: none;
+}
+
+.miaotu-home-tour-floaters .link-vault-peek,
+.miaotu-home-tour-floaters .oldcat-memory-peek {
+  z-index: 1002;
+  pointer-events: none;
+  filter: drop-shadow(0 24px 30px rgba(39, 27, 17, 0.28));
+  box-shadow:
+    0 0 0 4px rgba(255, 252, 242, 0.96),
+    0 0 0 9px rgba(212, 147, 86, 0.36),
+    0 20px 45px rgba(33, 23, 15, 0.32) !important;
+  transform: translateX(-0.25rem) scale(1.03);
 }
 
 .home-tour-oldcat .clay-mascot-oldcat {
@@ -2627,6 +2668,12 @@ button:hover .interviewer-clay {
 
   .home-tour-card {
     grid-template-columns: 1fr;
+  }
+
+  .home-tour-card--floaters {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
   }
 
   .home-tour-oldcat {

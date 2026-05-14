@@ -5,13 +5,29 @@ import useStore from '../../store/useStore'
 import { t } from '../../utils/i18n'
 import { getModelForMode } from '../../utils/claude'
 
-const PERSONALITIES = ['mom', 'teacher', 'friend', 'mentor', 'boss', 'colleague', 'toxic']
+const PERSONALITIES = ['teacher', 'coach', 'friend', 'senior', 'tsundere']
 const MODEL_MODES = [
   { key: 'economy', zh: '省钱模式', en: 'Economy', descZh: '日常聊天优先省钱', descEn: 'Lowest cost for daily chat' },
   { key: 'balanced', zh: '平衡模式', en: 'Balanced', descZh: '推荐，质量和成本平衡', descEn: 'Recommended balance' },
   { key: 'deep', zh: '深度模式', en: 'Deep', descZh: '复杂问题使用 GPT-4o', descEn: 'Uses GPT-4o for harder work' },
 ]
-const PERSONALITY_EMOJI = { mom: '💗', teacher: '📚', friend: '😄', mentor: '🧠', boss: '💼', colleague: '🤝', toxic: '🐍' }
+const PERSONALITY_EMOJI = { teacher: '📚', coach: '🎤', friend: '💗', senior: '🧠', tsundere: '🐾' }
+const PERSONALITY_DESCRIPTIONS = {
+  zh: {
+    teacher: '更直接指出问题，适合想快速补短板。',
+    coach: '关注表达结构和面试回答。',
+    friend: '语气更轻松，会多给鼓励。',
+    senior: '像产品前辈一样给你拆思路。',
+    tsundere: '嘴上有点毒，但会精准指出关键问题。',
+  },
+  en: {
+    teacher: 'Direct feedback for faster improvement.',
+    coach: 'Focuses on interview expression and structure.',
+    friend: 'Warmer and more encouraging.',
+    senior: 'Thinks with you like a senior PM.',
+    tsundere: 'Sharp-tongued, but precise and useful.',
+  },
+}
 
 export default function Settings() {
   const { user, updateSettings, resetAll, setCatConfig } = useStore()
@@ -125,10 +141,15 @@ export default function Settings() {
         <div className="font-bold text-sm">{t('catPersonalityLabel', lang)}</div>
         <div className="grid grid-cols-1 gap-2">
           {PERSONALITIES.map(p => (
-            <button key={p} onClick={() => save({ catPersonality: p })} className={`py-2.5 px-4 rounded-xl text-sm font-semibold border transition-all text-left flex items-center gap-2 ${user.settings.catPersonality === p ? 'bg-primary/10 border-primary text-primary dark:text-primary-dark' : 'border-border-light dark:border-border-dark hover:bg-border-light dark:hover:bg-border-dark'}`}>
-              <span>{PERSONALITY_EMOJI[p]}</span>
-              {t(`personality_${p}`, lang)}
-              {p === 'teacher' && <span className="ml-auto text-[10px] text-gray-400">{lang === 'zh' ? '默认' : 'Default'}</span>}
+            <button key={p} onClick={() => save({ catPersonality: p })} className={`py-2.5 px-4 rounded-xl text-sm font-semibold border transition-all text-left flex items-start gap-2 ${user.settings.catPersonality === p ? 'bg-primary/10 border-primary text-primary dark:text-primary-dark' : 'border-border-light dark:border-border-dark hover:bg-border-light dark:hover:bg-border-dark'}`}>
+              <span className="mt-0.5">{PERSONALITY_EMOJI[p]}</span>
+              <span className="flex-1">
+                <span className="flex items-center gap-2">
+                  {t(`personality_${p}`, lang)}
+                  {p === 'teacher' && <span className="text-[10px] text-gray-400">{lang === 'zh' ? '默认' : 'Default'}</span>}
+                </span>
+                <span className="mt-1 block text-[11px] font-normal text-gray-400">{PERSONALITY_DESCRIPTIONS[lang][p]}</span>
+              </span>
             </button>
           ))}
         </div>

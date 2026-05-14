@@ -13,7 +13,7 @@ const STEPS = [
   { id: 'setup' },
 ]
 
-const MENTOR_PERSONALITIES = ['teacher', 'coach', 'friend', 'senior']
+const MENTOR_PERSONALITIES = ['teacher', 'coach', 'friend', 'senior', 'tsundere']
 
 const personalityLabels = {
   zh: {
@@ -21,12 +21,14 @@ const personalityLabels = {
     coach: '面试教练型',
     friend: '温柔鼓励型',
     senior: '产品前辈型',
+    tsundere: '傲娇毒舌型',
   },
   en: {
     teacher: 'Strict mentor',
     coach: 'Interview coach',
     friend: 'Gentle encourager',
     senior: 'Senior PM',
+    tsundere: 'Tsundere critic',
   },
 }
 
@@ -36,12 +38,14 @@ const personalityDescriptions = {
     coach: '关注表达结构和面试回答。',
     friend: '语气更轻松，会多给鼓励。',
     senior: '像产品前辈一样给你拆思路。',
+    tsundere: '嘴上有点毒，但会精准指出关键问题。',
   },
   en: {
     teacher: 'Direct feedback for faster improvement.',
     coach: 'Focuses on interview expression and structure.',
     friend: 'Warmer and more encouraging.',
     senior: 'Thinks with you like a senior PM.',
+    tsundere: 'Sharp-tongued, but precise and useful.',
   },
 }
 
@@ -86,8 +90,8 @@ export default function Onboarding() {
         ? '先认识一下喵途现在的学习入口。'
         : 'Let me show you the learning areas in MiaoTu.',
       lang === 'zh'
-        ? '今日情报站：用 PREP 结构读 AI 新闻，保存原文链接\n委托任务：每天完成产品练习，获得反馈和奖励\n思维训练：两阶段答题，打磨 PM 分析框架\n专项攻破：把薄弱题型拆成 5 道同类练习\n面试模拟：和 16 位面试官猫猫进行实战演练\n成长档案：复盘任务、错题、日记和面试记录\n老猫导师：随时提问，也可以带着提示词去 GPT 深聊'
-        : 'AI News: Read AI updates with PREP summaries and save source links\nQuests: Finish daily product tasks with feedback and rewards\nTraining: Practice two-stage PM thinking drills\nBreakthrough: Turn weak question types into five focused drills\nInterview Sim: Practice with 16 interviewer cats\nGrowth Archive: Review tasks, mistakes, diary notes, and interviews\nMentor Cat: Ask questions and continue deeper in GPT',
+        ? '今日情报站：用 PREP 结构读 AI 新闻，保存原文链接\n委托任务：每天完成产品练习，获得反馈和奖励\n思维训练：两阶段答题，打磨 PM 分析框架\n专项攻破：把薄弱题型拆成 5 道同类练习\n面试模拟：和 16 位面试官猫猫进行实战演练\n成长档案：复盘任务、错题、日记和面试记录\n老猫导师：随时提问，也可以带着提示词去 GPT 深聊\n小猫树洞：把暂时说不清的想法先放进去'
+        : 'AI News: Read AI updates with PREP summaries and save source links\nQuests: Finish daily product tasks with feedback and rewards\nTraining: Practice two-stage PM thinking drills\nBreakthrough: Turn weak question types into five focused drills\nInterview Sim: Practice with 16 interviewer cats\nGrowth Archive: Review tasks, mistakes, diaries, and interviews\nMentor Cat: Ask questions and continue deeper in GPT\nKitten Corner: Park fuzzy thoughts before they become clear',
     ],
     rewards: [
       lang === 'zh'
