@@ -29,6 +29,7 @@ const INTERVIEWERS = [
 
 const DURATIONS = [15, 30, 60]
 const QUESTION_SECONDS = 180
+const MAX_FOLLOW_UPS = 2
 
 function InterviewerCat({ interviewer, size = 60 }) {
   return <InterviewerClay interviewer={interviewer} size={size} />
@@ -133,30 +134,91 @@ export default function Interview() {
     askNextQuestion([])
   }
 
+  function countFollowUpsAfterLastMain(msgs) {
+    let count = 0
+    for (let i = msgs.length - 1; i >= 0; i--) {
+      const message = msgs[i]
+      if (message.role !== 'assistant') continue
+      if (message.questionKind === 'followup') count += 1
+      else break
+    }
+    return count
+  }
+
+  function getInterviewTranscript(msgs) {
+    return msgs.map((m, index) => {
+      const speaker = m.role === 'assistant' ? '面试官' : '候选人'
+      const tag = m.role === 'assistant' ? `（${m.questionKind === 'followup' ? '追问' : '主问题'}）` : ''
+      return `${index + 1}. ${speaker}${tag}：${m.content}`
+    }).join('\n')
+  }
+
   async function askNextQuestion(currentMessages) {
     if (endingRef.current) return
     setLoading(true)
     try {
+      const hasHistory = currentMessages.length > 0
+      const followUps = countFollowUpsAfterLastMain(currentMessages)
+      const transcript = getInterviewTranscript(currentMessages)
       const res = await callClaude({
-        messages: currentMessages.length > 0
-          ? [...currentMessages, { role: 'user', content: '请继续面试，根据候选人的最后回答提出下一个 AI 产品经理面试问题。只输出问题本身。' }]
-          : [{ role: 'user', content: '请提出第一个 AI 产品经理模拟面试问题。只输出问题本身。' }],
-        system: `你正在扮演面试官${interviewer.name}，MBTI ${interviewer.mbti}，风格：${interviewer.desc}。问题要考察 AI 产品经理能力，包括产品判断、用户研究、数据分析、AI 技术理解、商业逻辑、表达结构。`,
-        maxTokens: 220,
+        messages: [{
+          role: 'user',
+          content: hasHistory
+            ? `这是目前的面试记录：\n${transcript}\n\n请基于候选人的最后一个回答，决定下一句话怎么问。`
+            : '请提出第一个 AI 产品经理模拟面试问题。',
+        }],
+        system: `你正在扮演 AI 产品经理面试官「${interviewer.name}」，MBTI ${interviewer.mbti}，风格：${interviewer.desc}。
+
+你的目标是模拟真实面试，不是顺序念题库。
+
+规则：
+1. 第一个问题必须是主问题，考察 AI 产品经理能力。
+2. 候选人回答后，先判断他的回答是否有效。
+3. 如果候选人回答很短、敷衍、跑题、情绪化、调侃、表白、说不知道、没有结构、没有案例或缺少关键判断，必须追问上一题，要求他重答或补充。
+4. 如果回答有价值但缺少细节，也优先追问：追数据、用户研究方法、取舍依据、AI 技术理解、风险、指标、落地步骤。
+5. 同一个主问题最多追问 ${MAX_FOLLOW_UPS} 次。当前已经连续追问 ${followUps} 次；如果已达到上限并且候选人不是完全无效回答，可以切到新的主问题。
+6. 新主问题要覆盖不同能力维度：产品判断、用户研究、数据分析、AI 技术理解、商业逻辑、表达结构。
+7. 问题要像真人面试官一样具体，避免泛泛而谈。
+8. 只输出 JSON，不要 Markdown，不要解释。
+
+JSON 格式：
+{
+  "kind": "main" 或 "followup",
+  "question": "你要问候选人的一句中文问题",
+  "reason": "内部原因，简短说明为什么追问或切题"
+}`,
+        maxTokens: 420,
         apiKey,
         modelMode: user.settings.modelMode,
       })
-      pushQuestion(extractText(res))
+      const text = extractText(res)
+      const match = text.match(/\{[\s\S]*\}/)
+      const parsed = match ? JSON.parse(match[0]) : null
+      const kind = parsed?.kind === 'followup' ? 'followup' : 'main'
+      const question = parsed?.question || text
+      pushQuestion(question, kind, parsed?.reason || '')
     } catch {
-      pushQuestion('请结合一个 AI 产品案例，说明你会如何判断它是否真正解决了用户痛点？')
+      const fallbackKind = currentMessages.length > 0 ? 'followup' : 'main'
+      pushQuestion(
+        currentMessages.length > 0
+          ? '你刚才的回答还不够像面试答案。请重新用「目标-方法-判断标准-风险」四步补充一下。'
+          : '请结合一个 AI 产品案例，说明你会如何判断它是否真正解决了用户痛点？',
+        fallbackKind
+      )
     } finally {
       setLoading(false)
     }
   }
 
-  function pushQuestion(question) {
+  function pushQuestion(question, questionKind = 'main', followupReason = '') {
     setQuestionTime(QUESTION_SECONDS)
-    setMessages(prev => [...prev, { role: 'assistant', content: question, questionId: `iv_${Date.now()}` }])
+    setMessages(prev => [...prev, {
+      role: 'assistant',
+      content: question,
+      questionId: `iv_${Date.now()}`,
+      questionKind,
+      followupReason,
+    }])
   }
 
   async function submitAnswer(auto = false) {
@@ -170,7 +232,7 @@ export default function Interview() {
     if (timeLeft <= 10) {
       endInterview(newMessages)
     } else {
-      await askNextQuestion(newMessages.map(m => ({ role: m.role, content: m.content })))
+      await askNextQuestion(newMessages)
     }
   }
 
@@ -258,6 +320,8 @@ ${transcript}
         const scored = questions[pairs.length] || {}
         pairs.push({
           questionId: m.questionId || `iv_${i}`,
+          questionKind: m.questionKind || 'main',
+          followupReason: m.followupReason || '',
           question: scored.question || m.content,
           answer: scored.answer || answer,
           ...scored,
@@ -371,8 +435,13 @@ ${q.answer || '未作答'}
           {messages.map((m, i) => (
             <div key={i} className={`flex gap-2 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
               {m.role === 'assistant' && <InterviewerCat interviewer={interviewer} size={46} />}
-              <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${m.role === 'user' ? 'bg-primary text-white rounded-tr-sm' : 'bg-card-light border border-border-light rounded-tl-sm'}`}>
-                {m.role === 'assistant' && <div className="text-[10px] font-bold text-gray-400 mb-0.5">{interviewer.name} 问：</div>}
+              <div className={`interview-message-bubble max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${m.role === 'user' ? 'interview-message-bubble-user bg-primary text-white rounded-tr-sm' : 'interview-message-bubble-assistant bg-card-light border border-border-light rounded-tl-sm'}`}>
+                {m.role === 'assistant' && (
+                  <div className="mb-0.5 flex items-center gap-2 text-[10px] font-bold text-gray-400">
+                    <span>{interviewer.name} 问：</span>
+                    {m.questionKind === 'followup' && <span className="interview-followup-pill">追问</span>}
+                  </div>
+                )}
                 {m.content}
               </div>
             </div>
