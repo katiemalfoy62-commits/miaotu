@@ -262,6 +262,7 @@ export default function Home() {
   const [pawPoint, setPawPoint] = useState(null)
   const tourStep = TOUR_STEPS[tourIndex]
   const tourDetailActive = showTour && tourPhase === 'detail'
+  const heroMapOnlyActive = tourDetailActive && tourStep?.key === 'hero'
   const activeTourTitleZh = tourDetailActive ? (tourStep?.detailTitleZh || tourStep?.titleZh) : tourStep?.titleZh
   const activeTourTitleEn = tourDetailActive ? (tourStep?.detailTitleEn || tourStep?.titleEn) : tourStep?.titleEn
   const activeTourBodyZh = tourDetailActive ? (tourStep?.detailBodyZh || tourStep?.bodyZh) : tourStep?.bodyZh
@@ -357,8 +358,13 @@ export default function Home() {
     if (done) setHomeTourDone(true)
   }
 
-  function replayTour() {
+  function closeFloatingPanels() {
     window.dispatchEvent(new CustomEvent('miaotu:close-oldcat'))
+    window.dispatchEvent(new CustomEvent('miaotu:close-floaters'))
+  }
+
+  function replayTour() {
+    closeFloatingPanels()
     setTourIndex(0)
     setTourPhase('prompt')
     setMapOpen(false)
@@ -373,7 +379,7 @@ export default function Home() {
   }
 
   function nextTourStep() {
-    window.dispatchEvent(new CustomEvent('miaotu:close-oldcat'))
+    closeFloatingPanels()
     if (tourIndex >= TOUR_STEPS.length - 1) {
       closeTour(true)
       return
@@ -382,6 +388,13 @@ export default function Home() {
     setTourPhase('prompt')
     setTourIndex(nextIndex)
     setHomeTourStep(nextIndex)
+  }
+
+  function closeGrowthMap() {
+    setMapOpen(false)
+    if (showTour && tourStep?.key === 'hero' && tourPhase === 'detail') {
+      nextTourStep()
+    }
   }
 
   const tourClass = (key) => showTour && tourStep?.key === key && tourPhase === 'prompt' ? 'tour-highlight' : ''
@@ -410,7 +423,7 @@ export default function Home() {
                 </div>
                 <h1>{lang === 'zh' ? '六站养成路线' : 'Six-stop growth route'}</h1>
               </div>
-              <button type="button" onClick={() => setMapOpen(false)} className="growth-map-close">
+              <button type="button" onClick={closeGrowthMap} className="growth-map-close">
                 {lang === 'zh' ? '返回首页' : 'Back'}
               </button>
             </div>
@@ -723,7 +736,7 @@ export default function Home() {
       {showTour && tourStep && (
         <>
           <div className="home-tour-dim" aria-hidden="true" />
-          {pawPoint && (
+          {pawPoint && !heroMapOnlyActive && (
             <motion.div
               className={`tour-paw-pointer tour-paw-pointer--${tourStep.key}`}
               initial={false}
@@ -740,6 +753,7 @@ export default function Home() {
               </span>
             </motion.div>
           )}
+          {!heroMapOnlyActive && (
           <motion.div
             className={`home-tour-card home-tour-card--${tourStep.key}`}
             initial={{ opacity: 0, y: 18, scale: 0.98 }}
@@ -765,6 +779,7 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
+          )}
         </>
       )}
     </div>

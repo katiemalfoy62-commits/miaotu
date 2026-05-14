@@ -198,6 +198,10 @@ Current product state:
 - Limited the "先跳过" action to the API Key setup step, retargeted tour paws to the kitten image, breakthrough card, and lower saved-chat folder, and made the Old Cat panel close on outside click, route changes, and tour-step changes.
 - Browser QA after this refinement: build passed; Playwright verified module pages have no guide overlay/skip button, paw targets align on desktop, and Old Cat closes on outside click plus route change. Existing React Router future-flag warnings remain.
 
+- Refined the growth-map tour detail state so opening the map only keeps the map highlighted against the dimmed page, with no explanatory tour card or paw pointer; returning from the map advances the tour.
+- Made the link vault and saved Old Cat chat archive close naturally like the Old Cat panel: outside click, route change, repeated launcher click, and tour-step close events all collapse them.
+- Browser QA after the natural-close update: build passed; Playwright verified map-only highlight, map return advancing the tour, and both floating panels closing on outside click plus route changes. Existing React Router future-flag warnings remain.
+
 ## Notes For Next Codex
 
 - Start by reading this file, then inspect `src/pages/Home/Home.jsx`, `src/index.css`, `src/components/OldCat/OldCat.jsx`, `src/components/LinkVault/FloatingLinkVault.jsx`, and `src/components/OldCat/FloatingOldCatArchive.jsx`.

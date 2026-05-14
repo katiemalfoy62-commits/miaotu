@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Check, Copy, ExternalLink, Trash2, X } from 'lucide-react'
 import useStore from '../../store/useStore'
 import ClayIcon from '../UI/ClayIcon'
@@ -16,11 +17,41 @@ function chatText(chat) {
 }
 
 export default function FloatingOldCatArchive() {
+  const location = useLocation()
   const { savedOldCatChats = [], deleteOldCatChat, user } = useStore()
   const lang = user.settings.language
   const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState(null)
   const [copied, setCopied] = useState('')
+  const buttonRef = useRef(null)
+  const panelRef = useRef(null)
+
+  useEffect(() => {
+    setOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    const closePanel = () => setOpen(false)
+    window.addEventListener('miaotu:close-floaters', closePanel)
+    return () => window.removeEventListener('miaotu:close-floaters', closePanel)
+  }, [])
+
+  useEffect(() => {
+    if (!open) return undefined
+
+    function closeOnOutsidePointer(event) {
+      if (buttonRef.current?.contains(event.target)) return
+      if (panelRef.current?.contains(event.target)) return
+      setOpen(false)
+    }
+
+    document.addEventListener('mousedown', closeOnOutsidePointer)
+    document.addEventListener('touchstart', closeOnOutsidePointer, { passive: true })
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsidePointer)
+      document.removeEventListener('touchstart', closeOnOutsidePointer)
+    }
+  }, [open])
 
   async function copyChat(chat) {
     await copyText(chatText(chat))
@@ -31,16 +62,17 @@ export default function FloatingOldCatArchive() {
   return (
     <>
       <button
+        ref={buttonRef}
         type="button"
         className="oldcat-memory-peek"
-        onClick={() => setOpen(true)}
+        onClick={() => setOpen(value => !value)}
         title={lang === 'zh' ? '老猫对话保存库' : 'Saved mentor chats'}
       >
         <ClayIcon name="oldcatMemory" alt="" />
       </button>
 
       {open && (
-        <div className="oldcat-memory-panel">
+        <div ref={panelRef} className="oldcat-memory-panel">
           <div className="oldcat-memory-head">
             <div>
               <strong>{lang === 'zh' ? '老猫对话保存库' : 'Saved Chats'}</strong>

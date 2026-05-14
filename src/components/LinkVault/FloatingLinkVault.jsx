@@ -1,16 +1,47 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { BookMarked, Check, Copy, ExternalLink, FolderPlus, X } from 'lucide-react'
 import useStore from '../../store/useStore'
 import ClayIcon from '../UI/ClayIcon'
 import { buildLinkPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
 
 export default function FloatingLinkVault() {
+  const location = useLocation()
   const { linkVault = [], addLinkItem, user } = useStore()
   const lang = user.settings.language
   const [open, setOpen] = useState(false)
   const [url, setUrl] = useState('')
   const [note, setNote] = useState('')
   const [copied, setCopied] = useState(false)
+  const buttonRef = useRef(null)
+  const panelRef = useRef(null)
+
+  useEffect(() => {
+    setOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    const closePanel = () => setOpen(false)
+    window.addEventListener('miaotu:close-floaters', closePanel)
+    return () => window.removeEventListener('miaotu:close-floaters', closePanel)
+  }, [])
+
+  useEffect(() => {
+    if (!open) return undefined
+
+    function closeOnOutsidePointer(event) {
+      if (buttonRef.current?.contains(event.target)) return
+      if (panelRef.current?.contains(event.target)) return
+      setOpen(false)
+    }
+
+    document.addEventListener('mousedown', closeOnOutsidePointer)
+    document.addEventListener('touchstart', closeOnOutsidePointer, { passive: true })
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsidePointer)
+      document.removeEventListener('touchstart', closeOnOutsidePointer)
+    }
+  }, [open])
 
   function cleanUrl(value) {
     const text = value.trim()
@@ -38,16 +69,17 @@ export default function FloatingLinkVault() {
   return (
     <>
       <button
+        ref={buttonRef}
         type="button"
         className="link-vault-peek"
-        onClick={() => setOpen(true)}
+        onClick={() => setOpen(value => !value)}
         title={lang === 'zh' ? '保存学习链接' : 'Save link'}
       >
         <ClayIcon name="archive" alt="" />
       </button>
 
       {open && (
-        <div className="link-vault-panel">
+        <div ref={panelRef} className="link-vault-panel">
           <div className="link-vault-head">
             <div>
               <strong>{lang === 'zh' ? '资料夹' : 'Link Vault'}</strong>
