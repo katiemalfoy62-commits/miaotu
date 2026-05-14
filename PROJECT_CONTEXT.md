@@ -166,14 +166,13 @@ Current product state:
 
 ## Next Tasks
 
-1. Replace the current CSS paw pointer with a better clay-style cat-paw cursor, preferably controlled in CSS/SVG for precise shape and motion. It should glide smoothly from the previous target to the next, like a mouse cursor, rather than popping.
-2. Browser QA the 9-step homepage guided tour from a clean `localStorage` state on desktop and mobile.
-3. Verify that clicking highlighted targets during the tour works and does not reset the tour step after returning home.
-4. QA Old Cat panel, link vault panel, and saved Old Cat chat panel during the tour to ensure they stay bright and operable above the overlay.
-5. Browser QA the simplified onboarding flow from a clean `localStorage` state.
-6. Continue dark-mode QA and adjust any remaining unreadable or inconsistent pages.
-7. Continue asset optimization later: interviewer PNGs, stage PNGs, and route-level code splitting.
-8. QA the task page second-input issue and training lock/unlock rules.
+1. Continue browser QA for the 9-step homepage guided tour from a clean `localStorage` state, especially mobile and panel interaction details.
+2. Verify that clicking highlighted targets during the tour works and does not reset the tour step after returning home.
+3. QA Old Cat panel, link vault panel, and saved Old Cat chat panel during the tour to ensure they stay bright and operable above the overlay.
+4. Browser QA the simplified onboarding flow from a clean `localStorage` state.
+5. Continue dark-mode QA and adjust any remaining unreadable or inconsistent pages.
+6. Continue asset optimization later: interviewer PNGs, stage PNGs, and route-level code splitting.
+7. QA the task page second-input issue and training lock/unlock rules.
 
 ## Recent Changes
 
@@ -192,6 +191,10 @@ Current product state:
 - Updated mock interview logic to generate adaptive follow-up questions based on transcript and answer quality.
 - Verified production builds after recent code changes with the bundled Node/Vite command.
 - Latest pushed commits include `fb3d145 Add guided tour paw pointer`, `bd75dda Improve home tour guidance`, `baf0f0e Refine neutral dark mode`, and `4ad05f5 Add adaptive interview followups`.
+- Replaced the homepage guided-tour paw with a Framer Motion-driven clay cat-paw cursor that glides between target coordinates, added right-edge-aware positioning for the floating-folder step, and fixed the React warning caused by writing store state inside the local tour-index updater.
+- Browser QA after the pointer update: clean onboarding-to-home path on desktop, homepage tour steps 1/5/9 captured, and console showed 0 errors after the updater fix. Existing React Router future-flag warnings remain.
+- Updated the homepage tour interaction model so selected steps have two phases: first highlight the clickable entry, then after the user clicks it, highlight the opened detail area. Implemented this for the hero cat/growth map, Mentor Cat panel, and right-side link vault panel. The paw prompt is now a normal clay paw without a cursor tip.
+- Added API Key setup as step 2 of the first-time guide: Home highlights the top-right settings gear, Settings highlights the OpenAI API Key field, and users can return home to continue the guide. News, tasks, training, and interview tour steps now support click-through page guides that highlight the core page area before returning home to continue.
 
 ## Notes For Next Codex
 

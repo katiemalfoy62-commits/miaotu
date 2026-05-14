@@ -6,6 +6,7 @@ import { callClaude, extractText, getCatPersonalityPrompt } from '../../utils/cl
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import ClayIcon from '../../components/UI/ClayIcon'
 import { buildTaskPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
+import PageTourGuide from '../../components/Tour/PageTourGuide'
 
 const MOCK_TASKS = [
   { type: 'qa', question: '请解释什么是大语言模型（LLM），它和传统 NLP 模型有什么本质区别？', difficulty: 'easy', curriculum: 'AI 基础认知' },
@@ -216,6 +217,7 @@ function CompletedDetail({ task, onClose }) {
 export default function Tasks() {
   const { user, tasks, setActiveTasks, completeTask, addExp, addFish, addLearningRecord } = useStore()
   const lang = user.settings.language
+  const showPageTour = user.homeTourDone !== true && user.homeTourStep === 3
   const [claiming, setClaiming] = useState(false)
   const [currentTaskIdx, setCurrentTaskIdx] = useState(0)
   const [selectedCompleted, setSelectedCompleted] = useState(null)
@@ -285,65 +287,75 @@ export default function Tasks() {
   const activeTasks = tasks.active || []
 
   return (
-    <div className="max-w-2xl mx-auto space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="section-title text-xl">委托任务</h1>
-        <button onClick={claimTasks} disabled={claiming} className="btn-primary flex items-center gap-2">
-          {claiming ? '领取中...' : <><Plus size={16} /> 领取任务</>}
-        </button>
-      </div>
-
-      {activeTasks.length === 0 ? (
-        <div className="card p-10 text-center space-y-3">
-          <ClayIcon name="tasks" className="empty-clay-icon mx-auto" alt="" />
-          <div className="font-bold text-gray-600 dark:text-gray-400">还没有任务，点击「领取任务」开始吧！</div>
-          <ClayIcon name="taskEmpty" className="task-empty-clay mx-auto" alt="" />
-          <div className="text-xs text-gray-400">老猫说：一步一步来，积少成多。</div>
+    <>
+      <div className={`max-w-2xl mx-auto space-y-5 ${showPageTour ? 'page-tour-highlight' : ''}`} data-tour-target="tasks-page">
+        <div className="flex items-center justify-between">
+          <h1 className="section-title text-xl">委托任务</h1>
+          <button onClick={claimTasks} disabled={claiming} className="btn-primary flex items-center gap-2">
+            {claiming ? '领取中...' : <><Plus size={16} /> 领取任务</>}
+          </button>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {activeTasks.map((task, i) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              index={i}
-              lang={lang}
-              onSubmit={handleSubmit}
-              isActive={i === currentTaskIdx}
-            />
-          ))}
-          {currentTaskIdx < activeTasks.length - 1 && (
-            <div className="text-center text-xs text-gray-400 py-2">完成当前题目后解锁下一题</div>
-          )}
-        </div>
-      )}
 
-      {(tasks.completed || []).length > 0 && (
-        <div className="card p-4">
-          <div className="text-xs font-bold text-gray-400 mb-3">已完成任务 ({tasks.completed.length})</div>
-          <div className="space-y-2">
-            {(tasks.completed || []).slice(0, 6).map(task => (
-              <button key={task.id} onClick={() => setSelectedCompleted(task)} className="flex w-full items-center gap-2 rounded-lg px-1 py-1 text-left text-xs text-gray-500 hover:bg-amber-50">
-                <CheckCircle size={12} className="text-green-500" />
-                <span className="flex-1 truncate">{task.question}</span>
-                <span>{task.score || '-'}分</span>
-              </button>
+        {activeTasks.length === 0 ? (
+          <div className="card p-10 text-center space-y-3">
+            <ClayIcon name="tasks" className="empty-clay-icon mx-auto" alt="" />
+            <div className="font-bold text-gray-600 dark:text-gray-400">还没有任务，点击「领取任务」开始吧！</div>
+            <ClayIcon name="taskEmpty" className="task-empty-clay mx-auto" alt="" />
+            <div className="text-xs text-gray-400">老猫说：一步一步来，积少成多。</div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {activeTasks.map((task, i) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                index={i}
+                lang={lang}
+                onSubmit={handleSubmit}
+                isActive={i === currentTaskIdx}
+              />
             ))}
+            {currentTaskIdx < activeTasks.length - 1 && (
+              <div className="text-center text-xs text-gray-400 py-2">完成当前题目后解锁下一题</div>
+            )}
+          </div>
+        )}
+
+        {(tasks.completed || []).length > 0 && (
+          <div className="card p-4">
+            <div className="text-xs font-bold text-gray-400 mb-3">已完成任务 ({tasks.completed.length})</div>
+            <div className="space-y-2">
+              {(tasks.completed || []).slice(0, 6).map(task => (
+                <button key={task.id} onClick={() => setSelectedCompleted(task)} className="flex w-full items-center gap-2 rounded-lg px-1 py-1 text-left text-xs text-gray-500 hover:bg-amber-50">
+                  <CheckCircle size={12} className="text-green-500" />
+                  <span className="flex-1 truncate">{task.question}</span>
+                  <span>{task.score || '-'}分</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {selectedCompleted && <CompletedDetail task={selectedCompleted} onClose={() => setSelectedCompleted(null)} />}
+
+        <div className="fixed bottom-0 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center pointer-events-none">
+          <div className="rounded-t-2xl border border-border-light bg-card-light px-4 pt-2 shadow-lg">
+            <BlinkingClayMascot type="oldcat" className="task-bottom-oldcat" />
+          </div>
+          <div className="-mt-1 rounded-xl border border-border-light bg-card-light px-3 py-1.5 text-xs font-semibold text-primary shadow">
+            有问题随时叫我~
           </div>
         </div>
-      )}
-
-      {selectedCompleted && <CompletedDetail task={selectedCompleted} onClose={() => setSelectedCompleted(null)} />}
-
-      <div className="fixed bottom-0 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center pointer-events-none">
-        <div className="rounded-t-2xl border border-border-light bg-card-light px-4 pt-2 shadow-lg">
-          <BlinkingClayMascot type="oldcat" className="task-bottom-oldcat" />
-        </div>
-        <div className="-mt-1 rounded-xl border border-border-light bg-card-light px-3 py-1.5 text-xs font-semibold text-primary shadow">
-          有问题随时叫我~
-        </div>
       </div>
-    </div>
+      <PageTourGuide
+        step={3}
+        targetSelector="[data-tour-target='tasks-page']"
+        titleZh="这里领取委托任务"
+        titleEn="Claim daily quests here"
+        bodyZh="在委托任务里领取每日 PM 练习，提交答案后老猫会给结构、逻辑和改进建议，也会把记录沉淀进成长档案。"
+        bodyEn="Claim daily PM quests here. After you submit, Mentor Cat scores structure and logic, then saves the record into your archive."
+      />
+    </>
   )
 }
 

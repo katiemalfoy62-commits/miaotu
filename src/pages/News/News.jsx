@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, Copy, ExternalLink, MessageCircle, Plus } from 
 import useStore from '../../store/useStore'
 import { callClaude, extractText, getNewsStylePrompt } from '../../utils/claude'
 import { buildLinkPrompt, copyText } from '../../utils/gptPrompt'
+import PageTourGuide from '../../components/Tour/PageTourGuide'
 
 function isReliableUrl(url) {
   if (!url) return false
@@ -154,6 +155,7 @@ function NewsItem({ item, index }) {
 export default function News() {
   const { user, addExp, recordActivity } = useStore()
   const lang = user.settings.language
+  const showPageTour = user.homeTourDone !== true && user.homeTourStep === 2
   const [news, setNews] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -191,27 +193,37 @@ export default function News() {
   }
 
   return (
-    <div className="flex gap-5">
-      <div className="flex-1 min-w-0 space-y-4">
-        <div className="flex items-center justify-between">
-          <h1 className="section-title text-xl">今日情报站</h1>
-          <span className="text-xs text-gray-400">{new Date().toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
+    <>
+      <div className={`flex gap-5 ${showPageTour ? 'page-tour-highlight' : ''}`} data-tour-target="news-page">
+        <div className="flex-1 min-w-0 space-y-4">
+          <div className="flex items-center justify-between">
+            <h1 className="section-title text-xl">今日情报站</h1>
+            <span className="text-xs text-gray-400">{new Date().toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
+          </div>
+          {error && <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700">{error}</div>}
+          <div className="space-y-3">
+            {news.map((item, i) => <NewsItem key={item.id} item={item} index={i} />)}
+          </div>
+          <button onClick={loadNews} disabled={loading} className="btn-ghost w-full py-3 flex items-center justify-center gap-2">
+            {loading ? '获取中...' : <><Plus size={16} /> 获取更多新闻</>}
+          </button>
         </div>
-        {error && <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700">{error}</div>}
-        <div className="space-y-3">
-          {news.map((item, i) => <NewsItem key={item.id} item={item} index={i} />)}
-        </div>
-        <button onClick={loadNews} disabled={loading} className="btn-ghost w-full py-3 flex items-center justify-center gap-2">
-          {loading ? '获取中...' : <><Plus size={16} /> 获取更多新闻</>}
-        </button>
+        <aside className="w-56 flex-shrink-0 space-y-4">
+          <div className="card p-4">
+            <div className="text-xs font-bold text-gray-500 mb-2">今日读法</div>
+            <p className="text-sm leading-relaxed text-gray-700">每条新闻现在会按 PREP 导读：先观点，再理由，再细节，最后回到 AI PM 启发。重点还是打开原文看。</p>
+          </div>
+        </aside>
       </div>
-      <aside className="w-56 flex-shrink-0 space-y-4">
-        <div className="card p-4">
-          <div className="text-xs font-bold text-gray-500 mb-2">今日读法</div>
-          <p className="text-sm leading-relaxed text-gray-700">每条新闻现在会按 PREP 导读：先观点，再理由，再细节，最后回到 AI PM 启发。重点还是打开原文看。</p>
-        </div>
-      </aside>
-    </div>
+      <PageTourGuide
+        step={2}
+        targetSelector="[data-tour-target='news-page']"
+        titleZh="这里读 AI 新闻"
+        titleEn="Read AI news here"
+        bodyZh="进入情报站后，可以获取 AI 行业动态，展开每条新闻看 PREP 导读，也可以复制 GPT Prompt 或存入资料夹。"
+        bodyEn="Inside the news station, fetch AI updates, expand each item for a PREP guide, copy a GPT prompt, or save useful links."
+      />
+    </>
   )
 }
 

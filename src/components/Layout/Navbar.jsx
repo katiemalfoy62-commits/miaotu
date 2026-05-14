@@ -60,6 +60,7 @@ export default function Navbar() {
           <Link
             to="/settings"
             className="rounded-full p-2.5 transition-colors hover:bg-border-light dark:hover:bg-border-dark"
+            data-tour-target="settings"
           >
             <Settings size={19} className={location.pathname === '/settings' ? 'text-primary dark:text-primary-dark' : ''} />
           </Link>

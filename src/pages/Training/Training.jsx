@@ -7,6 +7,7 @@ import { callClaude, extractText, getCatPersonalityPrompt } from '../../utils/cl
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import ClayIcon from '../../components/UI/ClayIcon'
 import { buildTaskPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
+import PageTourGuide from '../../components/Tour/PageTourGuide'
 
 const QUESTION_POOL = [
   { id: 'q1', text: '请说明用户研究中，定性和定量研究各自的适用场景，并各举一个 AI 产品案例。', source: '老猫题库', type: 'user_research' },
@@ -75,6 +76,7 @@ export default function Training() {
   } = useStore()
   const lang = user.settings.language
   const apiKey = user.settings.apiKey
+  const showPageTour = user.homeTourDone !== true && user.homeTourStep === 4
 
   const [phase, setPhase] = useState('idle')
   const [currentQ, setCurrentQ] = useState(null)
@@ -266,11 +268,12 @@ export default function Training() {
   }
 
   return (
-    <div className="max-w-xl mx-auto space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="section-title text-xl">思维训练</h1>
-        {phase === 'idle' && <button onClick={startNewQuestion} className="btn-primary">开始新题</button>}
-      </div>
+    <>
+      <div className={`max-w-xl mx-auto space-y-5 ${showPageTour ? 'page-tour-highlight' : ''}`} data-tour-target="training-page">
+        <div className="flex items-center justify-between">
+          <h1 className="section-title text-xl">思维训练</h1>
+          {phase === 'idle' && <button onClick={startNewQuestion} className="btn-primary">开始新题</button>}
+        </div>
 
       {phase === 'idle' && (
         <div className="card p-10 text-center space-y-4">
@@ -402,7 +405,16 @@ export default function Training() {
           )}
         </motion.div>
       )}
-    </div>
+      </div>
+      <PageTourGuide
+        step={4}
+        targetSelector="[data-tour-target='training-page']"
+        titleZh="这里做思维训练"
+        titleEn="Practice thinking drills here"
+        bodyZh="思维训练会让你先写第一反应，再通过老猫提示进行二次作答，重点训练先结论、再结构、再论证。"
+        bodyEn="Thinking drills ask for a first answer, then a second answer after Mentor Cat prompts, so you practice clear structure and reasoning."
+      />
+    </>
   )
 }
 

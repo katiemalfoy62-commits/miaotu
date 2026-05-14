@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Download, Upload, Trash2, Eye, EyeOff } from 'lucide-react'
 import useStore from '../../store/useStore'
@@ -30,13 +31,27 @@ const PERSONALITY_DESCRIPTIONS = {
 }
 
 export default function Settings() {
-  const { user, updateSettings, resetAll, setCatConfig } = useStore()
+  const { user, updateSettings, resetAll, setCatConfig, setHomeTourStep } = useStore()
+  const navigate = useNavigate()
   const lang = user.settings.language
   const [showKey, setShowKey] = useState(false)
   const [apiKey, setApiKeyLocal] = useState(user.settings.apiKey || '')
   const [saved, setSaved] = useState(false)
   const [customizing, setCustomizing] = useState(false)
   const [catDraft, setCatDraft] = useState({ ...user.catConfig })
+  const showApiTour = user.homeTourDone !== true && user.homeTourStep === 1
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('miaotu-settings-tour-active', showApiTour)
+    return () => document.documentElement.classList.remove('miaotu-settings-tour-active')
+  }, [showApiTour])
+
+  useEffect(() => {
+    if (!showApiTour) return undefined
+    const target = document.querySelector('[data-tour-target="api-key"]')
+    window.setTimeout(() => target?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120)
+    return undefined
+  }, [showApiTour])
 
   function save(patch) {
     updateSettings(patch)
@@ -49,6 +64,11 @@ export default function Settings() {
     localStorage.setItem('miaotu_openai_apikey', cleanKey)
     save({ apiKey: cleanKey })
     setApiKeyLocal(cleanKey)
+  }
+
+  function continueHomeTour() {
+    setHomeTourStep(2)
+    navigate('/')
   }
 
   function exportData() {
@@ -237,7 +257,7 @@ export default function Settings() {
       </div>
 
       {/* API Key */}
-      <div className="card p-5 space-y-3">
+      <div className={`card p-5 space-y-3 ${showApiTour ? 'settings-tour-highlight' : ''}`} data-tour-target="api-key">
         <div className="font-bold text-sm">OpenAI API Key</div>
         <div className="flex gap-2">
           <div className="relative flex-1">
@@ -255,6 +275,11 @@ export default function Settings() {
           <button onClick={saveApiKey} className="btn-primary px-4">{t('save', lang)}</button>
         </div>
         <div className="text-[10px] text-gray-400">{lang === 'zh' ? 'Key 存储在浏览器本地。不要把它发给别人；如果怀疑泄露，可以去 OpenAI Platform 删除并重建。' : 'The key is stored locally in your browser. Do not share it; delete and recreate it in OpenAI Platform if it leaks.'}</div>
+        {showApiTour && (
+          <button type="button" onClick={continueHomeTour} className="btn-primary w-full">
+            {lang === 'zh' ? '回到首页继续新手指引' : 'Back home and continue tour'}
+          </button>
+        )}
       </div>
 
       {/* Data management */}
@@ -273,6 +298,36 @@ export default function Settings() {
           <Trash2 size={16}/> {t('clearData', lang)}
         </button>
       </div>
+
+      {showApiTour && (
+        <>
+          <div className="settings-tour-dim" aria-hidden="true" />
+          <motion.div
+            className="settings-tour-card"
+            initial={{ opacity: 0, y: 18, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+          >
+            <div className="home-tour-copy">
+              <span>2 / 10</span>
+              <h3>{lang === 'zh' ? '把 API Key 放在这里' : 'Paste your API Key here'}</h3>
+              <p>
+                {lang === 'zh'
+                  ? 'API Key 只会保存在你的浏览器本地，用来调用 AI 反馈和导师对话。填好后回到首页继续新手指引。'
+                  : 'Your API Key is only saved in this browser. It powers AI feedback and Mentor Cat. Add it, then return home to continue the tour.'}
+              </p>
+              <div className="home-tour-actions">
+                <button type="button" onClick={continueHomeTour}>
+                  {lang === 'zh' ? '先跳过' : 'Skip for now'}
+                </button>
+                <button type="button" onClick={continueHomeTour}>
+                  {lang === 'zh' ? '回首页继续' : 'Continue'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
     </div>
   )
 }

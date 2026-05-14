@@ -97,10 +97,21 @@ const GROWTH_STAGE_PREVIEWS = [
 const TOUR_STEPS = [
   {
     key: 'hero',
-    titleZh: '今天的成长总览',
-    titleEn: 'Start with today',
-    bodyZh: '这里会告诉你等级、小鱼干、任务数量。小猫是可以点击的，点它可以展开 6 站成长路线，预览后续阶段会变成什么样。',
-    bodyEn: 'This area shows level, fish, active tasks, and the growth route. The cat is clickable: tap it to preview future stages.',
+    titleZh: '点击小猫查看成长地图',
+    titleEn: 'Tap the cat to open the map',
+    bodyZh: '先点一下小猫，它会展开你的 6 站成长地图。',
+    bodyEn: 'Tap the cat first. It opens your six-stop growth map.',
+    detailTitleZh: '这里是 6 站成长地图',
+    detailTitleEn: 'Your six-stop growth map',
+    detailBodyZh: '这里会展示从流浪小猫到首席猫的成长路线。可以点每一站，预览后续阶段会变成什么样。',
+    detailBodyEn: 'This map shows the route from Stray Kitten to Chief Cat. Tap each station to preview future stages.',
+  },
+  {
+    key: 'settings',
+    titleZh: '先添加你的 API Key',
+    titleEn: 'Add your API Key first',
+    bodyZh: '喵途的总结、反馈、追问和老猫导师都需要你自己的 API Key。点击右上角设置，填好后就可以使用 AI 功能。',
+    bodyEn: 'Miaotu uses your own API Key for summaries, feedback, follow-up questions, and Mentor Cat. Tap settings in the top right to add it.',
   },
   {
     key: 'news',
@@ -141,8 +152,12 @@ const TOUR_STEPS = [
     key: 'mentor',
     titleZh: '老猫导师和小猫树洞',
     titleEn: 'Ask Mentor Cat',
-    bodyZh: '右上角的小老猫可以随时打开导师对话；左下角爱心是小猫树洞，用来放下暂时没想清楚的想法和情绪。',
-    bodyEn: 'Open Mentor Cat from the right card for questions. The heart opens Kitten Corner for thoughts that are not ready yet.',
+    bodyZh: '先点右上角的小老猫，它会打开导师对话面板。',
+    bodyEn: 'Tap Mentor Cat on the right card to open the mentor panel.',
+    detailTitleZh: '这里可以随时问老猫',
+    detailTitleEn: 'Ask Mentor Cat here',
+    detailBodyZh: '打开后可以问学习问题、整理思路，也可以把对话总结成提示词带去 GPT 深聊。左下角爱心入口是小猫树洞。',
+    detailBodyEn: 'Use this panel for questions and thinking help. You can also copy a prompt for GPT. The heart entry opens Kitten Corner.',
   },
   {
     key: 'archive',
@@ -155,21 +170,29 @@ const TOUR_STEPS = [
     key: 'floaters',
     titleZh: '右侧两个随身文件夹',
     titleEn: 'Two side folders',
-    bodyZh: '右侧上方是链接/素材百宝袋，下方是老猫对话保存库。看到有价值的资料和讨论，可以先收进去，之后再整理。',
-    bodyEn: 'The top side folder is the link vault, and the lower one saves Mentor Cat chats. Store useful links and discussions for later review.',
+    bodyZh: '先点右侧上方的文件夹，它会打开资料夹面板。',
+    bodyEn: 'Tap the upper side folder to open the link vault panel.',
+    detailTitleZh: '资料和对话都可以先收起来',
+    detailTitleEn: 'Save useful things here',
+    detailBodyZh: '上方资料夹用来保存链接和素材；下方文件夹保存老猫对话。遇到有价值的资料和讨论，可以先放进来之后整理。',
+    detailBodyEn: 'The upper folder saves links and materials. The lower folder saves Mentor Cat chats for later review.',
   },
 ]
 
 const TOUR_TARGET_SELECTORS = {
   hero: '[data-tour-target="hero"]',
+  heroDetail: '[data-tour-target="growth-map"]',
+  settings: '[data-tour-target="settings"]',
   news: '[data-tour-target="news"]',
   tasks: '[data-tour-target="tasks"]',
   training: '[data-tour-target="training"]',
   interview: '[data-tour-target="interview"]',
   cat: '[data-tour-target="cat"]',
   mentor: '[data-tour-target="mentor"] .home-oldcat-entry',
+  mentorDetail: '.oldcat-panel',
   archive: '[data-tour-target="archive"]',
   floaters: '.link-vault-peek',
+  floatersDetail: '.link-vault-panel',
 }
 
 function ModuleCard({ mod, lang, index, highlighted = false }) {
@@ -236,8 +259,14 @@ export default function Home() {
   const [previewStationIndex, setPreviewStationIndex] = useState(null)
   const [showTour, setShowTour] = useState(() => user.homeTourDone !== true)
   const [tourIndex, setTourIndex] = useState(() => Math.min(user.homeTourStep || 0, TOUR_STEPS.length - 1))
-  const [pawStyle, setPawStyle] = useState(null)
+  const [tourPhase, setTourPhase] = useState('prompt')
+  const [pawPoint, setPawPoint] = useState(null)
   const tourStep = TOUR_STEPS[tourIndex]
+  const tourDetailActive = showTour && tourPhase === 'detail'
+  const activeTourTitleZh = tourDetailActive ? (tourStep?.detailTitleZh || tourStep?.titleZh) : tourStep?.titleZh
+  const activeTourTitleEn = tourDetailActive ? (tourStep?.detailTitleEn || tourStep?.titleEn) : tourStep?.titleEn
+  const activeTourBodyZh = tourDetailActive ? (tourStep?.detailBodyZh || tourStep?.bodyZh) : tourStep?.bodyZh
+  const activeTourBodyEn = tourDetailActive ? (tourStep?.detailBodyEn || tourStep?.bodyEn) : tourStep?.bodyEn
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', user.settings.theme === 'dark')
@@ -245,37 +274,66 @@ export default function Home() {
 
   useEffect(() => {
     document.documentElement.classList.toggle('miaotu-home-tour-active', showTour)
+    document.documentElement.classList.toggle('miaotu-home-tour-settings', showTour && tourStep?.key === 'settings')
     document.documentElement.classList.toggle('miaotu-home-tour-floaters', showTour && tourStep?.key === 'floaters')
+    document.documentElement.classList.toggle('miaotu-home-tour-floaters-detail', showTour && tourStep?.key === 'floaters' && tourPhase === 'detail')
     document.documentElement.classList.toggle('miaotu-home-tour-mentor', showTour && tourStep?.key === 'mentor')
+    document.documentElement.classList.toggle('miaotu-home-tour-mentor-detail', showTour && tourStep?.key === 'mentor' && tourPhase === 'detail')
     return () => {
       document.documentElement.classList.remove('miaotu-home-tour-active')
+      document.documentElement.classList.remove('miaotu-home-tour-settings')
       document.documentElement.classList.remove('miaotu-home-tour-floaters')
+      document.documentElement.classList.remove('miaotu-home-tour-floaters-detail')
       document.documentElement.classList.remove('miaotu-home-tour-mentor')
+      document.documentElement.classList.remove('miaotu-home-tour-mentor-detail')
     }
+  }, [showTour, tourStep?.key, tourPhase])
+
+  useEffect(() => {
+    setTourPhase('prompt')
+    if (tourStep?.key !== 'hero') {
+      setMapOpen(false)
+    }
+  }, [tourStep?.key])
+
+  useEffect(() => {
+    if (!showTour || tourStep?.key !== 'floaters') return undefined
+
+    function markFloaterOpened(event) {
+      if (event.target?.closest?.('.link-vault-peek, .oldcat-memory-peek')) {
+        window.setTimeout(() => setTourPhase('detail'), 80)
+      }
+    }
+
+    document.addEventListener('click', markFloaterOpened, true)
+    return () => document.removeEventListener('click', markFloaterOpened, true)
   }, [showTour, tourStep?.key])
 
   useEffect(() => {
     if (!showTour || !tourStep) {
-      setPawStyle(null)
+      setPawPoint(null)
       return undefined
     }
 
-    const selector = TOUR_TARGET_SELECTORS[tourStep.key]
+    const detailSelector = TOUR_TARGET_SELECTORS[`${tourStep.key}Detail`]
+    const selector = tourPhase === 'detail' && detailSelector ? detailSelector : TOUR_TARGET_SELECTORS[tourStep.key]
     if (!selector) return undefined
-    const shouldScroll = tourStep.key !== 'floaters'
+    const shouldScroll = tourStep.key !== 'floaters' || tourPhase === 'detail'
     let cancelled = false
 
     function placePointer() {
       if (cancelled) return
       const target = document.querySelector(selector)
       if (!target) {
-        setPawStyle(null)
+        setPawPoint(null)
         return
       }
       const rect = target.getBoundingClientRect()
-      const x = Math.min(window.innerWidth - 72, Math.max(48, rect.left + rect.width * 0.72))
-      const y = Math.min(window.innerHeight - 72, Math.max(64, rect.top + rect.height * 0.44))
-      setPawStyle({ left: `${x}px`, top: `${y}px` })
+      const nearRightEdge = rect.right > window.innerWidth - 128
+      const rawX = nearRightEdge ? rect.left + rect.width * 0.18 : rect.left + rect.width * 0.74
+      const x = Math.min(window.innerWidth - 112, Math.max(52, rawX))
+      const y = Math.min(window.innerHeight - 78, Math.max(64, rect.top + rect.height * 0.42))
+      setPawPoint({ x, y })
     }
 
     const target = document.querySelector(selector)
@@ -293,7 +351,7 @@ export default function Home() {
       window.removeEventListener('resize', placePointer)
       window.removeEventListener('scroll', placePointer)
     }
-  }, [showTour, tourStep?.key])
+  }, [showTour, tourStep?.key, tourPhase])
 
   const now = new Date()
   const midnight = new Date(now)
@@ -316,9 +374,16 @@ export default function Home() {
 
   function replayTour() {
     setTourIndex(0)
+    setTourPhase('prompt')
+    setMapOpen(false)
     setHomeTourStep(0)
     setShowTour(true)
     setHomeTourDone(false)
+  }
+
+  function activateTourDetail(key) {
+    if (!showTour || tourStep?.key !== key) return
+    setTourPhase('detail')
   }
 
   function nextTourStep() {
@@ -326,20 +391,22 @@ export default function Home() {
       closeTour(true)
       return
     }
-    setTourIndex(index => {
-      const nextIndex = index + 1
-      setHomeTourStep(nextIndex)
-      return nextIndex
-    })
+    const nextIndex = tourIndex + 1
+    setTourPhase('prompt')
+    setTourIndex(nextIndex)
+    setHomeTourStep(nextIndex)
   }
 
-  const tourClass = (key) => showTour && tourStep?.key === key ? 'tour-highlight' : ''
+  const tourClass = (key) => showTour && tourStep?.key === key && tourPhase === 'prompt' ? 'tour-highlight' : ''
 
   return (
     <div className={`home-shell clay-home ${showTour ? 'home-tour-active' : ''}`}>
       <section className={`clay-hero-panel ${mapOpen ? 'clay-hero-panel-map' : ''} ${tourClass('hero')}`}>
         {mapOpen && (
-          <div className="growth-map-panel">
+          <div
+            className={`growth-map-panel ${showTour && tourStep?.key === 'hero' && tourPhase === 'detail' ? 'tour-highlight tour-highlight-detail' : ''}`}
+            data-tour-target="growth-map"
+          >
             <div className="growth-map-head">
               <div>
                 <div className="eyebrow">
@@ -417,7 +484,16 @@ export default function Home() {
           </p>
         </div>
 
-        <button className="clay-hero-mascot" type="button" onClick={() => setMapOpen(true)} title={lang === 'zh' ? '查看成长地图' : 'Open growth map'} data-tour-target="hero">
+        <button
+          className="clay-hero-mascot"
+          type="button"
+          onClick={() => {
+            setMapOpen(true)
+            activateTourDetail('hero')
+          }}
+          title={lang === 'zh' ? '查看成长地图' : 'Open growth map'}
+          data-tour-target="hero"
+        >
           <span className="clay-star clay-star-one">✦</span>
           <LayeredCat
             catConfig={user.catConfig}
@@ -562,7 +638,10 @@ export default function Home() {
               <button
                 className="home-oldcat-entry"
                 type="button"
-                onClick={() => window.dispatchEvent(new CustomEvent('miaotu:open-oldcat'))}
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('miaotu:open-oldcat'))
+                  window.setTimeout(() => activateTourDetail('mentor'), 80)
+                }}
                 title={lang === 'zh' ? '召唤老猫导师' : 'Open mentor cat'}
               >
                 <BlinkingClayMascot type="oldcat" className="home-oldcat-mascot" interactive />
@@ -642,13 +721,22 @@ export default function Home() {
       {showTour && tourStep && (
         <>
           <div className="home-tour-dim" aria-hidden="true" />
-          {pawStyle && (
-            <div className={`tour-paw-pointer tour-paw-pointer--${tourStep.key}`} style={pawStyle} aria-hidden="true">
-              <span className="tour-paw-toe tour-paw-toe-one" />
-              <span className="tour-paw-toe tour-paw-toe-two" />
-              <span className="tour-paw-toe tour-paw-toe-three" />
-              <span className="tour-paw-pad" />
-            </div>
+          {pawPoint && (
+            <motion.div
+              className={`tour-paw-pointer tour-paw-pointer--${tourStep.key}`}
+              initial={false}
+              animate={{ left: pawPoint.x, top: pawPoint.y }}
+              transition={{ type: 'spring', stiffness: 105, damping: 20, mass: 0.82 }}
+              aria-hidden="true"
+            >
+              <span className="tour-paw-body">
+                <span className="tour-paw-toe tour-paw-toe-one" />
+                <span className="tour-paw-toe tour-paw-toe-two" />
+                <span className="tour-paw-toe tour-paw-toe-three" />
+                <span className="tour-paw-toe tour-paw-toe-four" />
+                <span className="tour-paw-pad" />
+              </span>
+            </motion.div>
           )}
           <motion.div
             className={`home-tour-card home-tour-card--${tourStep.key}`}
@@ -659,8 +747,8 @@ export default function Home() {
             <BlinkingClayMascot type="oldcat" className="home-tour-oldcat" />
             <div className="home-tour-copy">
               <span>{tourIndex + 1} / {TOUR_STEPS.length}</span>
-              <h3>{lang === 'zh' ? tourStep.titleZh : tourStep.titleEn}</h3>
-              <p>{lang === 'zh' ? tourStep.bodyZh : tourStep.bodyEn}</p>
+              <h3>{lang === 'zh' ? activeTourTitleZh : activeTourTitleEn}</h3>
+              <p>{lang === 'zh' ? activeTourBodyZh : activeTourBodyEn}</p>
               <div className="home-tour-actions">
                 <button type="button" onClick={() => closeTour(true)}>
                   {lang === 'zh' ? '跳过' : 'Skip'}

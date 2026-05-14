@@ -7,6 +7,7 @@ import { callClaude, extractText, getCatPersonalityPrompt } from '../../utils/cl
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import InterviewerClay from '../../components/Interviewers/InterviewerClay'
 import { buildInterviewPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
+import PageTourGuide from '../../components/Tour/PageTourGuide'
 
 const INTERVIEWERS = [
   { mbti: 'INTJ', name: '司马', nameEn: 'Sima', color: '#2A2A2A', desc: '极度理性，只问关键问题，沉默多', descEn: 'Rational and sharp', stress: 3 },
@@ -74,6 +75,7 @@ export default function Interview() {
   const { user, interview, addInterviewResult, addFish, addExp, saveQuestion, savedQuestions = [], addLearningRecord } = useStore()
   const lang = user.settings.language
   const apiKey = user.settings.apiKey
+  const showPageTour = user.homeTourDone !== true && user.homeTourStep === 5
   const [phase, setPhase] = useState('setup')
   const [selectedDuration, setSelectedDuration] = useState(30)
   const [selectedInterviewer, setSelectedInterviewer] = useState(INTERVIEWERS[2])
@@ -362,59 +364,69 @@ ${q.answer || '未作答'}
 
   if (phase === 'setup') {
     return (
-      <div className="interview-setup-shell">
-        <aside className="interview-record-side card">
-          <div className="interview-record-side-title">面试记录</div>
-          {interviewHistory.length === 0 ? (
-            <p>完成一次模拟面试后，整场问题、回答和评分会放在这里。</p>
-          ) : (
-            <div className="interview-record-side-list">
-              {interviewHistory.slice(0, 4).map((item, index) => (
-                <Link key={item.id || `${item.date}_${index}`} to="/archive/interviews">
-                  <strong>{item.interviewer || `第 ${index + 1} 次面试`}</strong>
-                  <span>{item.date || ''} · {item.totalScore ?? '-'}分</span>
-                </Link>
+      <>
+        <div className={`interview-setup-shell ${showPageTour ? 'page-tour-highlight' : ''}`} data-tour-target="interview-page">
+          <aside className="interview-record-side card">
+            <div className="interview-record-side-title">面试记录</div>
+            {interviewHistory.length === 0 ? (
+              <p>完成一次模拟面试后，整场问题、回答和评分会放在这里。</p>
+            ) : (
+              <div className="interview-record-side-list">
+                {interviewHistory.slice(0, 4).map((item, index) => (
+                  <Link key={item.id || `${item.date}_${index}`} to="/archive/interviews">
+                    <strong>{item.interviewer || `第 ${index + 1} 次面试`}</strong>
+                    <span>{item.date || ''} · {item.totalScore ?? '-'}分</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+            <Link to="/archive/interviews" className="interview-record-side-more">查看全部面试记录</Link>
+          </aside>
+          <div className="max-w-2xl mx-auto space-y-6 interview-setup-main">
+          <h1 className="section-title text-xl">面试模拟</h1>
+          <div className="card p-5 space-y-3">
+            <div className="font-bold text-sm">选择时长</div>
+            <div className="flex gap-3">
+              {DURATIONS.map(d => (
+                <button key={d} onClick={() => setSelectedDuration(d)} className={`flex-1 py-3 rounded-xl font-bold text-sm border ${selectedDuration === d ? 'bg-primary text-white border-primary' : 'border-border-light hover:bg-border-light'}`}>{d}分钟</button>
               ))}
             </div>
-          )}
-          <Link to="/archive/interviews" className="interview-record-side-more">查看全部面试记录</Link>
-        </aside>
-        <div className="max-w-2xl mx-auto space-y-6 interview-setup-main">
-        <h1 className="section-title text-xl">面试模拟</h1>
-        <div className="card p-5 space-y-3">
-          <div className="font-bold text-sm">选择时长</div>
-          <div className="flex gap-3">
-            {DURATIONS.map(d => (
-              <button key={d} onClick={() => setSelectedDuration(d)} className={`flex-1 py-3 rounded-xl font-bold text-sm border ${selectedDuration === d ? 'bg-primary text-white border-primary' : 'border-border-light hover:bg-border-light'}`}>{d}分钟</button>
-            ))}
+          </div>
+          <div className="card p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="font-bold text-sm">选择面试官</div>
+              <button onClick={() => setSelectedInterviewer(INTERVIEWERS[Math.floor(Math.random() * INTERVIEWERS.length)])} className="text-xs text-primary hover:underline">随机分配</button>
+            </div>
+            <div className="grid grid-cols-4 gap-2 max-h-52 overflow-y-auto">
+              {INTERVIEWERS.map(iv => (
+                <button key={iv.mbti} onClick={() => setSelectedInterviewer(iv)} className={`p-2 rounded-xl border text-center ${selectedInterviewer?.mbti === iv.mbti ? 'border-primary bg-primary/10' : 'border-border-light hover:bg-border-light'}`}>
+                  <InterviewerCat interviewer={iv} size={58} />
+                  <div className="text-[10px] font-bold mt-1">{iv.name}</div>
+                  <div className="text-[9px] text-gray-400">{iv.mbti}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="card p-5 flex gap-4 items-center">
+            <InterviewerCat interviewer={interviewer} size={96} />
+            <div className="flex-1 space-y-2">
+              <div className="font-bold">{interviewer.name} <span className="text-xs text-gray-400 font-normal ml-1">{interviewer.mbti}</span></div>
+              <div className="text-xs text-gray-600">{interviewer.desc}</div>
+              <StressBar level={interviewer.stress} />
+            </div>
+          </div>
+          <button onClick={startInterview} className="btn-primary w-full py-3 text-base font-bold">开始面试</button>
           </div>
         </div>
-        <div className="card p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="font-bold text-sm">选择面试官</div>
-            <button onClick={() => setSelectedInterviewer(INTERVIEWERS[Math.floor(Math.random() * INTERVIEWERS.length)])} className="text-xs text-primary hover:underline">随机分配</button>
-          </div>
-          <div className="grid grid-cols-4 gap-2 max-h-52 overflow-y-auto">
-            {INTERVIEWERS.map(iv => (
-              <button key={iv.mbti} onClick={() => setSelectedInterviewer(iv)} className={`p-2 rounded-xl border text-center ${selectedInterviewer?.mbti === iv.mbti ? 'border-primary bg-primary/10' : 'border-border-light hover:bg-border-light'}`}>
-                <InterviewerCat interviewer={iv} size={58} />
-                <div className="text-[10px] font-bold mt-1">{iv.name}</div>
-                <div className="text-[9px] text-gray-400">{iv.mbti}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="card p-5 flex gap-4 items-center">
-          <InterviewerCat interviewer={interviewer} size={96} />
-          <div className="flex-1 space-y-2">
-            <div className="font-bold">{interviewer.name} <span className="text-xs text-gray-400 font-normal ml-1">{interviewer.mbti}</span></div>
-            <div className="text-xs text-gray-600">{interviewer.desc}</div>
-            <StressBar level={interviewer.stress} />
-          </div>
-        </div>
-        <button onClick={startInterview} className="btn-primary w-full py-3 text-base font-bold">开始面试</button>
-        </div>
-      </div>
+        <PageTourGuide
+          step={5}
+          targetSelector="[data-tour-target='interview-page']"
+          titleZh="这里模拟真实面试"
+          titleEn="Practice mock interviews here"
+          bodyZh="面试模拟可以选择时长和面试官，进入后会根据你的回答继续追问，结束后生成逐题复盘和成长记录。"
+          bodyEn="Choose a duration and interviewer here. The session follows up on your answers, then generates a question-by-question review."
+        />
+      </>
     )
   }
 
