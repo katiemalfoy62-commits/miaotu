@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import OldCatSVG from '../../components/OldCat/OldCatSVG'
-import CatSVG from '../../components/Cat/CatSVG'
+import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import useStore from '../../store/useStore'
 import { t } from '../../utils/i18n'
 
@@ -73,7 +72,7 @@ export default function Onboarding() {
               transition={{ repeat: Infinity, duration: 2.5 }}
               className="flex justify-center"
             >
-              <OldCatSVG mode="teacher" size={100}/>
+              <BlinkingClayMascot type="oldcat" className="onboarding-oldcat-clay" />
             </motion.div>
 
             <div className="space-y-3">
@@ -102,7 +101,7 @@ export default function Onboarding() {
           <div className="card p-6 space-y-5">
             <div className="text-center">
               <motion.div animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="flex justify-center mb-4">
-                <OldCatSVG mode="companion" size={80}/>
+                <BlinkingClayMascot type="oldcat" className="onboarding-oldcat-clay onboarding-oldcat-clay-small" />
               </motion.div>
               <div className="font-bold text-base text-primary dark:text-primary-dark">
                 {lang === 'zh' ? '设计你的专属小猫！' : 'Design your own cat!'}
@@ -117,7 +116,7 @@ export default function Onboarding() {
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
-                <CatSVG {...catForm} idle size={100}/>
+                <BlinkingClayMascot type="kivi" className="onboarding-kivi-clay" />
               </motion.div>
             </div>
 

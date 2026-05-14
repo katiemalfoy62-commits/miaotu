@@ -2219,6 +2219,20 @@ button:hover .interviewer-clay {
   width: 3.5rem;
 }
 
+.onboarding-oldcat-clay .clay-mascot-oldcat {
+  width: 7rem;
+  filter: drop-shadow(0 18px 18px rgba(84, 52, 27, 0.18));
+}
+
+.onboarding-oldcat-clay-small .clay-mascot-oldcat {
+  width: 5.5rem;
+}
+
+.onboarding-kivi-clay .clay-mascot-kivi {
+  width: 8.4rem;
+  filter: drop-shadow(0 18px 18px rgba(84, 52, 27, 0.18));
+}
+
 .page-back-button {
   display: inline-flex;
   align-items: center;
