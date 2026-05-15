@@ -13,6 +13,7 @@ export default function FloatingLinkVault() {
   const [url, setUrl] = useState('')
   const [note, setNote] = useState('')
   const [copied, setCopied] = useState(false)
+  const [savedHint, setSavedHint] = useState('')
   const buttonRef = useRef(null)
   const panelRef = useRef(null)
 
@@ -22,9 +23,18 @@ export default function FloatingLinkVault() {
 
   useEffect(() => {
     const closePanel = () => setOpen(false)
+    const openWithSavedHint = () => {
+      setOpen(true)
+      setSavedHint(lang === 'zh' ? '已存入资料夹' : 'Saved')
+      setTimeout(() => setSavedHint(''), 1800)
+    }
     window.addEventListener('miaotu:close-floaters', closePanel)
-    return () => window.removeEventListener('miaotu:close-floaters', closePanel)
-  }, [])
+    window.addEventListener('miaotu:link-saved', openWithSavedHint)
+    return () => {
+      window.removeEventListener('miaotu:close-floaters', closePanel)
+      window.removeEventListener('miaotu:link-saved', openWithSavedHint)
+    }
+  }, [lang])
 
   useEffect(() => {
     if (!open) return undefined
@@ -53,7 +63,9 @@ export default function FloatingLinkVault() {
   function save() {
     const finalUrl = cleanUrl(url)
     if (!finalUrl) return
-    addLinkItem({ url: finalUrl, note, title: note || finalUrl })
+    const result = addLinkItem({ url: finalUrl, note, title: note || finalUrl })
+    setSavedHint(result?.saved === false ? (lang === 'zh' ? '已经保存过了' : 'Already saved') : (lang === 'zh' ? '已存入资料夹' : 'Saved'))
+    setTimeout(() => setSavedHint(''), 1800)
     setUrl('')
     setNote('')
   }
@@ -89,6 +101,7 @@ export default function FloatingLinkVault() {
           </div>
 
           <div className="link-vault-body">
+            {savedHint && <div className="link-vault-saved-hint"><Check size={14} /> {savedHint}</div>}
             <button type="button" className="btn-ghost flex items-center justify-center gap-1.5" onClick={openChatGPT}>
               <ExternalLink size={15} />
               {lang === 'zh' ? '打开 GPT 网页' : 'Open GPT'}
@@ -125,7 +138,7 @@ export default function FloatingLinkVault() {
                 <p>{lang === 'zh' ? '还没有链接。' : 'No links yet.'}</p>
               ) : linkVault.slice(0, 4).map(item => (
                 <div className="link-vault-item" key={item.id}>
-                  <span>{item.note || item.title || item.url}</span>
+                  <span title={item.note || item.title || item.url}>{item.note || item.title || item.url}</span>
                   <div>
                     <button type="button" onClick={() => copyText(buildLinkPrompt(item.url, item.note))}><Copy size={13} /></button>
                     <a href={item.url} target="_blank" rel="noopener noreferrer"><ExternalLink size={13} /></a>

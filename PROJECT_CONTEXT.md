@@ -106,6 +106,7 @@ Current product state:
 - `src/store/useStore.js`: central persisted Zustand state, rewards, records, Old Cat chats, shop/wardrobe state, onboarding flags, home tour state.
 - `src/utils/claude.js`: OpenAI API helper and prompt helpers.
 - `src/utils/gptPrompt.js`: GPT handoff prompt utilities.
+- `src/utils/newsFeeds.js`: frontend RSS fetcher for the trusted AI news source whitelist.
 - `src/utils/levelCalc.js`: level/growth calculation utilities.
 - `src/components/Layout/Layout.jsx`: app shell, navbar/back behavior, floating tools, Old Cat visibility.
 - `src/components/OldCat/OldCat.jsx`: Old Cat mentor chat panel; listens for `miaotu:open-oldcat`.
@@ -119,11 +120,13 @@ Current product state:
 - `src/pages/Settings/Settings.jsx`: settings page; Old Cat style options should match onboarding.
 - `src/pages/Shop/Shop.jsx` and `src/pages/Wardrobe/Wardrobe.jsx`: fish shop and wardrobe handling.
 - `src/data/shopItems.js`: shop item definitions; terminal may show Chinese/emoji as mojibake.
+- `src/data/newsSources.js`: trusted AI news sources used by the news page and source-introduction card.
 - `src/index.css`: custom visual styling, including clay dashboard, onboarding, guided tour, paw pointer, dark mode, hover states, and growth map styles.
 - `src/assets/mascots/`: clay mascot assets such as Kivi, Old Cat, breakthrough cat.
 - `src/assets/ui-clay/`: clay UI icons.
 - `src/assets/interviewers/`: clay interviewer cat PNGs.
-- `src/assets/cat-stages/`: six growth-stage cat images and transparent versions used by the growth route.
+- `src/assets/cat-stages/`: six transparent growth-stage cat images used by the growth route.
+- `archive_cleanup/`: local-only temporary cleanup archive. It is ignored by Git and contains moved legacy/generated files until the user confirms permanent deletion.
 
 ## Design And Product Decisions
 
@@ -142,6 +145,7 @@ Current product state:
 - User dislikes the current text label on/near the cat and the current CSS paw pointer. The next design should use a cleaner clay-style pointer that glides like a mouse cursor from one target to the next.
 - Dark mode should be a true night mode, not a weak dimmed light mode: neutral dark grays, readable text, low saturation, and only small warm accents.
 - News summaries should stay short, useful, and PREP-structured.
+- News content should come from the fixed AI source whitelist where possible: OpenAI, Anthropic, Google DeepMind, Meta AI, Microsoft AI, MIT Technology Review, The Verge, TechCrunch, VentureBeat, and Ars Technica. Do not return to old year-based mock news or `example.com` links.
 - GPT handoff is intended behavior: copy prompt/open GPT actions should remain.
 - API keys are user-provided in settings/localStorage. Do not commit or hardcode private keys.
 - Reward economy should remain slow enough for long-term use.
@@ -158,6 +162,7 @@ Current product state:
 - Homepage guided tour still needs mobile QA for spotlight alignment and card placement.
 - Dark mode still needs browser QA across pages; some pages may still have low contrast or inconsistent card colors.
 - Stage PNGs and interviewer PNGs still add build weight. Vite build warns that the main JS chunk is larger than 500 kB.
+- Non-transparent legacy stage PNGs and paused cat-customizer assets were moved to `archive_cleanup/` during cleanup; restore from there if the paused customization direction is revived.
 - Shop/wardrobe economy exists, but because appearance customization is paused, wearable overlay behavior should not be emphasized until a stable design is chosen.
 - Previously attempted layered cat appearance caused severe alignment problems. Do not restart that path casually.
 - Task page should still be QA-tested for the reported issue where the second task answer box can become unresponsive after submitting one task.
@@ -206,6 +211,8 @@ Current product state:
 - Browser QA after this polish: build passed; Playwright verified map spotlight-only mode, route-return auto-scroll from News to Tasks, Old Cat closing before the treehole step, and the paw landing on the treehole heart. Existing React Router future-flag warnings remain.
 - Simplified the growth-map detail highlight further: the map panel is only lifted above the dim layer with no extra frame, glow, or shadow. Homepage internal tour exits now advance immediately for wardrobe/shop/archive links in the cat card and the breakthrough card, and closing Mentor Cat advances to the treehole step.
 - Browser QA after this step-advance fix: build passed; Playwright verified plain-lit map styling, cat-to-wardrobe advancing to Mentor Cat, breakthrough advancing to the next step, and Mentor Cat outside-close advancing to the treehole highlight. Existing React Router future-flag warnings remain.
+- Project cleanup pass moved generated artifacts and unused legacy assets/components into ignored `archive_cleanup/`: historical `output/` screenshots, old `dist/` builds, `.miaotu-server.pid`, paused `src/assets/cat-customizer/`, non-transparent stage PNGs, and unused SVG/stage components (`CatSVG.jsx`, `OldCatSVG.jsx`, `CatStageImage.jsx`). Build still passes after cleanup; the verification build output was also archived as `archive_cleanup/dist_after_build_check/`.
+- Replaced the news page's old fallback mock news with a trusted-source RSS flow and source guide fallback. The right-side news card now explains sources instead of reading method. Link vault saves are deduped, news save buttons show saved state, and the floating link vault panel is constrained to the viewport with safer text wrapping.
 
 ## Notes For Next Codex
 

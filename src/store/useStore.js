@@ -249,14 +249,26 @@ const useStore = create(
       // Link vault stores article URLs without spending API tokens.
       linkVault: [],
 
-      addLinkItem: (item) => set((s) => ({
-        linkVault: [{
+      addLinkItem: (item) => {
+        const normalizeUrl = (url = '') => String(url).trim().replace(/#.*$/, '').replace(/\/$/, '').toLowerCase()
+        const nextUrl = normalizeUrl(item.url)
+        const nextTitle = String(item.title || item.note || '').trim().toLowerCase()
+        const existing = get().linkVault.find(saved => {
+          const savedUrl = normalizeUrl(saved.url)
+          const savedTitle = String(saved.title || saved.note || '').trim().toLowerCase()
+          return (nextUrl && savedUrl === nextUrl) || (!nextUrl && nextTitle && savedTitle === nextTitle)
+        })
+        if (existing) return { saved: false, item: existing }
+
+        const nextItem = {
           ...item,
           id: item.id || `link_${Date.now()}`,
           status: item.status || 'unread',
           createdAt: item.createdAt || new Date().toISOString(),
-        }, ...s.linkVault]
-      })),
+        }
+        set((s) => ({ linkVault: [nextItem, ...s.linkVault] }))
+        return { saved: true, item: nextItem }
+      },
 
       updateLinkItem: (id, patch) => set((s) => ({
         linkVault: s.linkVault.map(item => item.id === id ? { ...item, ...patch } : item)

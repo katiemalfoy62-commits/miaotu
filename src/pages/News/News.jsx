@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, ChevronUp, Copy, ExternalLink, MessageCircle, Plus } from 'lucide-react'
+import { Check, ChevronDown, ChevronUp, Copy, ExternalLink, MessageCircle, Plus } from 'lucide-react'
 import useStore from '../../store/useStore'
 import { callClaude, extractText, getNewsStylePrompt } from '../../utils/claude'
 import { buildLinkPrompt, copyText } from '../../utils/gptPrompt'
+import { describeNewsSources, SOURCE_GUIDE_ITEMS } from '../../data/newsSources'
+import { fetchTrustedAiNews } from '../../utils/newsFeeds'
 
 function isReliableUrl(url) {
   if (!url) return false
@@ -31,7 +33,6 @@ function isReliableUrl(url) {
     if (genericPaths.has(lowerPath)) return false
     if (/\/(news|blog|technology|category|tag|tags|search)$/.test(lowerPath)) return false
     if (parsed.hostname.includes('woshipm.com') && !/\/[a-z]+\/\d+\.html$/i.test(path)) return false
-    if (parsed.hostname.includes('openai.com') && !lowerPath.startsWith('/index/')) return false
     if (parsed.hostname.includes('anthropic.com') && !lowerPath.startsWith('/news/')) return false
     if (parsed.hostname.includes('blog.google') && lowerPath.split('/').filter(Boolean).length < 3) return false
     return true
@@ -49,13 +50,32 @@ function normalizeNewsItems(items) {
     }))
 }
 
+function linkKey(url = '') {
+  return String(url).trim().replace(/#.*$/, '').replace(/\/$/, '').toLowerCase()
+}
+
+function formatSourceMeta(item, lang) {
+  const date = item.publishedAt ? new Date(item.publishedAt) : null
+  const validDate = date && !Number.isNaN(date.getTime())
+  const dateText = validDate
+    ? date.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { month: 'short', day: 'numeric' })
+    : ''
+  return [item.source, dateText].filter(Boolean).join(' · ')
+}
+
 function NewsItem({ item, index }) {
-  const { user, addLinkItem } = useStore()
+  const { user, addLinkItem, linkVault = [] } = useStore()
   const lang = user.settings.language
   const [expanded, setExpanded] = useState(false)
   const [explanation, setExplanation] = useState(item.explanation || '')
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [savedFlash, setSavedFlash] = useState(false)
+  const canOpenLink = item.isSourceGuide || isReliableUrl(item.url)
+  const isSaved = useMemo(() => {
+    const key = linkKey(item.url)
+    return Boolean(key && linkVault.some(saved => linkKey(saved.url) === key))
+  }, [item.url, linkVault])
 
   async function loadExplanation() {
     if (explanation) {
@@ -103,14 +123,18 @@ function NewsItem({ item, index }) {
   }
 
   function saveLink() {
-    if (!isReliableUrl(item.url)) return
-    addLinkItem({ url: item.url, title: item.title, note: item.summary, status: 'unread' })
+    if (!canOpenLink) return
+    addLinkItem({ url: item.url, title: item.title, note: item.summary, status: 'unread', source: item.source })
+    setSavedFlash(true)
+    window.dispatchEvent(new CustomEvent('miaotu:link-saved'))
+    setTimeout(() => setSavedFlash(false), 1600)
   }
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className="card overflow-hidden">
       <button className="w-full p-4 text-left flex items-start gap-3 hover:bg-border-light/30 transition-colors" onClick={loadExplanation}>
         <div className="flex-1 min-w-0">
+          {formatSourceMeta(item, lang) && <div className="news-source-meta">{formatSourceMeta(item, lang)}</div>}
           <div className="font-bold text-sm leading-snug mb-1.5">{item.title}</div>
           <div className="text-xs text-gray-500 leading-relaxed line-clamp-2">{item.summary}</div>
         </div>
@@ -126,9 +150,9 @@ function NewsItem({ item, index }) {
                 <p className="pt-3 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">{explanation}</p>
               )}
               <div className="flex flex-wrap gap-2">
-                {isReliableUrl(item.url) ? (
+                {canOpenLink ? (
                   <a href={item.url} target="_blank" rel="noopener noreferrer" className="quick-button">
-                    <ExternalLink size={13} /> 原文链接
+                    <ExternalLink size={13} /> {item.isSourceGuide ? '打开来源' : '原文链接'}
                   </a>
                 ) : (
                   <span className="quick-button opacity-60">暂无可靠原文链接</span>
@@ -136,8 +160,8 @@ function NewsItem({ item, index }) {
                 <button type="button" onClick={copyPrompt} className="quick-button">
                   <Copy size={13} /> {copied ? '已复制' : '复制 GPT Prompt'}
                 </button>
-                <button type="button" onClick={saveLink} className="quick-button">
-                  <Plus size={13} /> 存入资料夹
+                <button type="button" onClick={saveLink} disabled={!canOpenLink || isSaved} className={`quick-button ${isSaved ? 'quick-button--saved' : ''}`}>
+                  {isSaved ? <Check size={13} /> : <Plus size={13} />} {savedFlash ? '已存入资料夹' : isSaved ? '已存入' : '存入资料夹'}
                 </button>
                 <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('miaotu:open-oldcat'))} className="quick-button">
                   <MessageCircle size={13} /> 问老猫
@@ -165,26 +189,14 @@ export default function News() {
     setLoading(true)
     setError('')
     try {
-      const res = await callClaude({
-        messages: [{
-          role: 'user',
-          content: '请搜索最近 24-72 小时内 5 条重要 AI 行业新闻，必须返回具体原文文章链接，不要返回官网首页、新闻列表页、标签页、搜索页或栏目页。如果找不到具体文章链接，url 留空。返回 JSON 数组：[{"title":"","summary":"","url":""}]，不要有其他内容。',
-        }],
-        system: '你是 AI 新闻编辑，筛选对 AI 产品经理有学习价值的新闻。url 必须是可直接打开具体新闻原文的文章页，不能是站点首页、新闻中心、博客首页、分类页或聚合页。',
-        maxTokens: 1200,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        apiKey: user.settings.apiKey,
-        modelMode: user.settings.modelMode,
-      })
-      const text = extractText(res)
-      const match = text.match(/\[[\s\S]*\]/)
-      const items = normalizeNewsItems(match ? JSON.parse(match[0]) : MOCK_NEWS)
+      const items = normalizeNewsItems(await fetchTrustedAiNews(5))
+      if (items.length === 0) throw new Error('NO_FEED_ITEMS')
       setNews(prev => [...prev, ...items.map((item, i) => ({ ...item, id: `${Date.now()}_${i}` }))])
       addExp(2)
       recordActivity()
     } catch {
-      setError('无法实时获取新闻，先展示示例新闻。设置 API Key 后可获取最新内容。')
-      setNews(normalizeNewsItems(MOCK_NEWS))
+      setError('暂时没有拉到实时 RSS 内容，先展示固定来源入口；点原文可直接去对应站点查看最新 AI 动态。')
+      setNews(SOURCE_GUIDE_ITEMS)
     } finally {
       setLoading(false)
     }
@@ -207,18 +219,10 @@ export default function News() {
         </div>
         <aside className="w-56 flex-shrink-0 space-y-4">
           <div className="card p-4">
-            <div className="text-xs font-bold text-gray-500 mb-2">今日读法</div>
-            <p className="text-sm leading-relaxed text-gray-700">每条新闻现在会按 PREP 导读：先观点，再理由，再细节，最后回到 AI PM 启发。重点还是打开原文看。</p>
+            <div className="text-xs font-bold text-gray-500 mb-2">今日来源</div>
+            <p className="text-sm leading-relaxed text-gray-700">{describeNewsSources(lang)}</p>
           </div>
         </aside>
       </div>
   )
 }
-
-const MOCK_NEWS = [
-  { id: 1, title: 'OpenAI 发布最新模型与开发者工具更新', summary: 'OpenAI 持续更新多模态模型、工具调用与开发者平台能力，AI 应用开发门槛进一步降低。', url: '' },
-  { id: 2, title: 'Anthropic 更新 Claude 系列能力', summary: 'Claude 在代码、长上下文和 Agent 能力上继续强化，面向企业工作流的产品化趋势更明显。', url: '' },
-  { id: 3, title: 'Google Gemini 面向更多企业场景开放', summary: 'Google 继续推进 Gemini 在 Workspace、云服务和企业 AI 场景中的集成。', url: '' },
-  { id: 4, title: 'AI Agent 产品进入工作流落地阶段', summary: '越来越多 AI Agent 从演示型能力转向真实业务流程，产品经理需要关注任务闭环和可控性。', url: '' },
-  { id: 5, title: 'AI 产品经理岗位持续升温', summary: '企业对懂产品、懂数据、懂 AI 能力边界的人才需求上升，面试更强调结构化表达和真实项目判断。', url: '' },
-]

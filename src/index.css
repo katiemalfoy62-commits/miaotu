@@ -3158,10 +3158,12 @@ button:hover .interviewer-clay {
 
 .link-vault-panel {
   position: fixed;
-  right: 1rem;
+  right: max(1rem, env(safe-area-inset-right));
   top: 7rem;
   z-index: 52;
-  width: min(23rem, calc(100vw - 2rem));
+  box-sizing: border-box;
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: min(42rem, calc(100vh - 8rem));
   overflow: hidden;
   border: 1px solid var(--clay-border);
   border-radius: 1.45rem;
@@ -3176,6 +3178,10 @@ button:hover .interviewer-clay {
   gap: 1rem;
   border-bottom: 1px solid rgba(219, 189, 147, 0.55);
   padding: 1rem;
+}
+
+.link-vault-head > div {
+  min-width: 0;
 }
 
 .link-vault-head strong,
@@ -3207,7 +3213,28 @@ button:hover .interviewer-clay {
 .link-vault-body {
   display: grid;
   gap: 0.75rem;
+  max-height: calc(min(42rem, 100vh - 8rem) - 4.25rem);
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem;
+}
+
+.link-vault-body > * {
+  min-width: 0;
+}
+
+.link-vault-saved-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 1px solid rgba(106, 166, 112, 0.28);
+  border-radius: 999px;
+  background: rgba(235, 250, 232, 0.88);
+  padding: 0.45rem 0.7rem;
+  color: #3f8d4a;
+  font-size: 0.78rem;
+  font-weight: 950;
 }
 
 .link-vault-list {
@@ -3240,21 +3267,60 @@ button:hover .interviewer-clay {
   border-radius: 0.85rem;
   background: #fffaf0;
   padding: 0.55rem 0.65rem;
+  min-width: 0;
 }
 
 .link-vault-item span {
+  display: -webkit-box;
+  min-width: 0;
   overflow: hidden;
   color: #5d5146;
   font-size: 0.78rem;
   font-weight: 850;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
 }
 
 .link-vault-item div {
   display: flex;
   gap: 0.35rem;
   flex-shrink: 0;
+}
+
+.news-source-meta {
+  margin-bottom: 0.35rem;
+  color: #c06b35;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.quick-button--saved,
+.quick-button:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.quick-button--saved {
+  border-color: rgba(106, 166, 112, 0.35);
+  background: rgba(238, 251, 234, 0.86);
+  color: #4f8f4c;
+}
+
+@media (max-width: 720px) {
+  .link-vault-panel {
+    right: 0.75rem;
+    left: 0.75rem;
+    top: auto;
+    bottom: 1rem;
+    width: auto;
+    max-height: min(34rem, calc(100vh - 2rem));
+  }
+
+  .link-vault-body {
+    max-height: calc(min(34rem, 100vh - 2rem) - 4.25rem);
+  }
 }
 
 .oldcat-gpt-tools {
