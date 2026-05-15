@@ -204,6 +204,8 @@ Current product state:
 - Increased guided-tour paw contrast with stronger outlines, darker pads, and layered shadow so it stays visible on warm light cards.
 - Replaced the growth-map detail highlight with a softer spotlight-only class instead of the generic tutorial frame, added route-return tour-index syncing plus repeated delayed scrolling, and inserted a dedicated Kitten Corner/treehole step after Mentor Cat closes.
 - Browser QA after this polish: build passed; Playwright verified map spotlight-only mode, route-return auto-scroll from News to Tasks, Old Cat closing before the treehole step, and the paw landing on the treehole heart. Existing React Router future-flag warnings remain.
+- Simplified the growth-map detail highlight further: the map panel is only lifted above the dim layer with no extra frame, glow, or shadow. Homepage internal tour exits now advance immediately for wardrobe/shop/archive links in the cat card and the breakthrough card, and closing Mentor Cat advances to the treehole step.
+- Browser QA after this step-advance fix: build passed; Playwright verified plain-lit map styling, cat-to-wardrobe advancing to Mentor Cat, breakthrough advancing to the next step, and Mentor Cat outside-close advancing to the treehole highlight. Existing React Router future-flag warnings remain.
 
 ## Notes For Next Codex
 

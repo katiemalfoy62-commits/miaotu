@@ -312,6 +312,19 @@ export default function Home() {
   }, [tourStep?.key])
 
   useEffect(() => {
+    function continueAfterOldCatClose() {
+      if (!showTour || tourStep?.key !== 'mentor') return
+      const nextIndex = Math.min(tourIndex + 1, TOUR_STEPS.length - 1)
+      setTourPhase('prompt')
+      setTourIndex(nextIndex)
+      setHomeTourStep(nextIndex)
+    }
+
+    window.addEventListener('miaotu:oldcat-closed', continueAfterOldCatClose)
+    return () => window.removeEventListener('miaotu:oldcat-closed', continueAfterOldCatClose)
+  }, [showTour, tourIndex, tourStep?.key, setHomeTourStep])
+
+  useEffect(() => {
     if (!showTour || !tourStep) {
       setPawPoint(null)
       return undefined
@@ -429,12 +442,16 @@ export default function Home() {
     setTourPhase('prompt')
   }
 
+  function continueTourFrom(key) {
+    continueTourAfterModule(key)
+  }
+
   return (
     <div className={`home-shell clay-home ${showTour ? 'home-tour-active' : ''}`}>
       <section className={`clay-hero-panel ${mapOpen ? 'clay-hero-panel-map' : ''} ${tourClass('hero')}`}>
         {mapOpen && (
           <div
-            className={`growth-map-panel ${showTour && tourStep?.key === 'hero' && tourPhase === 'detail' ? 'tour-map-spotlight' : ''}`}
+            className={`growth-map-panel ${showTour && tourStep?.key === 'hero' && tourPhase === 'detail' ? 'tour-map-lit' : ''}`}
             data-tour-target="growth-map"
           >
             <div className="growth-map-head">
@@ -591,7 +608,7 @@ export default function Home() {
           >
             <div className="clay-cat-scene">
               <span className="clay-stage-plant">🌱</span>
-              <Link to="/wardrobe" title={t('clickToWardrobe', lang)} className="clay-cat-link" data-tour-target="cat-avatar">
+              <Link to="/wardrobe" title={t('clickToWardrobe', lang)} className="clay-cat-link" data-tour-target="cat-avatar" onClick={() => continueTourFrom('cat')}>
                 <LayeredCat
                   catConfig={user.catConfig}
                   level={user.level}
@@ -600,7 +617,7 @@ export default function Home() {
                 />
               </Link>
               <ClayIcon name="fish" className="clay-stage-fish-icon" alt="" />
-              <Link to="/wardrobe" className="wardrobe-link">
+              <Link to="/wardrobe" className="wardrobe-link" onClick={() => continueTourFrom('cat')}>
                 {t('clickToWardrobe', lang)}
               </Link>
             </div>
@@ -636,14 +653,14 @@ export default function Home() {
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <Link to="/shop">
+                <Link to="/shop" onClick={() => continueTourFrom('cat')}>
                   <button className="fish-button">
                     <Fish size={19} />
                     <strong>{user.fish}</strong>
                     <span>{t('fishCount', lang)}</span>
                   </button>
                 </Link>
-                <Link to="/archive">
+                <Link to="/archive" onClick={() => continueTourFrom('cat')}>
                   <button className="archive-button">
                     <BookOpen size={18} />
                     {t('growthArchive', lang)}
@@ -686,7 +703,7 @@ export default function Home() {
             </div>
             <div className="mt-4 flex items-center justify-between">
               <Link to="/trehole" onClick={() => continueTourAfterModule('treehole')}>
-                <button className={`treehole-button ${tourClass('treehole')}`} data-tour-target="treehole" title={lang === 'zh' ? '小猫树洞' : 'Kitten Corner'}>
+                <button className={`treehole-button ${showTour && tourStep?.key === 'treehole' ? 'tour-highlight' : ''}`} data-tour-target="treehole" title={lang === 'zh' ? '小猫树洞' : 'Kitten Corner'}>
                   <Heart size={17} />
                 </button>
               </Link>
@@ -703,7 +720,7 @@ export default function Home() {
             className={`side-card growth-card clay-side-card ${tourClass('archive')}`}
             data-tour-target="archive"
           >
-            <Link to="/breakthrough" className="home-breakthrough-card" data-tour-target="breakthrough-card">
+            <Link to="/breakthrough" className="home-breakthrough-card" data-tour-target="breakthrough-card" onClick={() => continueTourFrom('archive')}>
               <div>
                 <span>专项攻破</span>
                 <strong>爆破猫咪</strong>

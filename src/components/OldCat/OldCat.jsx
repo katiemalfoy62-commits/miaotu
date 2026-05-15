@@ -30,13 +30,20 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
   const apiKey = user.settings.apiKey
   const modelMode = user.settings.modelMode || 'balanced'
 
+  function closePanel({ notify = true } = {}) {
+    setOpen(false)
+    setFullscreen(false)
+    if (notify) {
+      window.dispatchEvent(new CustomEvent('miaotu:oldcat-closed'))
+    }
+  }
+
   useEffect(() => {
     const openOldCat = () => {
       if (!disabledReason) setOpen(true)
     }
     const closeOldCat = () => {
-      setOpen(false)
-      setFullscreen(false)
+      closePanel({ notify: false })
     }
     window.addEventListener('miaotu:open-oldcat', openOldCat)
     window.addEventListener('miaotu:close-oldcat', closeOldCat)
@@ -47,8 +54,7 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
   }, [disabledReason])
 
   useEffect(() => {
-    setOpen(false)
-    setFullscreen(false)
+    closePanel({ notify: false })
   }, [location.pathname])
 
   useEffect(() => {
@@ -56,8 +62,7 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
 
     function closeOnOutsidePointer(event) {
       if (panelRef.current?.contains(event.target)) return
-      setOpen(false)
-      setFullscreen(false)
+      closePanel()
     }
 
     document.addEventListener('mousedown', closeOnOutsidePointer)
@@ -251,7 +256,7 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
               <button onClick={() => setFullscreen(f => !f)} className="p-1.5 rounded-full hover:bg-border-light dark:hover:bg-border-dark transition-colors" title={fullscreen ? '退出全屏' : '一键全屏'}>
                 {fullscreen ? <Minimize2 size={16}/> : <Maximize2 size={16}/>}
               </button>
-              <button onClick={() => { setOpen(false); setFullscreen(false) }} className="p-1.5 rounded-full hover:bg-border-light dark:hover:bg-border-dark transition-colors">
+              <button onClick={() => closePanel()} className="p-1.5 rounded-full hover:bg-border-light dark:hover:bg-border-dark transition-colors">
                 <X size={16}/>
               </button>
             </div>
