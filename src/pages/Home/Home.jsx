@@ -268,6 +268,7 @@ export default function Home() {
   const [tourIndex, setTourIndex] = useState(() => Math.min(user.homeTourStep || 0, TOUR_STEPS.length - 1))
   const [tourPhase, setTourPhase] = useState('prompt')
   const [pawPoint, setPawPoint] = useState(null)
+  const [manualTourReplay, setManualTourReplay] = useState(false)
   const tourStep = TOUR_STEPS[tourIndex]
   const tourDetailActive = showTour && tourPhase === 'detail'
   const heroMapOnlyActive = tourDetailActive && tourStep?.key === 'hero'
@@ -288,6 +289,11 @@ export default function Home() {
       setTourPhase('prompt')
     }
   }, [showTour, user.homeTourDone, user.homeTourStep, tourIndex])
+
+  useEffect(() => {
+    if (!showTour || manualTourReplay || user.homeTourDone === true) return
+    setHomeTourDone(true)
+  }, [showTour, manualTourReplay, user.homeTourDone, setHomeTourDone])
 
   useEffect(() => {
     document.documentElement.classList.toggle('miaotu-home-tour-active', showTour)
@@ -390,6 +396,7 @@ export default function Home() {
 
   function closeTour(done = true) {
     setShowTour(false)
+    setManualTourReplay(false)
     if (done) setHomeTourDone(true)
   }
 
@@ -404,6 +411,7 @@ export default function Home() {
     setTourPhase('prompt')
     setMapOpen(false)
     setHomeTourStep(0)
+    setManualTourReplay(true)
     setShowTour(true)
     setHomeTourDone(false)
   }
