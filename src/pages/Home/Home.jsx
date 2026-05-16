@@ -65,6 +65,30 @@ const MODULES = [
     labelEn: 'Mock',
     tone: 'module-sky',
   },
+  {
+    key: 'classroom',
+    iconKey: 'diary',
+    path: '/classroom',
+    titleZh: '小猫课堂',
+    titleEn: 'Kitten Classroom',
+    descZh: '先学 AI 和 PM 基础概念',
+    descEn: 'Learn AI and PM basics first',
+    labelZh: '先补课',
+    labelEn: 'Learn',
+    tone: 'module-cream',
+  },
+  {
+    key: 'workshop',
+    iconKey: 'archive',
+    path: '/workshop',
+    titleZh: '造物工坊',
+    titleEn: 'Maker Workshop',
+    descZh: '从 idea 练完整产品流程',
+    descEn: 'Practice a full product flow',
+    labelZh: '0 到 1',
+    labelEn: '0 to 1',
+    tone: 'module-rose',
+  },
 ]
 
 const ABILITY_LABELS = {
@@ -224,12 +248,12 @@ function ModuleCard({ mod, lang, index, highlighted = false, onTourOpen }) {
             <div>
               <div className="mb-2 flex items-center gap-2">
                 <h3 className="text-2xl font-black tracking-tight text-stone-900 dark:text-stone-50">
-                  {t(mod.titleKey, lang)}
+                  {lang === 'zh' ? (mod.titleZh || t(mod.titleKey, lang)) : (mod.titleEn || t(mod.titleKey, lang))}
                 </h3>
                 <ChevronRight size={22} className="translate-y-0.5 opacity-55" />
               </div>
               <p className="max-w-[18rem] text-base font-bold leading-relaxed text-stone-600 dark:text-stone-300">
-                {t(mod.descKey, lang)}
+                {lang === 'zh' ? (mod.descZh || t(mod.descKey, lang)) : (mod.descEn || t(mod.descKey, lang))}
               </p>
             </div>
           </div>

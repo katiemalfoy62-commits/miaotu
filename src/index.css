@@ -4672,3 +4672,548 @@ button:hover .interviewer-clay {
 .dark .text-stone-950 {
   color: #f2f2f2 !important;
 }
+
+.module-cream {
+  background: linear-gradient(135deg, #fff8df, #f6edcf);
+  color: #b8852f;
+}
+
+.module-rose {
+  background: linear-gradient(135deg, #ffe9e2, #f8d0c5);
+  color: #c96d55;
+}
+
+.dark .module-cream {
+  --module-accent: #d9aa65;
+  color: #d9aa65;
+}
+
+.dark .module-rose {
+  --module-accent: #d48673;
+  color: #e09a88;
+}
+
+.classroom-shell,
+.workshop-shell {
+  width: min(74rem, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.classroom-hero,
+.workshop-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 8rem 9rem;
+  align-items: center;
+  gap: 1rem;
+  overflow: hidden;
+  padding: 1.35rem;
+  background:
+    radial-gradient(circle at 74% 24%, rgba(244, 207, 121, 0.30), transparent 12rem),
+    linear-gradient(135deg, rgba(255,250,238,0.96), rgba(255,240,213,0.78));
+  box-shadow: 0 20px 48px rgba(87,52,22,0.10), inset 0 1px 0 rgba(255,255,255,0.88);
+}
+
+.classroom-hero h1,
+.workshop-hero h1 {
+  margin-top: 0.25rem;
+  color: #21170f;
+  font-size: clamp(2.25rem, 4.5vw, 3.8rem);
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.classroom-hero p,
+.workshop-hero p {
+  margin-top: 0.75rem;
+  max-width: 44rem;
+  color: #6f6258;
+  font-weight: 850;
+  line-height: 1.75;
+}
+
+.classroom-hero-cat,
+.workshop-hero-cat {
+  width: 7.5rem;
+  height: 7.5rem;
+  object-fit: contain;
+}
+
+.classroom-progress,
+.workshop-stats {
+  border: 1px solid rgba(219, 189, 147, 0.66);
+  border-radius: 1.25rem;
+  background: rgba(255,255,255,0.68);
+  padding: 0.9rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+}
+
+.classroom-progress span,
+.workshop-stats span {
+  display: block;
+  color: #8c7a68;
+  font-size: 0.78rem;
+  font-weight: 1000;
+}
+
+.classroom-progress strong,
+.workshop-stats strong {
+  display: block;
+  color: #c8622a;
+  font-size: 2.1rem;
+  font-weight: 1000;
+}
+
+.classroom-progress i {
+  display: block;
+  overflow: hidden;
+  height: 0.72rem;
+  border-radius: 999px;
+  background: #eadfce;
+}
+
+.classroom-progress b {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #c8622a, #e8a870, #f3d27b);
+}
+
+.classroom-grid,
+.workshop-layout {
+  display: grid;
+  grid-template-columns: 17rem minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.classroom-paths,
+.workshop-ideas {
+  position: sticky;
+  top: 6rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.classroom-path,
+.workshop-idea-card {
+  border: 1px solid rgba(219, 189, 147, 0.65);
+  border-radius: 1.2rem;
+  background: rgba(255,250,241,0.86);
+  padding: 0.95rem;
+  text-align: left;
+  box-shadow: 0 10px 22px rgba(87,52,22,0.07), inset 0 1px 0 rgba(255,255,255,0.82);
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.classroom-path:hover,
+.classroom-path.is-active,
+.workshop-idea-card:hover,
+.workshop-idea-card.is-active {
+  transform: translateY(-2px);
+  border-color: rgba(200, 98, 42, 0.55);
+  background: #fff4df;
+}
+
+.classroom-path strong,
+.classroom-path span,
+.workshop-idea-card strong,
+.workshop-idea-card span {
+  display: block;
+}
+
+.classroom-path strong,
+.workshop-idea-card strong {
+  color: #2a1d14;
+  font-size: 1rem;
+  font-weight: 1000;
+}
+
+.classroom-path span,
+.workshop-idea-card span {
+  margin-top: 0.4rem;
+  color: #7c6b5b;
+  font-size: 0.78rem;
+  font-weight: 830;
+  line-height: 1.6;
+}
+
+.classroom-path--mint.is-active {
+  background: #e9f7df;
+}
+
+.classroom-path--sky.is-active {
+  background: #e8f1ff;
+}
+
+.classroom-main,
+.workshop-main {
+  min-width: 0;
+}
+
+.classroom-main {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.classroom-lesson-list {
+  display: grid;
+  align-content: start;
+  gap: 0.55rem;
+}
+
+.classroom-lesson-tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  border-radius: 0.9rem;
+  padding: 0.68rem 0.75rem;
+  color: #7c6b5b;
+  font-size: 0.82rem;
+  font-weight: 950;
+  text-align: left;
+}
+
+.classroom-lesson-tab:hover,
+.classroom-lesson-tab.is-active {
+  background: #fff2df;
+  color: #c8622a;
+}
+
+.classroom-article {
+  min-width: 0;
+  border-radius: 1.2rem;
+  background: rgba(255,248,234,0.74);
+  padding: 1.1rem;
+}
+
+.classroom-article-head span {
+  color: #c8622a;
+  font-size: 0.76rem;
+  font-weight: 1000;
+}
+
+.classroom-article h2,
+.workshop-brief h2,
+.workshop-flow h2,
+.workshop-feedback h2,
+.workshop-reference h2 {
+  color: #2a1d14;
+  font-size: 1.35rem;
+  font-weight: 1000;
+  line-height: 1.25;
+}
+
+.classroom-article-head p,
+.classroom-body,
+.classroom-points div,
+.classroom-takeaway strong {
+  color: #5f5146;
+  font-weight: 820;
+  line-height: 1.75;
+}
+
+.classroom-body {
+  margin-top: 1rem;
+}
+
+.classroom-points {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.classroom-points div {
+  display: flex;
+  gap: 0.45rem;
+  border-radius: 0.9rem;
+  background: rgba(255,255,255,0.64);
+  padding: 0.7rem;
+}
+
+.classroom-takeaway {
+  margin-top: 1rem;
+  border-left: 4px solid #c8622a;
+  border-radius: 0.85rem;
+  background: #fff2df;
+  padding: 0.8rem;
+}
+
+.classroom-takeaway span {
+  display: block;
+  color: #c8622a;
+  font-size: 0.75rem;
+  font-weight: 1000;
+}
+
+.classroom-takeaway strong {
+  display: block;
+  margin-top: 0.3rem;
+}
+
+.classroom-done-button,
+.workshop-review-button {
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.classroom-done-button.is-done {
+  background: #87b882;
+}
+
+.workshop-main {
+  display: grid;
+  gap: 1rem;
+}
+
+.workshop-brief,
+.workshop-flow,
+.workshop-feedback,
+.workshop-reference {
+  padding: 1.1rem;
+}
+
+.workshop-brief {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.workshop-brief > div:first-child span,
+.workshop-flow-head span {
+  color: #c8622a;
+  font-size: 0.78rem;
+  font-weight: 1000;
+}
+
+.workshop-brief p,
+.workshop-context-grid p,
+.workshop-step small,
+.workshop-reference li,
+.workshop-feedback p {
+  color: #5f5146;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.workshop-refresh {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid rgba(219, 189, 147, 0.75);
+  border-radius: 999px;
+  background: #fffaf1;
+  padding: 0.55rem 0.8rem;
+  color: #a95525;
+  font-size: 0.78rem;
+  font-weight: 1000;
+}
+
+.workshop-context-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.workshop-context-grid article,
+.workshop-feedback-grid article {
+  border-radius: 1rem;
+  background: rgba(255,248,234,0.78);
+  padding: 0.85rem;
+}
+
+.workshop-context-grid b,
+.workshop-feedback-grid b {
+  display: block;
+  color: #a95525;
+  font-size: 0.8rem;
+  font-weight: 1000;
+}
+
+.workshop-flow-head,
+.workshop-feedback {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.workshop-flow-head em {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #5a9b66;
+  font-size: 0.8rem;
+  font-style: normal;
+  font-weight: 1000;
+}
+
+.workshop-step-list {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.workshop-step {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.workshop-step span {
+  color: #2a1d14;
+  font-size: 0.95rem;
+  font-weight: 1000;
+}
+
+.workshop-step textarea {
+  min-height: 6.8rem;
+  resize: vertical;
+  border: 1px solid rgba(219, 189, 147, 0.72);
+  border-radius: 1rem;
+  background: rgba(255,255,255,0.70);
+  padding: 0.85rem;
+  color: #3e3026;
+  font-weight: 800;
+  line-height: 1.65;
+  outline: none;
+}
+
+.workshop-step textarea:focus {
+  border-color: rgba(200, 98, 42, 0.82);
+  box-shadow: 0 0 0 3px rgba(200, 98, 42, 0.10);
+}
+
+.workshop-review-button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.workshop-feedback-score {
+  min-width: 7rem;
+  border-radius: 1.2rem;
+  background: linear-gradient(135deg, #fff1bf, #ffe6a0);
+  padding: 1rem;
+  text-align: center;
+}
+
+.workshop-feedback-score span,
+.workshop-feedback-score strong {
+  display: block;
+}
+
+.workshop-feedback-score span {
+  color: #8c7a68;
+  font-size: 0.78rem;
+  font-weight: 1000;
+}
+
+.workshop-feedback-score strong {
+  color: #c8622a;
+  font-size: 3rem;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.workshop-feedback-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.workshop-feedback-grid {
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.workshop-reference ol {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.55rem;
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+
+.dark .classroom-hero,
+.dark .workshop-hero,
+.dark .classroom-main,
+.dark .workshop-brief,
+.dark .workshop-flow,
+.dark .workshop-feedback,
+.dark .workshop-reference {
+  border-color: rgba(255,255,255,0.08);
+  background: #2a2a2a;
+}
+
+.dark .classroom-hero h1,
+.dark .workshop-hero h1,
+.dark .classroom-article h2,
+.dark .workshop-brief h2,
+.dark .workshop-flow h2,
+.dark .workshop-feedback h2,
+.dark .workshop-reference h2,
+.dark .workshop-step span,
+.dark .classroom-path strong,
+.dark .workshop-idea-card strong {
+  color: #f2f2f2;
+}
+
+.dark .classroom-hero p,
+.dark .workshop-hero p,
+.dark .classroom-article-head p,
+.dark .classroom-body,
+.dark .classroom-points div,
+.dark .classroom-takeaway strong,
+.dark .workshop-brief p,
+.dark .workshop-context-grid p,
+.dark .workshop-step small,
+.dark .workshop-reference li,
+.dark .workshop-feedback p,
+.dark .classroom-path span,
+.dark .workshop-idea-card span {
+  color: #c0c0c0;
+}
+
+.dark .classroom-path,
+.dark .workshop-idea-card,
+.dark .classroom-article,
+.dark .workshop-context-grid article,
+.dark .workshop-feedback-grid article,
+.dark .classroom-points div,
+.dark .classroom-takeaway,
+.dark .workshop-refresh {
+  border-color: rgba(255,255,255,0.08);
+  background: #303030;
+}
+
+.dark .classroom-lesson-tab:hover,
+.dark .classroom-lesson-tab.is-active {
+  background: #333333;
+}
+
+@media (max-width: 900px) {
+  .classroom-hero,
+  .workshop-hero,
+  .classroom-grid,
+  .workshop-layout,
+  .classroom-main,
+  .workshop-feedback {
+    grid-template-columns: 1fr;
+  }
+
+  .classroom-paths,
+  .workshop-ideas {
+    position: static;
+  }
+
+  .workshop-context-grid,
+  .workshop-feedback-grid {
+    grid-template-columns: 1fr;
+  }
+}

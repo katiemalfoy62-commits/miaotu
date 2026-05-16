@@ -321,6 +321,61 @@ const useStore = create(
         savedOldCatChats: (s.savedOldCatChats || []).filter(chat => chat.id !== id)
       })),
 
+      classroom: { completedLessons: [] },
+
+      completeLesson: (lesson) => set((s) => {
+        const completedLessons = s.classroom?.completedLessons || []
+        if (completedLessons.some(item => item.id === lesson.id)) return s
+        return {
+          classroom: {
+            ...(s.classroom || { completedLessons: [] }),
+            completedLessons: [{
+              id: lesson.id,
+              title: lesson.title,
+              path: lesson.path,
+              completedAt: new Date().toISOString(),
+            }, ...completedLessons],
+          },
+          learningRecords: [{
+            id: `lesson_${lesson.id}_${Date.now()}`,
+            type: 'classroom',
+            title: lesson.title,
+            source: '小猫课堂',
+            answer: lesson.takeaway || '',
+            score: 100,
+            createdAt: new Date().toISOString(),
+          }, ...s.learningRecords],
+        }
+      }),
+
+      workshop: { sessions: [] },
+
+      saveWorkshopSession: (session) => set((s) => {
+        const nextSession = {
+          ...session,
+          id: session.id || `workshop_${Date.now()}`,
+          createdAt: session.createdAt || new Date().toISOString(),
+        }
+        return {
+          workshop: {
+            ...(s.workshop || { sessions: [] }),
+            sessions: [nextSession, ...((s.workshop && s.workshop.sessions) || [])],
+          },
+          learningRecords: [{
+            id: `workshop_record_${nextSession.id}`,
+            type: 'workshop',
+            title: nextSession.ideaTitle || '造物工坊训练',
+            source: '造物工坊',
+            question: nextSession.ideaPrompt,
+            answer: nextSession.answer,
+            score: nextSession.score,
+            feedback: nextSession.feedback,
+            raw: nextSession,
+            createdAt: nextSession.createdAt,
+          }, ...s.learningRecords],
+        }
+      }),
+
       // ── Reset ──────────────────────────────────────────────
       resetAll: () => set({
         user: { ...defaultUser, createdAt: new Date().toISOString() },
@@ -335,6 +390,8 @@ const useStore = create(
         linkVault: [],
         breakthrough: { sessions: [] },
         savedOldCatChats: [],
+        classroom: { completedLessons: [] },
+        workshop: { sessions: [] },
       }),
     }),
     {
@@ -352,6 +409,8 @@ const useStore = create(
         linkVault: state.linkVault,
         breakthrough: state.breakthrough,
         savedOldCatChats: state.savedOldCatChats,
+        classroom: state.classroom,
+        workshop: state.workshop,
       }),
     }
   )

@@ -6,6 +6,8 @@ import News from './pages/News/News'
 import Tasks from './pages/Tasks/Tasks'
 import Training from './pages/Training/Training'
 import Interview from './pages/Interview/Interview'
+import Classroom from './pages/Classroom/Classroom'
+import Workshop from './pages/Workshop/Workshop'
 import Archive from './pages/Archive/Archive'
 import WrongBook from './pages/Archive/WrongBook'
 import Diary from './pages/Archive/Diary'
@@ -49,6 +51,8 @@ export default function App() {
                 <Route path="/news" element={<News/>}/>
                 <Route path="/tasks" element={<Tasks/>}/>
                 <Route path="/training" element={<Training/>}/>
+                <Route path="/classroom" element={<Classroom/>}/>
+                <Route path="/workshop" element={<Workshop/>}/>
                 <Route path="/breakthrough" element={<Breakthrough/>}/>
                 <Route path="/interview" element={<Interview/>}/>
                 <Route path="/interview/session" element={<Interview/>}/>

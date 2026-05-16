@@ -73,6 +73,8 @@ The app is a working Vite React single-page app deployed on Vercel. Main routes 
 - `/news`: AI news reading and PREP-style summaries
 - `/tasks`: daily commissioned tasks
 - `/training`: structured thinking drills
+- `/classroom`: 小猫课堂, lightweight AI/PM concept lessons for zero-basic learners
+- `/workshop`: 造物工坊, product idea-to-flow practice with Old Cat feedback
 - `/breakthrough`: targeted five-question drill
 - `/interview` and `/interview/session`: mock interview setup/session/report
 - `/archive`, `/archive/wrongbook`, `/archive/diary`, `/archive/interviews`: growth archive areas
@@ -117,10 +119,14 @@ Current product state:
 - `src/pages/Onboarding/Onboarding.jsx`: current onboarding flow and Old Cat style selection.
 - `src/pages/Home/Home.jsx`: home dashboard, growth map, 9-step guided tour, auto-scroll and paw-pointer logic.
 - `src/pages/Interview/Interview.jsx`: mock interview flow, adaptive follow-up logic, interview records.
+- `src/pages/Classroom/Classroom.jsx`: concept-learning page for AI basics, PM basics, and AI product basics.
+- `src/pages/Workshop/Workshop.jsx`: product-development process training page from idea to MVP/metrics/risks.
 - `src/pages/Settings/Settings.jsx`: settings page; Old Cat style options should match onboarding.
 - `src/pages/Shop/Shop.jsx` and `src/pages/Wardrobe/Wardrobe.jsx`: fish shop and wardrobe handling.
 - `src/data/shopItems.js`: shop item definitions; terminal may show Chinese/emoji as mojibake.
 - `src/data/newsSources.js`: trusted AI news sources used by the news page and source-introduction card.
+- `src/data/classroomLessons.js`: 小猫课堂 lesson paths and lesson copy.
+- `src/data/workshopIdeas.js`: 造物工坊 idea prompts and product-flow step definitions.
 - `src/index.css`: custom visual styling, including clay dashboard, onboarding, guided tour, paw pointer, dark mode, hover states, and growth map styles.
 - `src/assets/mascots/`: clay mascot assets such as Kivi, Old Cat, breakthrough cat.
 - `src/assets/ui-clay/`: clay UI icons.
@@ -149,6 +155,8 @@ Current product state:
 - GPT handoff is intended behavior: copy prompt/open GPT actions should remain.
 - API keys are user-provided in settings/localStorage. Do not commit or hardcode private keys.
 - Reward economy should remain slow enough for long-term use.
+- 小猫课堂 is for input/learning before practice; keep lessons short, concrete, and beginner-friendly.
+- 造物工坊 is for process practice from idea to product flow; it should complement daily tasks, not replace them. Daily tasks are small work simulations, while the workshop trains the full 0-to-1 product development order.
 
 ## Known Issues
 
@@ -167,6 +175,7 @@ Current product state:
 - Previously attempted layered cat appearance caused severe alignment problems. Do not restart that path casually.
 - Task page should still be QA-tested for the reported issue where the second task answer box can become unresponsive after submitting one task.
 - Training lock/unlock behavior should be QA-tested against the intended rule: same question type low score three times locks it, lists the three causing questions, and unlocks only after a five-question breakthrough drill with each answer above 80.
+- 小猫课堂 and 造物工坊 currently have first-pass content and layout. They compile, but still need browser visual QA and future content expansion.
 
 ## Next Tasks
 
@@ -213,6 +222,7 @@ Current product state:
 - Browser QA after this step-advance fix: build passed; Playwright verified plain-lit map styling, cat-to-wardrobe advancing to Mentor Cat, breakthrough advancing to the next step, and Mentor Cat outside-close advancing to the treehole highlight. Existing React Router future-flag warnings remain.
 - Project cleanup pass moved generated artifacts and unused legacy assets/components into ignored `archive_cleanup/`: historical `output/` screenshots, old `dist/` builds, `.miaotu-server.pid`, paused `src/assets/cat-customizer/`, non-transparent stage PNGs, and unused SVG/stage components (`CatSVG.jsx`, `OldCatSVG.jsx`, `CatStageImage.jsx`). Build still passes after cleanup; the verification build output was also archived as `archive_cleanup/dist_after_build_check/`.
 - Replaced the news page's old fallback mock news with a trusted-source RSS flow and source guide fallback. The right-side news card now explains sources instead of reading method. Link vault saves are deduped, news save buttons show saved state, and the floating link vault panel is constrained to the viewport with safer text wrapping.
+- Added 小猫课堂 and 造物工坊 as two new homepage learning entrances. 小猫课堂 introduces short AI/PM foundation lessons and records completed lessons into the growth archive. 造物工坊 gives product ideas, asks the user to write the full product development flow, provides AI or local fallback feedback, and saves sessions into the growth archive. Build passed after adding both routes.
 
 ## Notes For Next Codex
 
