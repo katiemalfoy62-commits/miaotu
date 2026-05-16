@@ -396,6 +396,27 @@ const useStore = create(
     }),
     {
       name: 'miaotu_store',
+      version: 2,
+      migrate: (persistedState) => {
+        if (!persistedState?.user) return persistedState
+        const user = persistedState.user
+        const hasExistingProgress = Boolean(
+          user.onboardingDone
+          || user.catCustomized
+          || (user.catConfig && String(user.catConfig.name || '').trim())
+          || (user.level && user.level > 1)
+          || (user.exp && user.exp > 0)
+          || (user.fish && user.fish > 0)
+        )
+        if (!hasExistingProgress || user.onboardingDone) return persistedState
+        return {
+          ...persistedState,
+          user: {
+            ...user,
+            onboardingDone: true,
+          },
+        }
+      },
       partialize: (state) => ({
         user: state.user,
         stats: state.stats,

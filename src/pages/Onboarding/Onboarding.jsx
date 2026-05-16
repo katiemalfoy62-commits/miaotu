@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
@@ -57,6 +57,12 @@ export default function Onboarding() {
   const [step, setStep] = useState(0)
   const [catName, setCatName] = useState(user.catConfig?.name || '')
   const [mentorStyle, setMentorStyle] = useState(user.settings.catPersonality || 'teacher')
+
+  useEffect(() => {
+    if (user.onboardingDone) {
+      navigate('/', { replace: true })
+    }
+  }, [navigate, user.onboardingDone])
 
   function next() {
     setStep(s => Math.min(s + 1, STEPS.length - 1))

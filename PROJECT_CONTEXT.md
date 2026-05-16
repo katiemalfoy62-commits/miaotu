@@ -223,6 +223,7 @@ Current product state:
 - Project cleanup pass moved generated artifacts and unused legacy assets/components into ignored `archive_cleanup/`: historical `output/` screenshots, old `dist/` builds, `.miaotu-server.pid`, paused `src/assets/cat-customizer/`, non-transparent stage PNGs, and unused SVG/stage components (`CatSVG.jsx`, `OldCatSVG.jsx`, `CatStageImage.jsx`). Build still passes after cleanup; the verification build output was also archived as `archive_cleanup/dist_after_build_check/`.
 - Replaced the news page's old fallback mock news with a trusted-source RSS flow and source guide fallback. The right-side news card now explains sources instead of reading method. Link vault saves are deduped, news save buttons show saved state, and the floating link vault panel is constrained to the viewport with safer text wrapping.
 - Added 小猫课堂 and 造物工坊 as two new homepage learning entrances. 小猫课堂 introduces short AI/PM foundation lessons and records completed lessons into the growth archive. 造物工坊 gives product ideas, asks the user to write the full product development flow, provides AI or local fallback feedback, and saves sessions into the growth archive. Build passed after adding both routes.
+- Fixed repeat onboarding: direct visits or reloads on `/onboarding` now redirect completed users back to `/`, and persisted store migration marks existing users with cat setup/progress/rewards as `onboardingDone` so old local data does not get forced through onboarding again.
 
 ## Notes For Next Codex
 
