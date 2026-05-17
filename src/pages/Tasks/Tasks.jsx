@@ -7,6 +7,7 @@ import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import ClayIcon from '../../components/UI/ClayIcon'
 import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 import { buildTaskPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
+import { XP_REWARDS, FISH_REWARDS } from '../../config/growthRules'
 
 const MOCK_TASKS = [
   { type: 'qa', question: '请解释什么是大语言模型（LLM），它和传统 NLP 模型有什么本质区别？', difficulty: 'easy', curriculum: 'AI 基础认知' },
@@ -238,11 +239,10 @@ export default function Tasks() {
     const task = (tasks.active || []).find(t => t.id === taskId)
     if (!task) return
     const score = feedback?.totalScore || 0
-    const expMap = { easy: 4, medium: 6, hard: 8 }
-    const fishMap = { easy: 1, medium: 2, hard: 3 }
-    addExp(expMap[task.difficulty] || 4)
-    if (score >= 80) addFish((fishMap[task.difficulty] || 1) + 1)
-    else if (score >= 60) addFish(fishMap[task.difficulty] || 1)
+    const taskExp = XP_REWARDS.task[task.difficulty] || XP_REWARDS.task.easy
+    const taskFish = FISH_REWARDS.task[task.difficulty] || 0
+    addExp(taskExp)
+    if (taskFish > 0) addFish(taskFish)
 
     const completed = { answer, feedback, score, module: 'task' }
     completeTask(taskId, completed)

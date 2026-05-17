@@ -6,6 +6,7 @@ import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 import { callClaude, extractText } from '../../utils/claude'
 import { WORKSHOP_IDEAS, PRODUCT_FLOW_STEPS, buildReferenceFlow } from '../../data/workshopIdeas'
+import { XP_REWARDS, FISH_REWARDS } from '../../config/growthRules'
 
 function parseJson(text, fallback) {
   try {
@@ -172,8 +173,8 @@ export default function Workshop() {
       feedback: result,
     }
     saveWorkshopSession(session)
-    addExp(10)
-    addFish(2)
+    addExp(XP_REWARDS.workshop)
+    addFish(FISH_REWARDS.workshop)
     setFeedback(result)
     setSaved(true)
     setLoading(false)

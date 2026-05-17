@@ -8,6 +8,7 @@ import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import ClayIcon from '../../components/UI/ClayIcon'
 import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 import { buildTaskPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
+import { XP_REWARDS, FISH_REWARDS } from '../../config/growthRules'
 
 const QUESTION_POOL = [
   { id: 'q1', text: '请说明用户研究中，定性和定量研究各自的适用场景，并各举一个 AI 产品案例。', source: '老猫题库', type: 'user_research' },
@@ -181,9 +182,8 @@ export default function Training() {
       feedback: result,
       raw: record,
     })
-    if (combinedScore >= 80) addFish(3)
-    else if (combinedScore >= 60) addFish(2)
-    addExp(8)
+    if (FISH_REWARDS.thinkingTraining > 0) addFish(FISH_REWARDS.thinkingTraining)
+    addExp(XP_REWARDS.thinkingTraining)
 
     if (combinedScore < 60) {
       const typeKey = currentQ.type || 'thinking'
@@ -375,7 +375,7 @@ export default function Training() {
               <div className="card p-3 flex items-center gap-3 bg-amber-50 border-amber-200">
                 <span className="text-2xl">🐟</span>
                 <div>
-                  <div className="font-bold text-sm text-amber-700">+{Math.round((scoring.first.total + scoring.second.total) / 2) >= 80 ? 3 : 2} 小鱼干</div>
+                  <div className="font-bold text-sm text-amber-700">+{XP_REWARDS.thinkingTraining} XP</div>
                   <div className="text-xs text-amber-600">答题奖励已发放</div>
                 </div>
               </div>

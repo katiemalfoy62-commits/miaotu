@@ -8,6 +8,7 @@ import { callClaude, extractText, getApiErrorMessage, getCatPersonalityPrompt } 
 import { t } from '../../utils/i18n'
 import VoiceInputButton from '../VoiceInput/VoiceInputButton'
 import { buildOldCatPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
+import { XP_REWARDS, FISH_REWARDS } from '../../config/growthRules'
 
 export default function OldCat({ visible = true, disabledReason = null, hideLauncher = false }) {
   const location = useLocation()
@@ -130,10 +131,13 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
           const insightText = extractText(insightCheck)
           const match = insightText.match(/奖励(\d)条/)
           if (match) {
-            const bonus = 1
-            addFish(bonus)
-            addExp(3)
-            setMessages(prev => [...prev, { role: 'system', content: `🐟 老猫觉得你说得很有洞见！奖励 ${bonus} 条小鱼干～` }])
+            const bonusFish = FISH_REWARDS.oldCatInsight
+            const bonusExp = XP_REWARDS.oldCatInsight
+            if (bonusFish > 0) addFish(bonusFish)
+            if (bonusExp > 0) addExp(bonusExp)
+            if (bonusFish > 0 || bonusExp > 0) {
+              setMessages(prev => [...prev, { role: 'system', content: '老猫觉得你说得很有洞见！奖励已记录～' }])
+            }
           }
         }
       }

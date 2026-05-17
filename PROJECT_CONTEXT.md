@@ -110,6 +110,7 @@ Current product state:
 - `src/utils/gptPrompt.js`: GPT handoff prompt utilities.
 - `src/utils/newsFeeds.js`: frontend RSS fetcher for the trusted AI news source whitelist.
 - `src/utils/levelCalc.js`: level/growth calculation utilities.
+- `src/config/growthRules.js`: single source of truth for XP rewards, fish rewards, streak rewards, level curve, and cat growth stages.
 - `src/components/Layout/Layout.jsx`: app shell, navbar/back behavior, floating tools, Old Cat visibility.
 - `src/components/OldCat/OldCat.jsx`: Old Cat mentor chat panel; listens for `miaotu:open-oldcat`.
 - `src/components/VoiceInput/VoiceInputButton.jsx`: shared speech-to-text button. It supports browser Web Speech, backend recording transcription, and auto mode based on user settings.
@@ -180,6 +181,48 @@ Current product state:
 - Training lock/unlock behavior should be QA-tested against the intended rule: same question type low score three times locks it, lists the three causing questions, and unlocks only after a five-question breakthrough drill with each answer above 80.
 - 小猫课堂 and 造物工坊 have expanded content, but still need browser visual QA and mobile adaptation.
 
+## Cat Growth And Reward Rules
+
+The single source of truth is `src/config/growthRules.js`. Do not hardcode XP, fish, streak, or level thresholds inside individual pages.
+
+XP rewards:
+
+- 小猫课堂：+5 XP
+- 新闻：0 XP
+- 委托任务：简单 +5 / 中等 +8 / 困难 +10 XP
+- 思维训练：+10 XP
+- 面试模拟：+15 XP
+- 造物工坊：+18 XP
+- 爆破猫咪：+12 XP
+- 老猫普通聊天/洞察：0 XP
+
+Fish rewards:
+
+- 面试模拟：+5 小鱼干
+- 造物工坊：+8 小鱼干
+- 爆破猫咪：+3 小鱼干
+- 连续学习：每连续 7 天 +3 小鱼干
+- 新闻、小猫课堂、委托任务、思维训练、老猫普通聊天：0 小鱼干
+
+Level curve:
+
+- Lv 1-5：每级 50 XP
+- Lv 6-10：每级 80 XP
+- Lv 11-25：每级 120 XP
+- Lv 26-45：每级 180 XP
+- Lv 46-70：每级 260 XP
+- Lv 71-90：每级 360 XP
+- Lv 91-100：每级 500 XP
+
+Growth stages:
+
+- Lv 1-10：流浪小猫
+- Lv 11-25：学生猫
+- Lv 26-45：实习猫
+- Lv 46-70：初级 PM 猫
+- Lv 71-90：资深 PM 猫
+- Lv 91-100：首席猫
+
 ## Next Tasks
 
 1. Continue mobile browser QA for the 10-step homepage guided tour from a clean `localStorage` state.
@@ -233,6 +276,7 @@ Current product state:
 - Added a shared voice-to-text button powered first by browser Web Speech API, with a new optional backend transcription path. Settings now lets users choose auto/browser/backend voice mode, and stores a separate speech transcription API key, endpoint, provider, and model from the OpenAI key used for Old Cat, feedback, and generation.
 - Added `api/transcribe.js` for Vercel backend transcription. Custom provider mode expects a JSON endpoint that accepts `{ audioBase64, mimeType, language, model }` and returns `text`/`transcript`; OpenAI provider mode posts multipart audio to the OpenAI transcription endpoint with default model `whisper-1`.
 - Added a stronger mobile responsive pass for the main app shell: fixed bottom navigation, hidden right-side floating folder peeks on small screens, compact homepage hero and cat stage card, and safer mobile positioning for voice-input hints. Production build passed after the update; the known 500 kB chunk warning remains.
+- Centralized the Cat Growth reward economy in `src/config/growthRules.js` and updated all reward entry points to use it: classroom, news, tasks, thinking training, mock interview, workshop, breakthrough, Old Cat, level calculation, and streak rewards.
 
 ## Notes For Next Codex
 

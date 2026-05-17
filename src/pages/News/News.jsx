@@ -176,7 +176,7 @@ function NewsItem({ item, index }) {
 }
 
 export default function News() {
-  const { user, addExp, recordActivity } = useStore()
+  const { user, recordActivity } = useStore()
   const lang = user.settings.language
   const [news, setNews] = useState([])
   const [loading, setLoading] = useState(false)
@@ -192,7 +192,6 @@ export default function News() {
       const items = normalizeNewsItems(await fetchTrustedAiNews(5))
       if (items.length === 0) throw new Error('NO_FEED_ITEMS')
       setNews(prev => [...prev, ...items.map((item, i) => ({ ...item, id: `${Date.now()}_${i}` }))])
-      addExp(2)
       recordActivity()
     } catch {
       setError('暂时没有拉到实时 RSS 内容，先展示固定来源入口；点原文可直接去对应站点查看最新 AI 动态。')

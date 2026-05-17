@@ -1,5 +1,11 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import {
+  calcExpForLevel as calcGrowthExpForLevel,
+  getCatStage as getGrowthCatStage,
+  FISH_REWARDS,
+  STREAK_RULES,
+} from '../config/growthRules'
 
 // Level thresholds: cumulative EXP needed to reach each level
 function calcExpForLevel(level) {
@@ -21,11 +27,25 @@ function getCatStage(level) {
   return '首席猫'
 }
 
+function formatActivityDate(date) {
+  return date.toISOString().slice(0, 10)
+}
+
+function countConsecutiveActivityDays(dailyActivity, todayText = formatActivityDate(new Date())) {
+  let count = 0
+  const cursor = new Date(`${todayText}T00:00:00`)
+  while (dailyActivity[formatActivityDate(cursor)]) {
+    count += 1
+    cursor.setDate(cursor.getDate() - 1)
+  }
+  return count
+}
+
 const defaultUser = {
   level: 1,
   exp: 0,
   fish: 0,
-  catStage: '流浪小猫',
+  catStage: getGrowthCatStage(1),
   catConfig: { name: '', focus: 'training' },
   equippedItems: [],
   unlockedItems: [],
@@ -53,6 +73,7 @@ const defaultUser = {
 
 const defaultStats = {
   dailyActivity: {},
+  streakRewardBlocksClaimed: 0,
   abilityScores: {
     userNeeds: 0, competitive: 0, business: 0, data: 0,
     expression: 0, aiTech: 0, productDesign: 0, innovation: 0,
@@ -75,9 +96,9 @@ const useStore = create(
         const newExp = s.user.exp + amount
         let level = s.user.level
         // Increment level while exp exceeds threshold
-        while (level < 100 && newExp >= calcExpForLevel(level + 1)) level++
+        while (level < 100 && newExp >= calcGrowthExpForLevel(level + 1)) level++
         return {
-          user: { ...s.user, exp: newExp, level, catStage: getCatStage(level) }
+          user: { ...s.user, exp: newExp, level, catStage: getGrowthCatStage(level) }
         }
       }),
 
@@ -122,10 +143,24 @@ const useStore = create(
       })),
 
       recordActivity: () => set((s) => {
-        const today = new Date().toISOString().slice(0, 10)
-        const daily = { ...s.stats.dailyActivity }
+        const today = formatActivityDate(new Date())
+        const daily = { ...(s.stats?.dailyActivity || {}) }
         daily[today] = (daily[today] || 0) + 1
-        return { stats: { ...s.stats, dailyActivity: daily } }
+
+        const streakDays = countConsecutiveActivityDays(daily, today)
+        const rewardBlocks = Math.floor(streakDays / STREAK_RULES.rewardIntervalDays)
+        const claimedBlocks = s.stats?.streakRewardBlocksClaimed || 0
+        const newBlocks = Math.max(0, rewardBlocks - claimedBlocks)
+        const fishBonus = newBlocks * FISH_REWARDS.sevenDayStreak
+
+        return {
+          stats: {
+            ...s.stats,
+            dailyActivity: daily,
+            streakRewardBlocksClaimed: Math.max(claimedBlocks, rewardBlocks),
+          },
+          user: fishBonus > 0 ? { ...s.user, fish: s.user.fish + fishBonus } : s.user,
+        }
       }),
 
       updateAbilityScore: (dimension, delta) => set((s) => {
@@ -406,6 +441,7 @@ const useStore = create(
         if (!persistedState?.user) return persistedState
         const user = persistedState.user
         const settings = { ...defaultUser.settings, ...(user.settings || {}) }
+        const stats = { ...defaultStats, ...(persistedState.stats || {}) }
         const hasExistingProgress = Boolean(
           user.onboardingDone
           || user.catCustomized
@@ -417,6 +453,7 @@ const useStore = create(
         if (!hasExistingProgress || user.onboardingDone) {
           return {
             ...persistedState,
+            stats,
             user: {
               ...user,
               settings,
@@ -425,6 +462,7 @@ const useStore = create(
         }
         return {
           ...persistedState,
+          stats,
           user: {
             ...user,
             settings,
@@ -453,4 +491,4 @@ const useStore = create(
 )
 
 export default useStore
-export { calcExpForLevel, getCatStage }
+export { calcGrowthExpForLevel as calcExpForLevel, getGrowthCatStage as getCatStage }

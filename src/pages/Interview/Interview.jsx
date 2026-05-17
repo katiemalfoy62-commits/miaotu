@@ -8,6 +8,7 @@ import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import InterviewerClay from '../../components/Interviewers/InterviewerClay'
 import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 import { buildInterviewPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
+import { XP_REWARDS, FISH_REWARDS } from '../../config/growthRules'
 
 const INTERVIEWERS = [
   { mbti: 'INTJ', name: '司马', nameEn: 'Sima', color: '#2A2A2A', desc: '极度理性，只问关键问题，沉默多', descEn: 'Rational and sharp', stress: 3 },
@@ -285,9 +286,8 @@ ${transcript}
       feedback: normalized,
       raw: normalized,
     })
-    if (normalized.totalScore >= 80) addFish(8)
-    else if (normalized.totalScore >= 60) addFish(5)
-    addExp(15)
+    addFish(FISH_REWARDS.mockInterview)
+    addExp(XP_REWARDS.mockInterview)
   }
 
   function normalizeQuestions(questions = [], sourceMessages = messages) {
@@ -510,7 +510,7 @@ ${q.answer || '未作答'}
             <div className="card p-3 flex items-center gap-3 bg-amber-50 border-amber-200">
               <span className="text-2xl">🐟</span>
               <div>
-                <div className="font-bold text-sm text-amber-700">+{report.totalScore >= 80 ? 8 : 5} 小鱼干</div>
+                <div className="font-bold text-sm text-amber-700">+{FISH_REWARDS.mockInterview} 小鱼干</div>
                 <div className="text-xs text-amber-600">面试完成奖励</div>
               </div>
             </div>

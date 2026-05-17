@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import useStore from '../../store/useStore'
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import { CLASSROOM_PATHS } from '../../data/classroomLessons'
+import { XP_REWARDS, FISH_REWARDS } from '../../config/growthRules'
 
 export default function Classroom() {
   const { classroom = { completedLessons: [] }, completeLesson, addExp, addFish } = useStore()
@@ -29,8 +30,8 @@ export default function Classroom() {
   function finishLesson() {
     if (isDone) return
     completeLesson({ ...activeLesson, path: activePath.title })
-    addExp(5)
-    addFish(1)
+    addExp(XP_REWARDS.classroomLesson)
+    if (FISH_REWARDS.classroomLesson > 0) addFish(FISH_REWARDS.classroomLesson)
   }
 
   return (

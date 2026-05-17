@@ -7,6 +7,7 @@ import useStore from '../../store/useStore'
 import { callClaude, extractText } from '../../utils/claude'
 import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 import { copyText, openChatGPT } from '../../utils/gptPrompt'
+import { XP_REWARDS, FISH_REWARDS } from '../../config/growthRules'
 
 const FALLBACK_TYPES = ['用户洞察', '竞品分析', '商业逻辑', '数据分析', '表达结构', 'AI 技术理解']
 
@@ -186,8 +187,8 @@ ${seed}
     if (isUnlock && finalResults.every(item => (item.score?.total || 0) >= 80)) {
       unlockTrainingType(unlockPayload.unlockType)
     }
-    addFish(avg >= 80 ? 3 : 1)
-    addExp(10)
+    addFish(FISH_REWARDS.breakthrough)
+    addExp(XP_REWARDS.breakthrough)
     setPhase('done')
   }
 
