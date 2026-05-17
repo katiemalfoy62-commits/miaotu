@@ -9,6 +9,7 @@ export default function Classroom() {
   const { classroom = { completedLessons: [] }, completeLesson, addExp, addFish } = useStore()
   const [pathId, setPathId] = useState(CLASSROOM_PATHS[0].id)
   const [lessonId, setLessonId] = useState(CLASSROOM_PATHS[0].lessons[0].id)
+  const [mobileLessonOpen, setMobileLessonOpen] = useState(false)
   const completed = classroom.completedLessons || []
 
   const activePath = CLASSROOM_PATHS.find(path => path.id === pathId) || CLASSROOM_PATHS[0]
@@ -22,6 +23,7 @@ export default function Classroom() {
   function choosePath(path) {
     setPathId(path.id)
     setLessonId(path.lessons[0].id)
+    setMobileLessonOpen(true)
   }
 
   function finishLesson() {
@@ -32,7 +34,7 @@ export default function Classroom() {
   }
 
   return (
-    <div className="classroom-shell">
+    <div className={`classroom-shell ${mobileLessonOpen ? 'is-lesson-open' : ''}`}>
       <section className="classroom-hero card">
         <div>
           <div className="section-kicker">知识补给</div>
@@ -63,6 +65,9 @@ export default function Classroom() {
         </aside>
 
         <main className="classroom-main card">
+          <button type="button" className="classroom-mobile-back" onClick={() => setMobileLessonOpen(false)}>
+            返回课程列表
+          </button>
           <div className="classroom-lesson-list">
             {activePath.lessons.map(lesson => {
               const done = completed.some(item => item.id === lesson.id)
@@ -71,7 +76,10 @@ export default function Classroom() {
                   type="button"
                   key={lesson.id}
                   className={`classroom-lesson-tab ${lesson.id === activeLesson.id ? 'is-active' : ''}`}
-                  onClick={() => setLessonId(lesson.id)}
+                  onClick={() => {
+                    setLessonId(lesson.id)
+                    setMobileLessonOpen(true)
+                  }}
                 >
                   {done && <CheckCircle size={14} />}
                   <span>{lesson.title}</span>

@@ -398,7 +398,7 @@ ${q.answer || '未作答'}
 
   if (phase === 'session') {
     return (
-      <div className="max-w-2xl mx-auto flex flex-col h-[calc(100vh-120px)]">
+      <div className="interview-session-page max-w-2xl mx-auto flex flex-col h-[calc(100vh-120px)]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <span className={`h-2 w-2 rounded-full ${paused ? 'bg-yellow-400' : 'bg-green-400 animate-pulse'}`} />

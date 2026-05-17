@@ -107,8 +107,8 @@ export default function Archive() {
   }, [learningRecords])
 
   return (
-    <div className="flex gap-5">
-      <div className="flex-1 min-w-0 space-y-6">
+    <div className="archive-page flex gap-5">
+      <div className="archive-main flex-1 min-w-0 space-y-6">
         <h1 className="section-title text-xl">成长档案</h1>
 
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="card p-5">
@@ -178,7 +178,7 @@ export default function Archive() {
         </motion.div>
       </div>
 
-      <div className="w-52 flex-shrink-0 space-y-4">
+      <div className="archive-side w-52 flex-shrink-0 space-y-4">
         <div className="grid grid-cols-2 gap-2">
           {[
             { label: '学习天数', value: studyDays, icon: <BookOpen size={18} /> },

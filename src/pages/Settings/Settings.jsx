@@ -229,6 +229,15 @@ export default function Settings() {
           ))}
         </div>
 
+        {voiceMode !== 'backend' && (
+          <div className="rounded-2xl border border-amber-200/80 bg-amber-50/55 p-3 text-xs font-bold leading-relaxed text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/15 dark:text-amber-200">
+            {lang === 'zh'
+              ? '当前不会要求你填写语音 API。点击麦克风时，浏览器会弹出麦克风权限；允许后就能直接把语音转成文字。'
+              : 'No speech API is needed right now. Tap the mic, allow browser microphone permission, and speech will turn into text.'}
+          </div>
+        )}
+
+        {voiceMode === 'backend' && (
         <div className="rounded-2xl border border-border-light/80 bg-white/45 p-3 dark:border-border-dark dark:bg-black/10">
           <div className="mb-2 text-xs font-bold text-gray-500">{lang === 'zh' ? '后端语音 API（和老猫/出题 API 分开）' : 'Backend speech API, separate from AI chat'}</div>
           <div className="mb-2 grid grid-cols-2 gap-2">
@@ -279,6 +288,7 @@ export default function Settings() {
               : 'Browser speech asks permission when you tap the mic. Backend mode sends recordings to your configured service. Miaotu does not hard-limit recording length, but longer audio can be slower and cost more.'}
           </p>
         </div>
+        )}
       </div>
 
       {/* Model mode */}

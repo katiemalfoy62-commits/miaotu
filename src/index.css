@@ -5425,13 +5425,145 @@ button:hover .interviewer-clay {
   display: none;
 }
 
+.tool-drawer-button {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  z-index: 47;
+  display: grid;
+  width: 4.4rem;
+  height: 4.4rem;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 1px solid rgba(217, 189, 147, 0.78);
+  border-right: 0;
+  border-radius: 1.2rem 0 0 1.2rem;
+  background: rgba(255, 251, 241, 0.92);
+  box-shadow: 0 16px 34px rgba(87, 52, 22, 0.16), inset 0 1px 0 rgba(255,255,255,0.95);
+  backdrop-filter: blur(14px);
+}
+
+.tool-drawer-button img {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+}
+
+.tool-drawer-panel {
+  position: fixed;
+  right: 1rem;
+  top: 50%;
+  z-index: 58;
+  width: min(22rem, calc(100vw - 2rem));
+  transform: translateY(-50%);
+  overflow: hidden;
+  border: 1px solid rgba(217, 189, 147, 0.78);
+  border-radius: 1.35rem;
+  background: rgba(255, 251, 241, 0.96);
+  box-shadow: 0 24px 54px rgba(87, 52, 22, 0.2), inset 0 1px 0 rgba(255,255,255,0.95);
+  backdrop-filter: blur(18px);
+}
+
+.tool-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(217, 189, 147, 0.58);
+  padding: 1rem;
+}
+
+.tool-drawer-head strong,
+.tool-drawer-item b {
+  display: block;
+  color: #a95525;
+  font-weight: 1000;
+}
+
+.tool-drawer-head span,
+.tool-drawer-item small {
+  display: block;
+  margin-top: 0.18rem;
+  color: #8c7a68;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.tool-drawer-list {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+}
+
+.tool-drawer-item {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: 0.2rem 0.75rem;
+  align-items: center;
+  border: 1px solid rgba(217, 189, 147, 0.58);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.62);
+  padding: 0.78rem;
+  text-align: left;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.tool-drawer-item:hover {
+  transform: translateY(-2px);
+  background: #fff4df;
+}
+
+.tool-drawer-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+.tool-drawer-item > span {
+  grid-row: span 2;
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  place-items: center;
+  border-radius: 0.85rem;
+  background: #fff0df;
+  color: #c8622a;
+}
+
+.classroom-mobile-back,
+.workshop-mobile-back {
+  display: none;
+}
+
 @media (max-width: 640px) {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
   body {
+    overflow: hidden;
     overflow-x: hidden;
   }
 
   .app-bg {
+    display: flex;
     min-height: 100svh;
+    height: 100svh;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .app-bg > nav:first-child {
+    flex: 0 0 auto;
+  }
+
+  .app-bg > main.mx-auto {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .mobile-bottom-nav {
@@ -5492,6 +5624,71 @@ button:hover .interviewer-clay {
     padding-inline: 0.7rem;
     padding-top: 0.75rem;
     padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
+
+  .tool-drawer-button {
+    top: auto;
+    right: 0;
+    bottom: calc(6.1rem + env(safe-area-inset-bottom));
+    width: 3.7rem;
+    height: 3.7rem;
+    transform: none;
+  }
+
+  .tool-drawer-button img {
+    width: 2.65rem;
+    height: 2.65rem;
+  }
+
+  .tool-drawer-panel {
+    left: 0.75rem;
+    right: 0.75rem;
+    top: auto;
+    bottom: calc(5.7rem + env(safe-area-inset-bottom));
+    width: auto;
+    transform: none;
+  }
+
+  .news-page,
+  .archive-page {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .news-main,
+  .archive-main,
+  .news-source-aside,
+  .archive-side {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .news-page .flex.items-center.justify-between {
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .news-page .section-title {
+    max-width: 6.5rem;
+    line-height: 1.15;
+  }
+
+  .news-source-aside {
+    order: -1;
+  }
+
+  .archive-type-grid,
+  .archive-record-list {
+    min-width: 0;
+  }
+
+  .archive-type-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .archive-side .grid.grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .card {
@@ -5620,6 +5817,32 @@ button:hover .interviewer-clay {
     padding: 0.75rem;
   }
 
+  .classroom-mobile-back,
+  .workshop-mobile-back {
+    display: inline-flex;
+    width: max-content;
+    align-items: center;
+    border: 1px solid rgba(219, 189, 147, 0.72);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.72);
+    padding: 0.45rem 0.75rem;
+    color: #a95525;
+    font-size: 0.78rem;
+    font-weight: 1000;
+  }
+
+  .classroom-shell:not(.is-lesson-open) .classroom-main,
+  .workshop-shell:not(.is-answer-open) .workshop-main {
+    display: none;
+  }
+
+  .classroom-shell.is-lesson-open .classroom-hero,
+  .classroom-shell.is-lesson-open .classroom-paths,
+  .workshop-shell.is-answer-open .workshop-hero,
+  .workshop-shell.is-answer-open .workshop-ideas {
+    display: none;
+  }
+
   .classroom-paths,
   .workshop-ideas {
     position: static;
@@ -5636,6 +5859,61 @@ button:hover .interviewer-clay {
   .classroom-lesson-tab {
     flex: 0 0 12rem;
     scroll-snap-align: start;
+  }
+
+  .workshop-main {
+    gap: 0.8rem;
+  }
+
+  .workshop-brief {
+    gap: 0.75rem;
+  }
+
+  .workshop-context-grid {
+    gap: 0.55rem;
+  }
+
+  .workshop-step-list {
+    gap: 0.95rem;
+  }
+
+  .workshop-step textarea {
+    width: 100%;
+    min-height: 9rem;
+  }
+
+  .workshop-review-button {
+    position: sticky;
+    bottom: 0.65rem;
+    justify-content: center;
+    width: 100%;
+    z-index: 3;
+  }
+
+  .interview-setup-shell {
+    gap: 0.85rem;
+  }
+
+  .interview-setup-shell .interview-record-side {
+    order: 2;
+  }
+
+  .interview-setup-main {
+    width: 100%;
+  }
+
+  .interview-setup-main .card {
+    overflow: hidden;
+  }
+
+  .interview-setup-main .grid.grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 18rem;
+  }
+
+  .interview-session-page {
+    height: calc(100svh - 9.4rem);
+    max-height: calc(100svh - 9.4rem);
   }
 
   .classroom-article,
@@ -5696,8 +5974,7 @@ button:hover .interviewer-clay {
   }
 
   .task-bottom-oldcat {
-    width: 3.75rem;
-    height: 3.75rem;
+    display: none;
   }
 
   .task-detail-modal {
@@ -5721,10 +5998,10 @@ button:hover .interviewer-clay {
     left: 0.65rem;
     right: 0.65rem;
     top: auto;
-    bottom: 0.75rem;
+    bottom: calc(5.7rem + env(safe-area-inset-bottom));
     width: auto;
     max-width: none;
-    max-height: calc(100vh - 1.5rem);
+    max-height: calc(100vh - 7rem);
   }
 
   .oldcat-memory-body {

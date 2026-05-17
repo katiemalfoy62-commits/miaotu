@@ -16,7 +16,7 @@ function chatText(chat) {
     .join('\n\n')
 }
 
-export default function FloatingOldCatArchive() {
+export default function FloatingOldCatArchive({ hideLauncher = false }) {
   const location = useLocation()
   const { savedOldCatChats = [], deleteOldCatChat, user } = useStore()
   const lang = user.settings.language
@@ -32,8 +32,13 @@ export default function FloatingOldCatArchive() {
 
   useEffect(() => {
     const closePanel = () => setOpen(false)
+    const openPanel = () => setOpen(true)
     window.addEventListener('miaotu:close-floaters', closePanel)
-    return () => window.removeEventListener('miaotu:close-floaters', closePanel)
+    window.addEventListener('miaotu:open-oldcat-archive', openPanel)
+    return () => {
+      window.removeEventListener('miaotu:close-floaters', closePanel)
+      window.removeEventListener('miaotu:open-oldcat-archive', openPanel)
+    }
   }, [])
 
   useEffect(() => {
@@ -61,15 +66,17 @@ export default function FloatingOldCatArchive() {
 
   return (
     <>
-      <button
-        ref={buttonRef}
-        type="button"
-        className="oldcat-memory-peek"
-        onClick={() => setOpen(value => !value)}
-        title={lang === 'zh' ? '老猫对话保存库' : 'Saved mentor chats'}
-      >
-        <ClayIcon name="oldcatMemory" alt="" />
-      </button>
+      {!hideLauncher && (
+        <button
+          ref={buttonRef}
+          type="button"
+          className="oldcat-memory-peek"
+          onClick={() => setOpen(value => !value)}
+          title={lang === 'zh' ? '老猫对话保存库' : 'Saved mentor chats'}
+        >
+          <ClayIcon name="oldcatMemory" alt="" />
+        </button>
+      )}
 
       {open && (
         <div ref={panelRef} className="oldcat-memory-panel">

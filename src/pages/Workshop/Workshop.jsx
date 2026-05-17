@@ -46,6 +46,7 @@ export default function Workshop() {
   const [generatingIdea, setGeneratingIdea] = useState(false)
   const [saved, setSaved] = useState(false)
   const [ideaNotice, setIdeaNotice] = useState('')
+  const [mobileAnswerOpen, setMobileAnswerOpen] = useState(false)
   const completedFixedIds = useMemo(() => new Set(
     (workshop.sessions || [])
       .filter(session => WORKSHOP_IDEAS.some(item => item.id === session.ideaId))
@@ -73,6 +74,7 @@ export default function Workshop() {
     setIdeaIndex(index)
     setIdeaNotice('')
     resetDraft()
+    setMobileAnswerOpen(true)
   }
 
   function pickRandomFixedIdea() {
@@ -121,6 +123,7 @@ export default function Workshop() {
         tag: generated.tag || '即兴题',
       })
       resetDraft()
+      setMobileAnswerOpen(true)
       setIdeaNotice('老猫刚抓了一道即兴题。这道题不会占用固定 20 题进度。')
     } catch {
       setIdeaNotice('即兴题生成失败了，可能是 API Key 或网络问题。先练固定题也可以。')
@@ -177,7 +180,7 @@ export default function Workshop() {
   }
 
   return (
-    <div className="workshop-shell">
+    <div className={`workshop-shell ${mobileAnswerOpen ? 'is-answer-open' : ''}`}>
       <section className="workshop-hero card">
         <div>
           <div className="section-kicker">产品流程训练</div>
@@ -228,6 +231,9 @@ export default function Workshop() {
         </aside>
 
         <main className="workshop-main">
+          <button type="button" className="workshop-mobile-back" onClick={() => setMobileAnswerOpen(false)}>
+            返回选题
+          </button>
           <section className="workshop-brief card">
             <div>
               <span>本次题目</span>

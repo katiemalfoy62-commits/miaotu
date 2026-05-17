@@ -6,6 +6,7 @@ import OldCat from '../OldCat/OldCat'
 import ClayIcon from '../UI/ClayIcon'
 import FloatingLinkVault from '../LinkVault/FloatingLinkVault'
 import FloatingOldCatArchive from '../OldCat/FloatingOldCatArchive'
+import ToolDrawer from '../Tools/ToolDrawer'
 
 // Pages where old cat is NOT available
 const NO_OLDCAT_PATHS = ['/interview/session']
@@ -36,9 +37,10 @@ export default function Layout({ children }) {
         )}
         {children}
       </main>
-      <FloatingLinkVault />
-      <FloatingOldCatArchive />
-      <OldCat visible={!hideOldCat} hideLauncher={isHome}/>
+      <FloatingLinkVault hideLauncher />
+      <FloatingOldCatArchive hideLauncher />
+      <OldCat visible={!hideOldCat} hideLauncher />
+      <ToolDrawer oldCatAvailable={!hideOldCat} />
       <nav className="mobile-bottom-nav" aria-label="移动端导航">
         {MOBILE_NAV.map(item => {
           const Icon = item.icon

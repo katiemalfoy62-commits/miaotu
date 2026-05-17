@@ -203,8 +203,8 @@ export default function News() {
   }
 
   return (
-      <div className="flex gap-5">
-        <div className="flex-1 min-w-0 space-y-4">
+      <div className="news-page flex gap-5">
+        <div className="news-main flex-1 min-w-0 space-y-4">
           <div className="flex items-center justify-between">
             <h1 className="section-title text-xl">今日情报站</h1>
             <span className="text-xs text-gray-400">{new Date().toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
@@ -217,7 +217,7 @@ export default function News() {
             {loading ? '获取中...' : <><Plus size={16} /> 获取更多新闻</>}
           </button>
         </div>
-        <aside className="w-56 flex-shrink-0 space-y-4">
+        <aside className="news-source-aside w-56 flex-shrink-0 space-y-4">
           <div className="card p-4">
             <div className="text-xs font-bold text-gray-500 mb-2">今日来源</div>
             <p className="text-sm leading-relaxed text-gray-700">{describeNewsSources(lang)}</p>

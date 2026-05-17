@@ -5,7 +5,7 @@ import useStore from '../../store/useStore'
 import ClayIcon from '../UI/ClayIcon'
 import { buildLinkPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
 
-export default function FloatingLinkVault() {
+export default function FloatingLinkVault({ hideLauncher = false }) {
   const location = useLocation()
   const { linkVault = [], addLinkItem, user } = useStore()
   const lang = user.settings.language
@@ -28,10 +28,13 @@ export default function FloatingLinkVault() {
       setSavedHint(lang === 'zh' ? '已存入资料夹' : 'Saved')
       setTimeout(() => setSavedHint(''), 1800)
     }
+    const openPanel = () => setOpen(true)
     window.addEventListener('miaotu:close-floaters', closePanel)
+    window.addEventListener('miaotu:open-link-vault', openPanel)
     window.addEventListener('miaotu:link-saved', openWithSavedHint)
     return () => {
       window.removeEventListener('miaotu:close-floaters', closePanel)
+      window.removeEventListener('miaotu:open-link-vault', openPanel)
       window.removeEventListener('miaotu:link-saved', openWithSavedHint)
     }
   }, [lang])
@@ -80,15 +83,17 @@ export default function FloatingLinkVault() {
 
   return (
     <>
-      <button
-        ref={buttonRef}
-        type="button"
-        className="link-vault-peek"
-        onClick={() => setOpen(value => !value)}
-        title={lang === 'zh' ? '保存学习链接' : 'Save link'}
-      >
-        <ClayIcon name="archive" alt="" />
-      </button>
+      {!hideLauncher && (
+        <button
+          ref={buttonRef}
+          type="button"
+          className="link-vault-peek"
+          onClick={() => setOpen(value => !value)}
+          title={lang === 'zh' ? '保存学习链接' : 'Save link'}
+        >
+          <ClayIcon name="archive" alt="" />
+        </button>
+      )}
 
       {open && (
         <div ref={panelRef} className="link-vault-panel">

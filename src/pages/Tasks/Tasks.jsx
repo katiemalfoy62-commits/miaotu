@@ -311,7 +311,7 @@ export default function Tasks() {
 
         {selectedCompleted && <CompletedDetail task={selectedCompleted} onClose={() => setSelectedCompleted(null)} />}
 
-        <div className="fixed bottom-0 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center pointer-events-none">
+        <div className="hidden">
           <div className="rounded-t-2xl border border-border-light bg-card-light px-4 pt-2 shadow-lg">
             <BlinkingClayMascot type="oldcat" className="task-bottom-oldcat" />
           </div>
