@@ -4798,7 +4798,8 @@ button:hover .interviewer-clay {
 }
 
 .classroom-path,
-.workshop-idea-card {
+.workshop-idea-card,
+.workshop-random-card {
   border: 1px solid rgba(219, 189, 147, 0.65);
   border-radius: 1.2rem;
   background: rgba(255,250,241,0.86);
@@ -4811,7 +4812,8 @@ button:hover .interviewer-clay {
 .classroom-path:hover,
 .classroom-path.is-active,
 .workshop-idea-card:hover,
-.workshop-idea-card.is-active {
+.workshop-idea-card.is-active,
+.workshop-random-card:hover {
   transform: translateY(-2px);
   border-color: rgba(200, 98, 42, 0.55);
   background: #fff4df;
@@ -4820,24 +4822,41 @@ button:hover .interviewer-clay {
 .classroom-path strong,
 .classroom-path span,
 .workshop-idea-card strong,
-.workshop-idea-card span {
+.workshop-idea-card span,
+.workshop-random-card strong,
+.workshop-random-card span {
   display: block;
 }
 
 .classroom-path strong,
-.workshop-idea-card strong {
+.workshop-idea-card strong,
+.workshop-random-card strong {
   color: #2a1d14;
   font-size: 1rem;
   font-weight: 1000;
 }
 
 .classroom-path span,
-.workshop-idea-card span {
+.workshop-idea-card span,
+.workshop-random-card span {
   margin-top: 0.4rem;
   color: #7c6b5b;
   font-size: 0.78rem;
   font-weight: 830;
   line-height: 1.6;
+}
+
+.workshop-random-card {
+  display: grid;
+  gap: 0.2rem;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(255,255,255,0.72), transparent 5rem),
+    linear-gradient(135deg, #fff1bf, #ffe0c8);
+  color: #c8622a;
+}
+
+.workshop-random-card svg {
+  color: #c8622a;
 }
 
 .classroom-path--mint.is-active {
@@ -5182,6 +5201,7 @@ button:hover .interviewer-clay {
 
 .dark .classroom-path,
 .dark .workshop-idea-card,
+.dark .workshop-random-card,
 .dark .classroom-article,
 .dark .workshop-context-grid article,
 .dark .workshop-feedback-grid article,

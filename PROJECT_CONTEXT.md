@@ -125,8 +125,8 @@ Current product state:
 - `src/pages/Shop/Shop.jsx` and `src/pages/Wardrobe/Wardrobe.jsx`: fish shop and wardrobe handling.
 - `src/data/shopItems.js`: shop item definitions; terminal may show Chinese/emoji as mojibake.
 - `src/data/newsSources.js`: trusted AI news sources used by the news page and source-introduction card.
-- `src/data/classroomLessons.js`: 小猫课堂 lesson paths and lesson copy.
-- `src/data/workshopIdeas.js`: 造物工坊 idea prompts and product-flow step definitions.
+- `src/data/classroomLessons.js`: 小猫课堂 lesson paths and lesson copy. Current content has 5 learning paths and 25 short lessons.
+- `src/data/workshopIdeas.js`: 造物工坊 idea prompts and product-flow step definitions. Current content has 20 fixed product ideas across learning, job search, B-side efficiency, lifestyle, knowledge management, community, and product work.
 - `src/index.css`: custom visual styling, including clay dashboard, onboarding, guided tour, paw pointer, dark mode, hover states, and growth map styles.
 - `src/assets/mascots/`: clay mascot assets such as Kivi, Old Cat, breakthrough cat.
 - `src/assets/ui-clay/`: clay UI icons.
@@ -175,7 +175,7 @@ Current product state:
 - Previously attempted layered cat appearance caused severe alignment problems. Do not restart that path casually.
 - Task page should still be QA-tested for the reported issue where the second task answer box can become unresponsive after submitting one task.
 - Training lock/unlock behavior should be QA-tested against the intended rule: same question type low score three times locks it, lists the three causing questions, and unlocks only after a five-question breakthrough drill with each answer above 80.
-- 小猫课堂 and 造物工坊 currently have first-pass content and layout. They compile, but still need browser visual QA and future content expansion.
+- 小猫课堂 and 造物工坊 have expanded content, but still need browser visual QA and mobile adaptation.
 
 ## Next Tasks
 
@@ -224,6 +224,7 @@ Current product state:
 - Replaced the news page's old fallback mock news with a trusted-source RSS flow and source guide fallback. The right-side news card now explains sources instead of reading method. Link vault saves are deduped, news save buttons show saved state, and the floating link vault panel is constrained to the viewport with safer text wrapping.
 - Added 小猫课堂 and 造物工坊 as two new homepage learning entrances. 小猫课堂 introduces short AI/PM foundation lessons and records completed lessons into the growth archive. 造物工坊 gives product ideas, asks the user to write the full product development flow, provides AI or local fallback feedback, and saves sessions into the growth archive. Build passed after adding both routes.
 - Fixed repeat onboarding: direct visits or reloads on `/onboarding` now redirect completed users back to `/`, and persisted store migration marks existing users with cat setup/progress/rewards as `onboardingDone` so old local data does not get forced through onboarding again.
+- Expanded 造物工坊 from 4 to 20 fixed product ideas and added a random-topic entry that draws from the fixed idea pool. Expanded 小猫课堂 from 3 paths/9 lessons to 5 paths/25 lessons, adding product development flow and AI PM work-method paths. Build passed after expansion.
 
 ## Notes For Next Codex
 

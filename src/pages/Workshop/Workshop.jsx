@@ -52,7 +52,9 @@ export default function Workshop() {
   }
 
   function nextIdea() {
-    setIdeaIndex((ideaIndex + 1) % WORKSHOP_IDEAS.length)
+    const pool = WORKSHOP_IDEAS.map((_, index) => index).filter(index => index !== ideaIndex)
+    const nextIndex = pool[Math.floor(Math.random() * pool.length)] ?? 0
+    setIdeaIndex(nextIndex)
     setAnswers({})
     setFeedback(null)
     setSaved(false)
@@ -121,6 +123,15 @@ export default function Workshop() {
 
       <div className="workshop-layout">
         <aside className="workshop-ideas">
+          <button
+            type="button"
+            className="workshop-random-card"
+            onClick={nextIdea}
+          >
+            <RefreshCw size={16} />
+            <strong>随机题目</strong>
+            <span>不想挑固定题时，让老猫随便抓一个 idea。</span>
+          </button>
           {WORKSHOP_IDEAS.map((item, index) => (
             <button
               type="button"
@@ -134,7 +145,7 @@ export default function Workshop() {
               }}
             >
               <strong>{item.title}</strong>
-              <span>{item.user}</span>
+              <span>{item.tag} · {item.user}</span>
             </button>
           ))}
         </aside>
