@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Send, Mic, MicOff, Copy, ExternalLink, Check, Maximize2, Minimize2, Save } from 'lucide-react'
+import { X, Send, Copy, ExternalLink, Check, Maximize2, Minimize2, Save } from 'lucide-react'
 import BlinkingClayMascot from '../Cat/BlinkingClayMascot'
 import useStore from '../../store/useStore'
 import { callClaude, extractText, getApiErrorMessage, getCatPersonalityPrompt } from '../../utils/claude'
 import { t } from '../../utils/i18n'
+import VoiceInputButton from '../VoiceInput/VoiceInputButton'
 import { buildOldCatPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
 
 export default function OldCat({ visible = true, disabledReason = null, hideLauncher = false }) {
@@ -16,12 +17,10 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [listening, setListening] = useState(false)
   const [copiedPrompt, setCopiedPrompt] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
   const [savedChat, setSavedChat] = useState(false)
   const bottomRef = useRef(null)
-  const recogRef = useRef(null)
   const panelRef = useRef(null)
 
   const { user, addExp, addFish, saveOldCatChat } = useStore()
@@ -143,25 +142,6 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
     } finally {
       setLoading(false)
     }
-  }
-
-  function toggleVoice() {
-    if (!user.settings.voiceEnabled) return
-    if (listening) {
-      recogRef.current?.stop()
-      setListening(false)
-      return
-    }
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    if (!SpeechRecognition) return
-    const recog = new SpeechRecognition()
-    recog.lang = lang === 'zh' ? 'zh-CN' : 'en-US'
-    recog.continuous = false
-    recog.onresult = (e) => setInput(prev => prev + e.results[0][0].transcript)
-    recog.onend = () => setListening(false)
-    recog.start()
-    recogRef.current = recog
-    setListening(true)
   }
 
   async function copyForGPT() {
@@ -331,14 +311,12 @@ export default function OldCat({ visible = true, disabledReason = null, hideLaun
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
                 />
-                {user.settings.voiceEnabled && (
-                  <button
-                    onClick={toggleVoice}
-                    className={`p-2 rounded-xl border transition-colors ${listening ? 'bg-primary text-white border-primary' : 'border-border-light dark:border-border-dark hover:bg-border-light dark:hover:bg-border-dark'}`}
-                  >
-                    {listening ? <MicOff size={16}/> : <Mic size={16}/>}
-                  </button>
-                )}
+                <VoiceInputButton
+                  enabled={user.settings.voiceEnabled}
+                  lang={lang}
+                  onText={text => setInput(prev => `${prev}${prev ? ' ' : ''}${text}`)}
+                  className="oldcat-voice-button"
+                />
                 <button
                   onClick={send}
                   disabled={!input.trim() || loading}

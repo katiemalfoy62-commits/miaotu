@@ -3,6 +3,7 @@ import { CheckCircle, RefreshCw, Sparkles, Wand2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import useStore from '../../store/useStore'
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
+import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 import { callClaude, extractText } from '../../utils/claude'
 import { WORKSHOP_IDEAS, PRODUCT_FLOW_STEPS, buildReferenceFlow } from '../../data/workshopIdeas'
 
@@ -36,6 +37,7 @@ function buildLocalFeedback(idea, answers) {
 
 export default function Workshop() {
   const { user, workshop = { sessions: [] }, saveWorkshopSession, addExp, addFish } = useStore()
+  const lang = user.settings.language
   const [ideaIndex, setIdeaIndex] = useState(0)
   const [customIdea, setCustomIdea] = useState(null)
   const [answers, setAnswers] = useState({})
@@ -266,11 +268,19 @@ export default function Workshop() {
                 <label key={step.id} className="workshop-step">
                   <span>{step.title}</span>
                   <small>{step.guide}</small>
-                  <textarea
-                    value={answers[step.id] || ''}
-                    onChange={event => updateAnswer(step.id, event.target.value)}
-                    placeholder={step.placeholder}
-                  />
+                  <div className="relative">
+                    <textarea
+                      value={answers[step.id] || ''}
+                      onChange={event => updateAnswer(step.id, event.target.value)}
+                      placeholder={step.placeholder}
+                    />
+                    <VoiceInputButton
+                      enabled={user.settings.voiceEnabled}
+                      lang={lang}
+                      onText={text => updateAnswer(step.id, `${answers[step.id] || ''}${answers[step.id] ? ' ' : ''}${text}`)}
+                      className="absolute bottom-3 right-3"
+                    />
+                  </div>
                 </label>
               ))}
             </div>

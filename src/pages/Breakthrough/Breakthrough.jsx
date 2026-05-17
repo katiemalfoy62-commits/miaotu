@@ -5,6 +5,7 @@ import ClayMascot from '../../components/Cat/ClayMascot'
 import ClayIcon from '../../components/UI/ClayIcon'
 import useStore from '../../store/useStore'
 import { callClaude, extractText } from '../../utils/claude'
+import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 import { copyText, openChatGPT } from '../../utils/gptPrompt'
 
 const FALLBACK_TYPES = ['用户洞察', '竞品分析', '商业逻辑', '数据分析', '表达结构', 'AI 技术理解']
@@ -57,6 +58,7 @@ export default function Breakthrough() {
     addExp,
     unlockTrainingType,
   } = useStore()
+  const lang = user.settings.language
 
   const unlockPayload = location.state || {}
   const isUnlock = Boolean(unlockPayload.unlockType)
@@ -213,7 +215,15 @@ ${seed}
       {phase === 'setup' && (
         <section className="card breakthrough-card">
           <label>输入挑战题目</label>
-          <textarea value={seed} onChange={e => setSeed(e.target.value)} placeholder="把你觉得难的题目粘贴到这里..." />
+          <div className="relative">
+            <textarea value={seed} onChange={e => setSeed(e.target.value)} placeholder="把你觉得难的题目粘贴到这里..." />
+            <VoiceInputButton
+              enabled={user.settings.voiceEnabled}
+              lang={lang}
+              onText={text => setSeed(prev => `${prev}${prev ? ' ' : ''}${text}`)}
+              className="absolute bottom-3 right-3"
+            />
+          </div>
           {isUnlock && (
             <div className="breakthrough-lock-note">
               这是「{unlockPayload.unlockType}」解锁挑战。连续 5 题都达到 80 分以上即可解锁。
@@ -232,7 +242,15 @@ ${seed}
             <strong>第 {index + 1} / {questions.length} 题</strong>
           </div>
           <h2>{currentQuestion.question}</h2>
-          <textarea value={answer} onChange={e => setAnswer(e.target.value)} placeholder="先给观点，再解释理由，补例子，最后回扣..." />
+          <div className="relative">
+            <textarea value={answer} onChange={e => setAnswer(e.target.value)} placeholder="先给观点，再解释理由，补例子，最后回扣..." />
+            <VoiceInputButton
+              enabled={user.settings.voiceEnabled}
+              lang={lang}
+              onText={text => setAnswer(prev => `${prev}${prev ? ' ' : ''}${text}`)}
+              className="absolute bottom-3 right-3"
+            />
+          </div>
           <button className="btn-primary" onClick={submitAnswer} disabled={!answer.trim() || loading}>
             <Send size={16} /> {loading ? '评分中...' : '提交本题'}
           </button>

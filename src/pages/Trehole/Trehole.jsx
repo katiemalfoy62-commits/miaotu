@@ -4,6 +4,7 @@ import { Send, Heart } from 'lucide-react'
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import useStore from '../../store/useStore'
 import { callClaude, extractText } from '../../utils/claude'
+import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 
 const WARM_RESPONSES = [
   '喵~ 我在呢，说吧~',
@@ -91,13 +92,21 @@ export default function Trehole() {
 
       {/* Input */}
       <div className="flex gap-2 border-t border-border-light dark:border-border-dark pt-4">
-        <input
-          className="input-base flex-1 text-sm"
-          placeholder={lang === 'zh' ? '说点什么...' : 'Say something...'}
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && send()}
-        />
+        <div className="relative flex-1">
+          <input
+            className="input-base w-full pr-11 text-sm"
+            placeholder={lang === 'zh' ? '说点什么...' : 'Say something...'}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && send()}
+          />
+          <VoiceInputButton
+            enabled={user.settings.voiceEnabled}
+            lang={lang}
+            onText={text => setInput(prev => `${prev}${prev ? ' ' : ''}${text}`)}
+            className="absolute right-2 top-1/2 -translate-y-1/2"
+          />
+        </div>
         <button onClick={send} disabled={!input.trim() || loading} className="p-2.5 bg-pink-400 text-white rounded-xl hover:opacity-90 disabled:opacity-40 transition-all">
           <Send size={16}/>
         </button>

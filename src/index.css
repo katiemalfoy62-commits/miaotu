@@ -5329,3 +5329,317 @@ button:hover .interviewer-clay {
     grid-template-columns: 1fr;
   }
 }
+
+.voice-input-button {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(217, 189, 147, 0.72);
+  border-radius: 999px;
+  background: rgba(255, 248, 233, 0.9);
+  color: #9a8878;
+  box-shadow: 0 5px 12px rgba(87, 52, 22, 0.08), inset 0 1px 0 rgba(255,255,255,0.92);
+  transition: transform 160ms ease, color 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.voice-input-button:hover {
+  transform: translateY(-1px);
+  color: #c8622a;
+  border-color: rgba(200, 98, 42, 0.42);
+}
+
+.voice-input-button.is-listening {
+  background: #c8622a;
+  color: #fff;
+  border-color: #c8622a;
+  animation: voicePulse 1.1s ease-in-out infinite;
+}
+
+.voice-input-button.is-unsupported {
+  opacity: 0.55;
+}
+
+.oldcat-voice-button {
+  flex: 0 0 auto;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+}
+
+@keyframes voicePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 98, 42, 0.32); }
+  50% { box-shadow: 0 0 0 0.35rem rgba(200, 98, 42, 0); }
+}
+
+.dark .voice-input-button {
+  border-color: rgba(255,255,255,0.1);
+  background: #303030;
+  color: #c0c0c0;
+}
+
+.dark .voice-input-button.is-listening {
+  background: #d18a52;
+  color: #181818;
+}
+
+@media (max-width: 640px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  nav .h-16 {
+    height: 3.7rem;
+  }
+
+  nav .text-xl {
+    font-size: 1.05rem;
+  }
+
+  main.mx-auto {
+    padding-inline: 0.85rem;
+    padding-top: 1rem;
+    padding-bottom: 5rem;
+  }
+
+  .card {
+    border-radius: 1rem;
+  }
+
+  .clay-hero-panel {
+    min-height: 0;
+    padding: 1rem;
+  }
+
+  .clay-hero-copy h1 {
+    font-size: 2rem;
+    line-height: 1.08;
+  }
+
+  .clay-hero-copy p {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .clay-hero-mascot {
+    display: grid;
+    justify-self: center;
+  }
+
+  .clay-hero-mascot .clay-mascot-kivi,
+  .hero-layered-cat {
+    width: 10.5rem;
+    transform: none;
+  }
+
+  .clay-hero-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    padding: 0.65rem;
+  }
+
+  .clay-hero-stats div {
+    min-width: 0;
+  }
+
+  .clay-hero-stats strong {
+    font-size: 1.35rem;
+  }
+
+  .clay-cat-stage-card {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .clay-cat-scene {
+    min-height: 13rem;
+  }
+
+  .home-layered-cat {
+    width: 12.5rem;
+  }
+
+  .home-grid,
+  .clay-home-grid,
+  .classroom-grid,
+  .workshop-layout,
+  .interview-setup-shell {
+    grid-template-columns: 1fr !important;
+  }
+
+  .classroom-shell,
+  .workshop-shell,
+  .breakthrough-page,
+  .interview-record-page,
+  .interview-setup-shell {
+    width: 100%;
+  }
+
+  .classroom-hero,
+  .workshop-hero {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .classroom-hero h1,
+  .workshop-hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .classroom-hero-cat,
+  .workshop-hero-cat {
+    justify-self: center;
+    width: 6rem;
+    height: 6rem;
+  }
+
+  .classroom-progress,
+  .workshop-stats {
+    width: 100%;
+  }
+
+  .classroom-main {
+    grid-template-columns: 1fr;
+    padding: 0.75rem;
+  }
+
+  .classroom-paths,
+  .workshop-ideas {
+    position: static;
+  }
+
+  .classroom-lesson-list {
+    display: flex;
+    gap: 0.55rem;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .classroom-lesson-tab {
+    flex: 0 0 12rem;
+    scroll-snap-align: start;
+  }
+
+  .classroom-article,
+  .workshop-brief,
+  .workshop-flow,
+  .workshop-feedback,
+  .workshop-reference {
+    padding: 0.9rem;
+  }
+
+  .classroom-study-grid,
+  .workshop-context-grid,
+  .workshop-feedback-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workshop-feedback {
+    display: grid;
+  }
+
+  .workshop-step textarea,
+  .breakthrough-card textarea,
+  .input-base {
+    font-size: 16px;
+  }
+
+  .breakthrough-hero {
+    grid-template-columns: 1fr;
+    padding: 1.1rem;
+  }
+
+  .breakthrough-hero h1 {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+
+  .breakthrough-mascot {
+    justify-self: center;
+  }
+
+  .interview-record-side {
+    order: 2;
+  }
+
+  .interview-setup-main .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .interview-setup-main .flex.gap-3,
+  .interview-setup-main .card.flex {
+    flex-direction: column;
+  }
+
+  .interview-message-bubble,
+  .oldcat-panel .rounded-2xl,
+  .treehole-kivi-small + div {
+    max-width: 86%;
+  }
+
+  .task-bottom-oldcat {
+    width: 3.75rem;
+    height: 3.75rem;
+  }
+
+  .task-detail-modal {
+    width: min(100%, 34rem);
+    max-height: 88vh;
+  }
+
+  .oldcat-peek,
+  .link-vault-peek,
+  .oldcat-memory-peek {
+    right: 0;
+    transform: scale(0.86);
+    transform-origin: right center;
+  }
+
+  .oldcat-panel {
+    width: 100vw !important;
+    max-width: 100vw;
+  }
+
+  .link-vault-panel,
+  .oldcat-memory-panel {
+    left: 0.65rem;
+    right: 0.65rem;
+    top: auto;
+    bottom: 0.75rem;
+    width: auto;
+    max-width: none;
+    max-height: calc(100vh - 1.5rem);
+  }
+
+  .oldcat-memory-body {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    max-height: calc(100vh - 12rem);
+    overflow: auto;
+  }
+
+  .oldcat-memory-list {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid rgba(219, 189, 147, 0.45);
+  }
+
+  .oldcat-memory-list button {
+    min-width: 10rem;
+  }
+
+  .home-tour-card {
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    bottom: 1rem !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  .tour-paw-pointer {
+    transform: scale(0.82);
+  }
+}

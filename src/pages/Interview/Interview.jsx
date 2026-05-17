@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Bookmark, BookmarkPlus, Check, Clock, Copy, ExternalLink, Mic, MicOff, Pause, Send } from 'lucide-react'
+import { Bookmark, BookmarkPlus, Check, Clock, Copy, ExternalLink, Pause, Send } from 'lucide-react'
 import { motion } from 'framer-motion'
 import useStore from '../../store/useStore'
 import { callClaude, extractText, getCatPersonalityPrompt } from '../../utils/claude'
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import InterviewerClay from '../../components/Interviewers/InterviewerClay'
+import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 import { buildInterviewPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
 
 const INTERVIEWERS = [
@@ -48,28 +49,6 @@ function formatTime(sec) {
   return `${Math.floor(sec / 60).toString().padStart(2, '0')}:${(sec % 60).toString().padStart(2, '0')}`
 }
 
-function useVoice(setValue, lang) {
-  const [listening, setListening] = useState(false)
-  const ref = useRef(null)
-  function toggle() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    if (!SpeechRecognition) return
-    if (listening) {
-      ref.current?.stop()
-      setListening(false)
-      return
-    }
-    const recog = new SpeechRecognition()
-    recog.lang = lang === 'zh' ? 'zh-CN' : 'en-US'
-    recog.onresult = e => setValue(prev => `${prev}${e.results[0][0].transcript}`)
-    recog.onend = () => setListening(false)
-    recog.start()
-    ref.current = recog
-    setListening(true)
-  }
-  return { listening, toggle }
-}
-
 export default function Interview() {
   const { user, interview, addInterviewResult, addFish, addExp, saveQuestion, savedQuestions = [], addLearningRecord } = useStore()
   const lang = user.settings.language
@@ -89,7 +68,6 @@ export default function Interview() {
   const [copiedId, setCopiedId] = useState('')
   const bottomRef = useRef(null)
   const endingRef = useRef(false)
-  const voice = useVoice(setInput, lang)
   const interviewer = selectedInterviewer || INTERVIEWERS[2]
   const interviewHistory = Array.isArray(interview?.history) ? interview.history : []
   const savedQuestionList = Array.isArray(savedQuestions) ? savedQuestions : []
@@ -452,11 +430,12 @@ ${q.answer || '未作答'}
         <div className="space-y-2 border-t border-border-light pt-4">
           <div className="relative">
             <textarea className="input-base min-h-[88px] resize-none pr-12" placeholder="请在 3 分钟内作答，尽量像真实面试一样口述..." value={input} onChange={e => setInput(e.target.value)} disabled={paused || loading} />
-            {user.settings.voiceEnabled && (
-              <button type="button" onClick={voice.toggle} className={`absolute bottom-3 right-3 rounded-full p-1.5 ${voice.listening ? 'bg-primary text-white' : 'text-gray-400 hover:bg-border-light'}`}>
-                {voice.listening ? <MicOff size={16} /> : <Mic size={16} />}
-              </button>
-            )}
+            <VoiceInputButton
+              enabled={user.settings.voiceEnabled}
+              lang={lang}
+              onText={text => setInput(prev => `${prev}${prev ? ' ' : ''}${text}`)}
+              className="absolute bottom-3 right-3"
+            />
           </div>
           <div className="flex gap-2">
             <button onClick={() => setPaused(p => !p)} className="px-4 py-2 rounded-xl text-sm font-semibold border border-border-light hover:bg-border-light"><Pause size={14} className="inline mr-1.5" />{paused ? '继续' : '暂停'}</button>

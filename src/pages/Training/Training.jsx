@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Bookmark, BookmarkPlus, Check, Copy, ExternalLink, Lock, Mic, MicOff, Send } from 'lucide-react'
+import { Bookmark, BookmarkPlus, Check, Copy, ExternalLink, Lock, Send } from 'lucide-react'
 import { motion } from 'framer-motion'
 import useStore from '../../store/useStore'
 import { callClaude, extractText, getCatPersonalityPrompt } from '../../utils/claude'
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import ClayIcon from '../../components/UI/ClayIcon'
+import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 import { buildTaskPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
 
 const QUESTION_POOL = [
@@ -36,30 +37,6 @@ function ScoreCard({ label, score, dimensions, color = 'warm' }) {
   )
 }
 
-function useVoice(setValue, lang) {
-  const [listening, setListening] = useState(false)
-  const ref = useRef(null)
-
-  function toggle() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    if (!SpeechRecognition) return
-    if (listening) {
-      ref.current?.stop()
-      setListening(false)
-      return
-    }
-    const recog = new SpeechRecognition()
-    recog.lang = lang === 'zh' ? 'zh-CN' : 'en-US'
-    recog.onresult = e => setValue(prev => `${prev}${e.results[0][0].transcript}`)
-    recog.onend = () => setListening(false)
-    recog.start()
-    ref.current = recog
-    setListening(true)
-  }
-
-  return { listening, toggle }
-}
-
 export default function Training() {
   const {
     user,
@@ -87,8 +64,6 @@ export default function Training() {
   const [loadingScore, setLoadingScore] = useState(false)
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
-  const secondVoice = useVoice(setSecondAnswer, lang)
-
   const isQuestionSaved = currentQ && savedQuestions.some(q => q.questionId === currentQ.id)
 
   function startNewQuestion() {
@@ -284,7 +259,15 @@ export default function Training() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="card p-5 space-y-4">
           <span className="tag bg-blue-100 text-blue-700">{currentQ.source}</span>
           <p className="font-bold text-sm leading-relaxed">{currentQ.text}</p>
-          <textarea className="input-base min-h-[130px] resize-none" placeholder="写下你的第一反应，训练快速组织思路..." value={firstAnswer} onChange={e => setFirstAnswer(e.target.value)} />
+          <div className="relative">
+            <textarea className="input-base min-h-[130px] resize-none pr-11" placeholder="写下你的第一反应，训练快速组织思路..." value={firstAnswer} onChange={e => setFirstAnswer(e.target.value)} />
+            <VoiceInputButton
+              enabled={user.settings.voiceEnabled}
+              lang={lang}
+              onText={text => setFirstAnswer(prev => `${prev}${prev ? ' ' : ''}${text}`)}
+              className="absolute bottom-3 right-3"
+            />
+          </div>
           <button onClick={submitFirst} className="btn-primary w-full" disabled={!firstAnswer.trim()}>提交第一次作答</button>
         </motion.div>
       )}
@@ -339,11 +322,12 @@ export default function Training() {
 
             <div className="relative">
               <textarea className="input-base min-h-[130px] resize-none pr-11" placeholder="写下你的第二次答案，可以更完整..." value={secondAnswer} onChange={e => setSecondAnswer(e.target.value)} />
-              {user.settings.voiceEnabled && (
-                <button type="button" onClick={secondVoice.toggle} className={`absolute bottom-3 right-3 rounded-full p-1.5 ${secondVoice.listening ? 'bg-primary text-white' : 'text-gray-400 hover:bg-border-light'}`}>
-                  {secondVoice.listening ? <MicOff size={15} /> : <Mic size={15} />}
-                </button>
-              )}
+              <VoiceInputButton
+                enabled={user.settings.voiceEnabled}
+                lang={lang}
+                onText={text => setSecondAnswer(prev => `${prev}${prev ? ' ' : ''}${text}`)}
+                className="absolute bottom-3 right-3"
+              />
             </div>
             <button onClick={submitSecond} disabled={!secondAnswer.trim()} className="btn-primary w-full">提交第二次作答</button>
           </div>

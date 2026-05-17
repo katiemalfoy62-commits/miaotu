@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle, Clock, Copy, ExternalLink, Mic, MicOff, Plus, Send, X } from 'lucide-react'
+import { CheckCircle, Clock, Copy, ExternalLink, Plus, Send, X } from 'lucide-react'
 import useStore from '../../store/useStore'
 import { callClaude, extractText, getCatPersonalityPrompt } from '../../utils/claude'
 import BlinkingClayMascot from '../../components/Cat/BlinkingClayMascot'
 import ClayIcon from '../../components/UI/ClayIcon'
+import VoiceInputButton from '../../components/VoiceInput/VoiceInputButton'
 import { buildTaskPrompt, copyText, openChatGPT } from '../../utils/gptPrompt'
 
 const MOCK_TASKS = [
@@ -40,33 +41,11 @@ function CountdownBar({ deadline }) {
   )
 }
 
-function useSpeechToText(setValue, lang) {
-  const [listening, setListening] = useState(false)
-
-  function toggle() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    if (!SpeechRecognition) return
-    if (listening) {
-      setListening(false)
-      return
-    }
-    const recog = new SpeechRecognition()
-    recog.lang = lang === 'zh' ? 'zh-CN' : 'en-US'
-    recog.onresult = e => setValue(prev => `${prev}${e.results[0][0].transcript}`)
-    recog.onend = () => setListening(false)
-    recog.start()
-    setListening(true)
-  }
-
-  return { listening, toggle }
-}
-
 function TaskCard({ task, index, onSubmit, isActive, lang }) {
   const { user } = useStore()
   const [answer, setAnswer] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const { listening, toggle } = useSpeechToText(setAnswer, lang)
 
   async function submitAnswer() {
     if (!answer.trim() || submitting) return
@@ -140,15 +119,12 @@ function TaskCard({ task, index, onSubmit, isActive, lang }) {
           onChange={e => setAnswer(e.target.value)}
           disabled={submitting}
         />
-        {user.settings.voiceEnabled && (
-          <button
-            type="button"
-            onClick={toggle}
-            className={`absolute bottom-3 right-3 rounded-full p-1.5 ${listening ? 'bg-primary text-white' : 'text-gray-400 hover:bg-border-light'}`}
-          >
-            {listening ? <MicOff size={15} /> : <Mic size={15} />}
-          </button>
-        )}
+        <VoiceInputButton
+          enabled={user.settings.voiceEnabled}
+          lang={lang}
+          onText={text => setAnswer(prev => `${prev}${prev ? ' ' : ''}${text}`)}
+          className="absolute bottom-3 right-3"
+        />
       </div>
       {error && <div className="rounded-xl bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700">{error}</div>}
       <button

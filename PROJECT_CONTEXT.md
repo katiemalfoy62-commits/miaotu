@@ -112,6 +112,7 @@ Current product state:
 - `src/utils/levelCalc.js`: level/growth calculation utilities.
 - `src/components/Layout/Layout.jsx`: app shell, navbar/back behavior, floating tools, Old Cat visibility.
 - `src/components/OldCat/OldCat.jsx`: Old Cat mentor chat panel; listens for `miaotu:open-oldcat`.
+- `src/components/VoiceInput/VoiceInputButton.jsx`: shared browser speech-to-text button using Chrome/Web Speech API when enabled in settings.
 - `src/components/OldCat/FloatingOldCatArchive.jsx`: right-side saved Old Cat chat folder.
 - `src/components/LinkVault/FloatingLinkVault.jsx`: right-side URL/prompt vault.
 - `src/components/Cat/BlinkingClayMascot.jsx`: blinking clay Kivi/Old Cat mascot.
@@ -168,6 +169,7 @@ Current product state:
 - `src/data/shopItems.js` may display mojibake in terminal. Be careful when editing text there.
 - A generated-image attempt for the paw pointer failed and produced an irrelevant tutorial screenshot. Do not use that generated output.
 - Homepage guided tour still needs mobile QA for spotlight alignment and card placement.
+- Mobile layout now has a first responsive pass for the main learning pages and floating panels, but still needs real-device visual QA.
 - Dark mode still needs browser QA across pages; some pages may still have low contrast or inconsistent card colors.
 - Stage PNGs and interviewer PNGs still add build weight. Vite build warns that the main JS chunk is larger than 500 kB.
 - Non-transparent legacy stage PNGs and paused cat-customizer assets were moved to `archive_cleanup/` during cleanup; restore from there if the paused customization direction is revived.
@@ -227,6 +229,8 @@ Current product state:
 - Expanded 造物工坊 from 4 to 20 fixed product ideas and added a random fixed-topic entry. Expanded 小猫课堂 from 3 paths/9 lessons to 5 paths/25 lessons, adding product development flow and AI PM work-method paths. Build passed after expansion.
 - Refined 造物工坊 random logic: random fixed-topic draw now skips fixed ideas that already have saved sessions, completed fixed ideas show an "已练习" badge, and a separate "老猫即兴出题" option uses the user's API Key to generate a fresh non-fixed practice idea.
 - Reworked 小猫课堂 lesson presentation into a deeper learning template: professional definition, plain-language explanation, key points, real scenario, common mistake, small exercise, mentor tip, and takeaway. Added matching data fields for all 25 lessons. Build passed after this update.
+- Added a shared voice-to-text button powered by the browser Web Speech API. It is enabled by the existing settings voice toggle and now appears on long-input flows: daily tasks, thinking training first/second answers, breakthrough seed/answers, mock interview answers, workshop step answers, Old Cat chat, and Kitten Corner.
+- Added a mobile responsive pass for homepage, classroom, workshop, breakthrough, interview setup/session, task detail modal, Old Cat panel, link vault, and saved Old Cat chat panel. Desktop styling should remain unchanged because the new rules are scoped to small viewports. Production build passed after the update; the known 500 kB chunk warning remains.
 
 ## Notes For Next Codex
 
