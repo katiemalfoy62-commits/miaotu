@@ -4809,6 +4809,11 @@ button:hover .interviewer-clay {
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
+.workshop-random-card:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .classroom-path:hover,
 .classroom-path.is-active,
 .workshop-idea-card:hover,
@@ -4857,6 +4862,44 @@ button:hover .interviewer-clay {
 
 .workshop-random-card svg {
   color: #c8622a;
+}
+
+.workshop-random-card--ai {
+  background:
+    radial-gradient(circle at 84% 20%, rgba(255,255,255,0.82), transparent 5rem),
+    linear-gradient(135deg, #fff4f0, #eef6ff);
+}
+
+.workshop-idea-card {
+  position: relative;
+}
+
+.workshop-idea-card em {
+  display: inline-flex;
+  margin-top: 0.55rem;
+  border-radius: 999px;
+  background: rgba(135, 184, 130, 0.16);
+  padding: 0.2rem 0.55rem;
+  color: #5a9b66;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 1000;
+}
+
+.workshop-idea-card.is-completed:not(.is-active) {
+  opacity: 0.78;
+}
+
+.workshop-idea-note {
+  margin: 0;
+  border: 1px solid rgba(200, 98, 42, 0.18);
+  border-radius: 1rem;
+  background: rgba(255, 242, 223, 0.72);
+  padding: 0.75rem 0.85rem;
+  color: #9b542b;
+  font-size: 0.78rem;
+  font-weight: 900;
+  line-height: 1.55;
 }
 
 .classroom-path--mint.is-active {
@@ -4929,16 +4972,42 @@ button:hover .interviewer-clay {
 }
 
 .classroom-article-head p,
-.classroom-body,
+.classroom-definition p,
+.classroom-plain strong,
 .classroom-points div,
+.classroom-study-grid p,
 .classroom-takeaway strong {
   color: #5f5146;
   font-weight: 820;
   line-height: 1.75;
 }
 
-.classroom-body {
+.classroom-definition,
+.classroom-plain {
   margin-top: 1rem;
+  border-radius: 1rem;
+  background: rgba(255,255,255,0.62);
+  padding: 0.9rem 1rem;
+}
+
+.classroom-definition span,
+.classroom-plain span,
+.classroom-study-grid span,
+.classroom-block-title {
+  display: block;
+  color: #c8622a;
+  font-size: 0.76rem;
+  font-weight: 1000;
+  margin-bottom: 0.35rem;
+}
+
+.classroom-plain {
+  border-left: 4px solid rgba(200, 98, 42, 0.72);
+  background: #fff2df;
+}
+
+.classroom-plain strong {
+  display: block;
 }
 
 .classroom-points {
@@ -4953,6 +5022,23 @@ button:hover .interviewer-clay {
   border-radius: 0.9rem;
   background: rgba(255,255,255,0.64);
   padding: 0.7rem;
+}
+
+.classroom-study-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.classroom-study-grid article {
+  border-radius: 1rem;
+  background: rgba(255,255,255,0.68);
+  padding: 0.85rem;
+}
+
+.classroom-study-grid p {
+  margin: 0;
 }
 
 .classroom-takeaway {
@@ -5186,8 +5272,10 @@ button:hover .interviewer-clay {
 .dark .classroom-hero p,
 .dark .workshop-hero p,
 .dark .classroom-article-head p,
-.dark .classroom-body,
+.dark .classroom-definition p,
+.dark .classroom-plain strong,
 .dark .classroom-points div,
+.dark .classroom-study-grid p,
 .dark .classroom-takeaway strong,
 .dark .workshop-brief p,
 .dark .workshop-context-grid p,
@@ -5203,6 +5291,9 @@ button:hover .interviewer-clay {
 .dark .workshop-idea-card,
 .dark .workshop-random-card,
 .dark .classroom-article,
+.dark .classroom-definition,
+.dark .classroom-plain,
+.dark .classroom-study-grid article,
 .dark .workshop-context-grid article,
 .dark .workshop-feedback-grid article,
 .dark .classroom-points div,
@@ -5233,7 +5324,8 @@ button:hover .interviewer-clay {
   }
 
   .workshop-context-grid,
-  .workshop-feedback-grid {
+  .workshop-feedback-grid,
+  .classroom-study-grid {
     grid-template-columns: 1fr;
   }
 }

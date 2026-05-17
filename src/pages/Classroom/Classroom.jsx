@@ -93,12 +93,40 @@ export default function Classroom() {
               <p>{activeLesson.example}</p>
             </div>
 
-            <p className="classroom-body">{activeLesson.body}</p>
+            <div className="classroom-definition">
+              <span>专业定义</span>
+              <p>{activeLesson.definition || activeLesson.body}</p>
+            </div>
+
+            <div className="classroom-plain">
+              <span>人话解释</span>
+              <strong>{activeLesson.plain || activeLesson.takeaway}</strong>
+            </div>
 
             <div className="classroom-points">
+              <span className="classroom-block-title">关键点</span>
               {activeLesson.bullets.map(point => (
                 <div key={point}><Sparkles size={15} /> {point}</div>
               ))}
+            </div>
+
+            <div className="classroom-study-grid">
+              <article>
+                <span>真实场景</span>
+                <p>{activeLesson.scenario || activeLesson.example}</p>
+              </article>
+              <article>
+                <span>常见误区</span>
+                <p>{activeLesson.mistake || '只记概念名，但不知道它解决什么真实问题。'}</p>
+              </article>
+              <article>
+                <span>小练习</span>
+                <p>{activeLesson.exercise || '用你自己的项目举一个例子，写出用户、场景和判断标准。'}</p>
+              </article>
+              <article>
+                <span>老猫提示</span>
+                <p>{activeLesson.mentor || activeLesson.takeaway}</p>
+              </article>
             </div>
 
             <div className="classroom-takeaway">

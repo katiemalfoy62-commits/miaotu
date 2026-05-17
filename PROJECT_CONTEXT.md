@@ -125,8 +125,8 @@ Current product state:
 - `src/pages/Shop/Shop.jsx` and `src/pages/Wardrobe/Wardrobe.jsx`: fish shop and wardrobe handling.
 - `src/data/shopItems.js`: shop item definitions; terminal may show Chinese/emoji as mojibake.
 - `src/data/newsSources.js`: trusted AI news sources used by the news page and source-introduction card.
-- `src/data/classroomLessons.js`: 小猫课堂 lesson paths and lesson copy. Current content has 5 learning paths and 25 short lessons.
-- `src/data/workshopIdeas.js`: 造物工坊 idea prompts and product-flow step definitions. Current content has 20 fixed product ideas across learning, job search, B-side efficiency, lifestyle, knowledge management, community, and product work.
+- `src/data/classroomLessons.js`: 小猫课堂 lesson paths and lesson copy. Current content has 5 learning paths and 25 lessons, each with professional definition, plain-language explanation, real scenario, common mistake, small exercise, mentor tip, key points, and takeaway.
+- `src/data/workshopIdeas.js`: 造物工坊 fixed idea prompts and product-flow step definitions. Current content has 20 fixed product ideas across learning, job search, B-side efficiency, lifestyle, knowledge management, community, and product work.
 - `src/index.css`: custom visual styling, including clay dashboard, onboarding, guided tour, paw pointer, dark mode, hover states, and growth map styles.
 - `src/assets/mascots/`: clay mascot assets such as Kivi, Old Cat, breakthrough cat.
 - `src/assets/ui-clay/`: clay UI icons.
@@ -155,8 +155,8 @@ Current product state:
 - GPT handoff is intended behavior: copy prompt/open GPT actions should remain.
 - API keys are user-provided in settings/localStorage. Do not commit or hardcode private keys.
 - Reward economy should remain slow enough for long-term use.
-- 小猫课堂 is for input/learning before practice; keep lessons short, concrete, and beginner-friendly.
-- 造物工坊 is for process practice from idea to product flow; it should complement daily tasks, not replace them. Daily tasks are small work simulations, while the workshop trains the full 0-to-1 product development order.
+- 小猫课堂 is for input/learning before practice; lessons should stay beginner-friendly but must feel useful enough to study, with definitions, plain explanations, scenarios, mistakes, exercises, and mentor guidance.
+- 造物工坊 is for process practice from idea to product flow; it should complement daily tasks, not replace them. Daily tasks are small work simulations, while the workshop trains the full 0-to-1 product development order. Fixed random draw should skip completed fixed ideas, and AI impromptu ideas should be separate from the fixed 20题 pool.
 
 ## Known Issues
 
@@ -224,7 +224,9 @@ Current product state:
 - Replaced the news page's old fallback mock news with a trusted-source RSS flow and source guide fallback. The right-side news card now explains sources instead of reading method. Link vault saves are deduped, news save buttons show saved state, and the floating link vault panel is constrained to the viewport with safer text wrapping.
 - Added 小猫课堂 and 造物工坊 as two new homepage learning entrances. 小猫课堂 introduces short AI/PM foundation lessons and records completed lessons into the growth archive. 造物工坊 gives product ideas, asks the user to write the full product development flow, provides AI or local fallback feedback, and saves sessions into the growth archive. Build passed after adding both routes.
 - Fixed repeat onboarding: direct visits or reloads on `/onboarding` now redirect completed users back to `/`, and persisted store migration marks existing users with cat setup/progress/rewards as `onboardingDone` so old local data does not get forced through onboarding again.
-- Expanded 造物工坊 from 4 to 20 fixed product ideas and added a random-topic entry that draws from the fixed idea pool. Expanded 小猫课堂 from 3 paths/9 lessons to 5 paths/25 lessons, adding product development flow and AI PM work-method paths. Build passed after expansion.
+- Expanded 造物工坊 from 4 to 20 fixed product ideas and added a random fixed-topic entry. Expanded 小猫课堂 from 3 paths/9 lessons to 5 paths/25 lessons, adding product development flow and AI PM work-method paths. Build passed after expansion.
+- Refined 造物工坊 random logic: random fixed-topic draw now skips fixed ideas that already have saved sessions, completed fixed ideas show an "已练习" badge, and a separate "老猫即兴出题" option uses the user's API Key to generate a fresh non-fixed practice idea.
+- Reworked 小猫课堂 lesson presentation into a deeper learning template: professional definition, plain-language explanation, key points, real scenario, common mistake, small exercise, mentor tip, and takeaway. Added matching data fields for all 25 lessons. Build passed after this update.
 
 ## Notes For Next Codex
 

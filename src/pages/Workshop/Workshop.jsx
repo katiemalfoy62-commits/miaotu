@@ -37,13 +37,28 @@ function buildLocalFeedback(idea, answers) {
 export default function Workshop() {
   const { user, workshop = { sessions: [] }, saveWorkshopSession, addExp, addFish } = useStore()
   const [ideaIndex, setIdeaIndex] = useState(0)
+  const [customIdea, setCustomIdea] = useState(null)
   const [answers, setAnswers] = useState({})
   const [feedback, setFeedback] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [generatingIdea, setGeneratingIdea] = useState(false)
   const [saved, setSaved] = useState(false)
-  const idea = WORKSHOP_IDEAS[ideaIndex]
+  const [ideaNotice, setIdeaNotice] = useState('')
+  const completedFixedIds = useMemo(() => new Set(
+    (workshop.sessions || [])
+      .filter(session => WORKSHOP_IDEAS.some(item => item.id === session.ideaId))
+      .map(session => session.ideaId)
+  ), [workshop.sessions])
+  const fixedIdea = WORKSHOP_IDEAS[ideaIndex]
+  const idea = customIdea || fixedIdea
   const referenceFlow = useMemo(() => buildReferenceFlow(idea), [idea])
   const completedSteps = PRODUCT_FLOW_STEPS.filter(step => (answers[step.id] || '').trim()).length
+
+  function resetDraft() {
+    setAnswers({})
+    setFeedback(null)
+    setSaved(false)
+  }
 
   function updateAnswer(stepId, value) {
     setSaved(false)
@@ -51,13 +66,65 @@ export default function Workshop() {
     setAnswers(prev => ({ ...prev, [stepId]: value }))
   }
 
-  function nextIdea() {
-    const pool = WORKSHOP_IDEAS.map((_, index) => index).filter(index => index !== ideaIndex)
+  function chooseFixedIdea(index) {
+    setCustomIdea(null)
+    setIdeaIndex(index)
+    setIdeaNotice('')
+    resetDraft()
+  }
+
+  function pickRandomFixedIdea() {
+    const pool = WORKSHOP_IDEAS
+      .map((item, index) => ({ item, index }))
+      .filter(({ item, index }) => index !== ideaIndex && !completedFixedIds.has(item.id))
+      .map(({ index }) => index)
+
+    if (!pool.length) {
+      setIdeaNotice('固定题差不多都练过了，可以让老猫即兴出题，或者回头复盘已完成题。')
+      return
+    }
+
     const nextIndex = pool[Math.floor(Math.random() * pool.length)] ?? 0
-    setIdeaIndex(nextIndex)
-    setAnswers({})
-    setFeedback(null)
-    setSaved(false)
+    chooseFixedIdea(nextIndex)
+  }
+
+  async function generateImpromptuIdea() {
+    if (!user.settings.apiKey) {
+      setIdeaNotice('老猫即兴出题需要先在设置里添加 API Key。没有 Key 时，可以先练左侧 20 个固定题。')
+      return
+    }
+
+    setGeneratingIdea(true)
+    setIdeaNotice('')
+    try {
+      const res = await callClaude({
+        apiKey: user.settings.apiKey,
+        modelMode: user.settings.modelMode,
+        maxTokens: 700,
+        system: '你是 AI 产品经理训练题出题官。只输出 JSON，不要 Markdown。',
+        messages: [{
+          role: 'user',
+          content: `请为零基础 AI PM 学习者生成一个全新的产品开发训练题，不要和这些固定题重复：${WORKSHOP_IDEAS.map(item => item.title).join('、')}。\n\n返回 JSON 字段：title, prompt, user, scene, hint, tag。要求题目具体、有真实用户和真实场景，不要太宏大。`,
+        }],
+      })
+      const generated = parseJson(extractText(res), null)
+      if (!generated?.title || !generated?.prompt) throw new Error('bad idea')
+      setCustomIdea({
+        id: `impromptu-${Date.now()}`,
+        title: generated.title,
+        prompt: generated.prompt,
+        user: generated.user || '需要解决具体问题的目标用户',
+        scene: generated.scene || '用户在一个明确场景里遇到重复成本或决策困难。',
+        hint: generated.hint || '先缩小场景，再设计 MVP 和验证指标。',
+        tag: generated.tag || '即兴题',
+      })
+      resetDraft()
+      setIdeaNotice('老猫刚抓了一道即兴题。这道题不会占用固定 20 题进度。')
+    } catch {
+      setIdeaNotice('即兴题生成失败了，可能是 API Key 或网络问题。先练固定题也可以。')
+    } finally {
+      setGeneratingIdea(false)
+    }
   }
 
   async function reviewFlow() {
@@ -91,6 +158,7 @@ export default function Workshop() {
 
     const session = {
       ideaId: idea.id,
+      ideaType: customIdea ? 'impromptu' : 'fixed',
       ideaTitle: idea.title,
       ideaPrompt: idea.prompt,
       answer: answerText,
@@ -126,26 +194,33 @@ export default function Workshop() {
           <button
             type="button"
             className="workshop-random-card"
-            onClick={nextIdea}
+            onClick={pickRandomFixedIdea}
           >
             <RefreshCw size={16} />
-            <strong>随机题目</strong>
-            <span>不想挑固定题时，让老猫随便抓一个 idea。</span>
+            <strong>随机抽固定题</strong>
+            <span>只从没练过的固定题里抽一个。</span>
           </button>
+          <button
+            type="button"
+            className="workshop-random-card workshop-random-card--ai"
+            onClick={generateImpromptuIdea}
+            disabled={generatingIdea}
+          >
+            <Wand2 size={16} />
+            <strong>{generatingIdea ? '老猫出题中...' : '老猫即兴出题'}</strong>
+            <span>不想做固定题时，让 AI 临场给一个新场景。</span>
+          </button>
+          {ideaNotice && <p className="workshop-idea-note">{ideaNotice}</p>}
           {WORKSHOP_IDEAS.map((item, index) => (
             <button
               type="button"
               key={item.id}
-              className={`workshop-idea-card ${index === ideaIndex ? 'is-active' : ''}`}
-              onClick={() => {
-                setIdeaIndex(index)
-                setAnswers({})
-                setFeedback(null)
-                setSaved(false)
-              }}
+              className={`workshop-idea-card ${!customIdea && index === ideaIndex ? 'is-active' : ''} ${completedFixedIds.has(item.id) ? 'is-completed' : ''}`}
+              onClick={() => chooseFixedIdea(index)}
             >
               <strong>{item.title}</strong>
               <span>{item.tag} · {item.user}</span>
+              {completedFixedIds.has(item.id) && <em>已练习</em>}
             </button>
           ))}
         </aside>
@@ -157,9 +232,9 @@ export default function Workshop() {
               <h2>{idea.title}</h2>
               <p>{idea.prompt}</p>
             </div>
-            <button type="button" className="workshop-refresh" onClick={nextIdea}>
+            <button type="button" className="workshop-refresh" onClick={pickRandomFixedIdea}>
               <RefreshCw size={16} />
-              换一个
+              换个固定题
             </button>
             <div className="workshop-context-grid">
               <article>
