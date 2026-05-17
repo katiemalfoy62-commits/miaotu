@@ -46,6 +46,17 @@ export default function ToolDrawer({ oldCatAvailable = true }) {
   }, [location.pathname])
 
   useEffect(() => {
+    const openDrawer = () => setOpen(true)
+    const toggleDrawer = () => setOpen(value => !value)
+    window.addEventListener('miaotu:open-tool-drawer', openDrawer)
+    window.addEventListener('miaotu:toggle-tool-drawer', toggleDrawer)
+    return () => {
+      window.removeEventListener('miaotu:open-tool-drawer', openDrawer)
+      window.removeEventListener('miaotu:toggle-tool-drawer', toggleDrawer)
+    }
+  }, [])
+
+  useEffect(() => {
     if (!open) return undefined
 
     function closeOnOutside(event) {

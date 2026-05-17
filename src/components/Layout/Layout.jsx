@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { BookOpen, GraduationCap, Home, Settings, Target } from 'lucide-react'
+import { BookOpen, GraduationCap, Home, Settings, Target, Wrench } from 'lucide-react'
 import Navbar from './Navbar'
 import OldCat from '../OldCat/OldCat'
 import ClayIcon from '../UI/ClayIcon'
@@ -22,13 +22,44 @@ const MOBILE_NAV = [
 export default function Layout({ children }) {
   const location = useLocation()
   const navigate = useNavigate()
+  const mainRef = useRef(null)
   const hideOldCat = NO_OLDCAT_PATHS.some(p => location.pathname.startsWith(p))
   const isHome = location.pathname === '/'
+
+  useEffect(() => {
+    const main = mainRef.current
+    if (!main) return undefined
+
+    const mainKey = `miaotu-scroll:main:${location.pathname}`
+    const windowKey = `miaotu-scroll:window:${location.pathname}`
+    const savedMain = Number(sessionStorage.getItem(mainKey) || 0)
+    const savedWindow = Number(sessionStorage.getItem(windowKey) || 0)
+    const restore = window.setTimeout(() => {
+      main.scrollTo({ top: savedMain, behavior: 'auto' })
+      window.scrollTo({ top: savedWindow, behavior: 'auto' })
+    }, 40)
+
+    function saveScroll() {
+      sessionStorage.setItem(mainKey, String(main.scrollTop || 0))
+      sessionStorage.setItem(windowKey, String(window.scrollY || 0))
+    }
+
+    main.addEventListener('scroll', saveScroll, { passive: true })
+    window.addEventListener('scroll', saveScroll, { passive: true })
+    window.addEventListener('beforeunload', saveScroll)
+    return () => {
+      window.clearTimeout(restore)
+      saveScroll()
+      main.removeEventListener('scroll', saveScroll)
+      window.removeEventListener('scroll', saveScroll)
+      window.removeEventListener('beforeunload', saveScroll)
+    }
+  }, [location.pathname])
 
   return (
     <div className="app-bg min-h-screen bg-bg-light dark:bg-bg-dark">
       <Navbar/>
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <main ref={mainRef} className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {!isHome && (
           <button type="button" className="page-back-button" onClick={() => navigate(-1)}>
             <ClayIcon name="back" alt="" />
@@ -52,6 +83,10 @@ export default function Layout({ children }) {
             </Link>
           )
         })}
+        <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('miaotu:toggle-tool-drawer'))}>
+          <Wrench size={18} />
+          <span>工具</span>
+        </button>
       </nav>
     </div>
   )

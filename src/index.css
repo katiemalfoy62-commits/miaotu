@@ -5177,6 +5177,7 @@ button:hover .interviewer-clay {
 }
 
 .workshop-step textarea {
+  width: 100%;
   min-height: 6.8rem;
   resize: vertical;
   border: 1px solid rgba(219, 189, 147, 0.72);
@@ -5573,7 +5574,7 @@ button:hover .interviewer-clay {
     bottom: max(0.65rem, env(safe-area-inset-bottom));
     z-index: 48;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 0.25rem;
     padding: 0.45rem;
     border: 1px solid rgba(217, 189, 147, 0.72);
@@ -5583,7 +5584,8 @@ button:hover .interviewer-clay {
     backdrop-filter: blur(16px);
   }
 
-  .mobile-bottom-nav a {
+  .mobile-bottom-nav a,
+  .mobile-bottom-nav button {
     display: grid;
     place-items: center;
     gap: 0.12rem;
@@ -5593,6 +5595,12 @@ button:hover .interviewer-clay {
     color: #8a7661;
     font-size: 0.66rem;
     font-weight: 900;
+  }
+
+  .mobile-bottom-nav button {
+    appearance: none;
+    border: 0;
+    background: transparent;
   }
 
   .mobile-bottom-nav a.active {
@@ -5627,12 +5635,7 @@ button:hover .interviewer-clay {
   }
 
   .tool-drawer-button {
-    top: auto;
-    right: 0;
-    bottom: calc(6.1rem + env(safe-area-inset-bottom));
-    width: 3.7rem;
-    height: 3.7rem;
-    transform: none;
+    display: none;
   }
 
   .tool-drawer-button img {
@@ -5647,6 +5650,14 @@ button:hover .interviewer-clay {
     bottom: calc(5.7rem + env(safe-area-inset-bottom));
     width: auto;
     transform: none;
+  }
+
+  .app-bg:has(.interview-session-page) .mobile-bottom-nav {
+    display: none;
+  }
+
+  .app-bg:has(.interview-session-page) main.mx-auto {
+    padding-bottom: 0.75rem;
   }
 
   .news-page,
@@ -5912,8 +5923,27 @@ button:hover .interviewer-clay {
   }
 
   .interview-session-page {
-    height: calc(100svh - 9.4rem);
-    max-height: calc(100svh - 9.4rem);
+    height: calc(100dvh - 5.4rem);
+    max-height: calc(100dvh - 5.4rem);
+  }
+
+  .interview-session-main {
+    min-height: 0;
+  }
+
+  .interview-session-page > .flex-1 {
+    min-height: 0;
+  }
+
+  .interview-session-page:focus-within > .flex-1 {
+    flex: 0 1 42dvh;
+  }
+
+  .interview-session-page:focus-within .interview-message-bubble {
+    max-width: 88%;
+    padding: 0.65rem 0.8rem;
+    font-size: 0.86rem;
+    line-height: 1.55;
   }
 
   .classroom-article,
@@ -5940,9 +5970,38 @@ button:hover .interviewer-clay {
     font-size: 16px;
   }
 
+  .treehole-page {
+    height: calc(100dvh - 10.2rem);
+    max-height: calc(100dvh - 10.2rem);
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  .treehole-page > .flex-1 {
+    min-height: 0;
+  }
+
+  .treehole-page .treehole-kivi-large .clay-mascot-kivi {
+    width: 6.4rem;
+  }
+
   .breakthrough-hero {
     grid-template-columns: 1fr;
     padding: 1.1rem;
+  }
+
+  .breakthrough-card {
+    padding: 0.95rem;
+  }
+
+  .breakthrough-card textarea {
+    width: 100%;
+    min-height: 9.5rem;
+  }
+
+  .breakthrough-card .btn-primary {
+    width: 100%;
+    justify-content: center;
   }
 
   .breakthrough-hero h1 {

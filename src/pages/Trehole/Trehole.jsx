@@ -51,7 +51,7 @@ export default function Trehole() {
   }
 
   return (
-    <div className="max-w-sm mx-auto flex flex-col h-[calc(100vh-120px)]">
+    <div className="treehole-page max-w-sm mx-auto flex flex-col h-[calc(100vh-120px)]">
       {/* Header */}
       <div className="text-center py-4 space-y-2">
         <motion.div animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 2.5 }} className="flex justify-center">
