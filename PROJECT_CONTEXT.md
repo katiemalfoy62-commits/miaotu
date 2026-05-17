@@ -12,9 +12,11 @@ Current branch: `master`
 
 ## What This Is
 
-Miaotu is a gamified AI product manager learning companion for students or early-career PM learners. It helps users build AI PM habits through daily AI news, PM tasks, structured thinking drills, mock interviews, targeted breakthrough practice, growth records, and an Old Cat mentor.
+喵途 Miaotu is a gamified AI product manager learning companion for beginners, students, and early-career PM learners. It helps users build AI PM ability through input, practice, feedback, mock interviews, and a cute clay-cat growth loop.
 
-The app is intended to be resume-demo-friendly: cute and clay-styled, but still understandable as a real learning product when a first-time visitor opens it from a portfolio or resume link.
+Core product promise: a user who is almost zero-basic can first learn concepts in 小猫课堂, then practice with news, tasks, thinking drills, mock interviews, product-flow exercises, and targeted breakthrough drills. Progress is stored in a cat growth archive with XP, levels, fish rewards, notes, saved links, and Old Cat mentor conversations.
+
+This is also intended to be portfolio/resume-demo-friendly: warm, cute, and clay-styled, but still understandable as a real learning product.
 
 ## Tech Stack
 
@@ -27,6 +29,8 @@ The app is intended to be resume-demo-friendly: cute and clay-styled, but still 
 - Charts: `recharts`
 - Styling: Tailwind CSS plus custom CSS in `src/index.css`
 - AI helper: browser-side OpenAI Chat Completions helper in `src/utils/claude.js`; exported name `callClaude` is kept for compatibility
+- Voice input: browser Web Speech API plus optional Vercel backend transcription endpoint
+- Backend/serverless: `api/transcribe.js` for optional speech transcription proxy
 - Deployment: GitHub imported into Vercel, with SPA fallback rewrite in `vercel.json`
 
 ## How To Run
@@ -66,36 +70,41 @@ Tests: no automated test script is configured.
 
 ## Current Status
 
-The app is a working Vite React single-page app deployed on Vercel. Main routes include:
+The app is a working Vite React single-page app deployed on Vercel. Current routes:
 
 - `/onboarding`: first-time intro, module introduction, cat name setup, Old Cat companion-style choice
-- `/`: clay-style home dashboard, growth route, daily module cards, right-side progress widgets, guided homepage tour
-- `/news`: AI news reading and PREP-style summaries
+- `/`: clay-style home dashboard, growth map, daily module cards, right-side progress widgets, guided homepage tour
+- `/news`: trusted AI news source guide and AI news reading/PREP summaries
 - `/tasks`: daily commissioned tasks
 - `/training`: structured thinking drills
-- `/classroom`: 小猫课堂, lightweight AI/PM concept lessons for zero-basic learners
+- `/classroom`: 小猫课堂, beginner-friendly AI/PM lessons
 - `/workshop`: 造物工坊, product idea-to-flow practice with Old Cat feedback
 - `/breakthrough`: targeted five-question drill
 - `/interview` and `/interview/session`: mock interview setup/session/report
 - `/archive`, `/archive/wrongbook`, `/archive/diary`, `/archive/interviews`: growth archive areas
 - `/shop` and `/wardrobe`: fish reward shop and outfit flow
-- `/settings`: API key, model mode, theme, cat name, Old Cat personality, voice setting
+- `/settings`: API key, model mode, theme, cat name, Old Cat personality, voice settings
 - `/collection`: saved question collection
 - `/trehole`: cat treehole chat
 
-Current product state:
+Completed product pieces:
 
-- Homepage uses a stable clay Kivi cat for the main companion visuals.
-- Growth route uses six fixed transparent stage-cat images for hover/focus/click previews.
-- Onboarding no longer has fur color, eye color, pattern, breed, or gender customization.
-- Onboarding flow is: Old Cat introduces the site, introduces core modules, explains rewards/growth stages, asks for cat name and Old Cat companion style, then enters homepage.
-- Settings only allows editing the cat name for the cat section; visual appearance customization is intentionally hidden for now.
-- Homepage guided tour has 9 steps: growth overview, news station, tasks, thinking drills, interview simulation, cat/fish/shop, Old Cat plus Kitten Corner, breakthrough/archive, and the two right-side floating folders.
-- Guided tour auto-scrolls the current target into view, highlights the current target, keeps it clickable, and uses a CSS-drawn paw pointer. This paw pointer is currently disliked by the user and should be redesigned.
-- The Old Cat panel, link vault panel, and saved Old Cat chat panel are lifted above the tour overlay while their steps are active so they can be operated.
-- Mock interview now attempts adaptive follow-up questions based on the user's previous answer instead of only asking a fixed next question.
-- Dark mode was revised toward a neutral, WeChat-like deep gray palette with better text contrast, but still needs visual QA across all pages.
-- Large legacy mascot PNGs were partly optimized to WebP. Interviewer PNGs and six stage PNGs are still relatively large.
+- Stable clay Kivi cat for the main companion visuals.
+- Six fixed transparent stage-cat images for the growth route.
+- Onboarding is simplified; no fur/eye/pattern/breed/gender customization.
+- Old Cat style selection exists in onboarding and settings.
+- Home guided tour exists and stores progress in Zustand/localStorage.
+- API Key setup is part of the tour, and settings highlights the OpenAI key card.
+- 小猫课堂 has expanded lesson content with definitions, plain explanations, scenarios, mistakes, exercises, mentor tips, and takeaways.
+- 造物工坊 has 20 fixed product ideas plus an AI impromptu-topic option.
+- Random fixed workshop topics skip fixed ideas already completed.
+- AI news no longer uses 2023 mock news or `example.com`; it uses a trusted source whitelist/fallback source guide.
+- Link vault and Old Cat saved-chat archive exist and can save/copy/export useful material.
+- Voice input button exists and can use browser speech or optional backend transcription depending on settings.
+- Mobile has a first responsive pass: bottom nav, compact hero/card styles, tool entry in nav, and hidden side launchers on smaller screens.
+- Reward economy is centralized in `src/config/growthRules.js`.
+
+Current git status before this handoff update was clean after the latest reward-mechanism push.
 
 ## Important Files
 
@@ -103,83 +112,88 @@ Current product state:
 - `package.json`: scripts and dependencies.
 - `vite.config.js`: Vite React config.
 - `vercel.json`: SPA rewrite for direct route refresh on Vercel.
+- `api/transcribe.js`: Vercel serverless transcription proxy for optional backend speech-to-text.
 - `src/main.jsx`: React entry point.
-- `src/App.jsx`: route wiring.
+- `src/App.jsx`: route wiring and onboarding guard.
 - `src/store/useStore.js`: central persisted Zustand state, rewards, records, Old Cat chats, shop/wardrobe state, onboarding flags, home tour state.
+- `src/config/growthRules.js`: single source of truth for XP rewards, fish rewards, streak rewards, level curve, and cat stages.
+- `src/utils/levelCalc.js`: level/growth utilities using the centralized growth rules.
 - `src/utils/claude.js`: OpenAI API helper and prompt helpers.
+- `src/utils/newsFeeds.js`: frontend RSS fetcher for trusted AI news sources.
 - `src/utils/gptPrompt.js`: GPT handoff prompt utilities.
-- `src/utils/newsFeeds.js`: frontend RSS fetcher for the trusted AI news source whitelist.
-- `src/utils/levelCalc.js`: level/growth calculation utilities.
-- `src/config/growthRules.js`: single source of truth for XP rewards, fish rewards, streak rewards, level curve, and cat growth stages.
-- `src/components/Layout/Layout.jsx`: app shell, navbar/back behavior, floating tools, Old Cat visibility.
+- `src/components/Layout/Layout.jsx`: app shell, navbar/back behavior, bottom nav, floating tools, Old Cat visibility.
+- `src/components/Tools/ToolDrawer.jsx`: shared tool drawer entry for link vault, Old Cat, and saved chats.
 - `src/components/OldCat/OldCat.jsx`: Old Cat mentor chat panel; listens for `miaotu:open-oldcat`.
-- `src/components/VoiceInput/VoiceInputButton.jsx`: shared speech-to-text button. It supports browser Web Speech, backend recording transcription, and auto mode based on user settings.
-- `api/transcribe.js`: Vercel serverless transcription proxy. It accepts user-provided speech API credentials and supports OpenAI-style audio transcription or a custom JSON endpoint.
-- `src/components/OldCat/FloatingOldCatArchive.jsx`: right-side saved Old Cat chat folder.
-- `src/components/LinkVault/FloatingLinkVault.jsx`: right-side URL/prompt vault.
-- `src/components/Cat/BlinkingClayMascot.jsx`: blinking clay Kivi/Old Cat mascot.
-- `src/components/Cat/LayeredCat.jsx`: currently a stable Kivi image wrapper. Do not reintroduce visible appearance customization unless the product decision changes.
-- `src/pages/Onboarding/Onboarding.jsx`: current onboarding flow and Old Cat style selection.
-- `src/pages/Home/Home.jsx`: home dashboard, growth map, 9-step guided tour, auto-scroll and paw-pointer logic.
-- `src/pages/Interview/Interview.jsx`: mock interview flow, adaptive follow-up logic, interview records.
-- `src/pages/Classroom/Classroom.jsx`: concept-learning page for AI basics, PM basics, and AI product basics.
-- `src/pages/Workshop/Workshop.jsx`: product-development process training page from idea to MVP/metrics/risks.
-- `src/pages/Settings/Settings.jsx`: settings page; Old Cat style options should match onboarding. AI chat API and speech transcription API are intentionally configured separately.
-- `src/pages/Shop/Shop.jsx` and `src/pages/Wardrobe/Wardrobe.jsx`: fish shop and wardrobe handling.
-- `src/data/shopItems.js`: shop item definitions; terminal may show Chinese/emoji as mojibake.
-- `src/data/newsSources.js`: trusted AI news sources used by the news page and source-introduction card.
-- `src/data/classroomLessons.js`: 小猫课堂 lesson paths and lesson copy. Current content has 5 learning paths and 25 lessons, each with professional definition, plain-language explanation, real scenario, common mistake, small exercise, mentor tip, key points, and takeaway.
-- `src/data/workshopIdeas.js`: 造物工坊 fixed idea prompts and product-flow step definitions. Current content has 20 fixed product ideas across learning, job search, B-side efficiency, lifestyle, knowledge management, community, and product work.
-- `src/index.css`: custom visual styling, including clay dashboard, onboarding, guided tour, paw pointer, dark mode, hover states, and growth map styles.
-- `src/assets/mascots/`: clay mascot assets such as Kivi, Old Cat, breakthrough cat.
+- `src/components/OldCat/FloatingOldCatArchive.jsx`: saved Old Cat chat archive panel.
+- `src/components/LinkVault/FloatingLinkVault.jsx`: URL/prompt vault panel.
+- `src/components/VoiceInput/VoiceInputButton.jsx`: shared speech-to-text button.
+- `src/components/Cat/BlinkingClayMascot.jsx`: blinking clay mascot component.
+- `src/components/Cat/LayeredCat.jsx`: stable Kivi image wrapper; do not revive layered appearance customization casually.
+- `src/pages/Home/Home.jsx`: home dashboard, growth map, module cards, guided tour, scroll/highlight logic.
+- `src/pages/Onboarding/Onboarding.jsx`: onboarding flow and Old Cat style selection.
+- `src/pages/Settings/Settings.jsx`: API, model, cat, Old Cat, and voice settings.
+- `src/pages/Classroom/Classroom.jsx`: 小猫课堂 lesson UI and completion rewards.
+- `src/pages/Workshop/Workshop.jsx`: 造物工坊 topic selection, answer flow, feedback, rewards.
+- `src/pages/News/News.jsx`: news source guide and article reading/saving.
+- `src/pages/Tasks/Tasks.jsx`: daily task answering and reward logic.
+- `src/pages/Training/Training.jsx`: thinking drills and reward logic.
+- `src/pages/Interview/Interview.jsx`: mock interview flow, adaptive follow-ups, records.
+- `src/pages/Breakthrough/Breakthrough.jsx`: targeted drill and reward logic.
+- `src/data/classroomLessons.js`: 小猫课堂 lesson data.
+- `src/data/workshopIdeas.js`: 造物工坊 fixed ideas and product-flow steps.
+- `src/data/newsSources.js`: trusted AI news sources.
+- `src/data/shopItems.js`: shop item definitions; terminal may display Chinese/emoji as mojibake.
+- `src/index.css`: custom visual styling, responsive layout, dark mode, tour, clay UI.
+- `src/assets/mascots/`: clay mascot assets.
 - `src/assets/ui-clay/`: clay UI icons.
 - `src/assets/interviewers/`: clay interviewer cat PNGs.
-- `src/assets/cat-stages/`: six transparent growth-stage cat images used by the growth route.
-- `archive_cleanup/`: local-only temporary cleanup archive. It is ignored by Git and contains moved legacy/generated files until the user confirms permanent deletion.
+- `src/assets/cat-stages/`: six transparent growth-stage cat images.
+- `archive_cleanup/`: local-only temporary cleanup archive, ignored by Git.
 
 ## Design And Product Decisions
 
 - Keep the visual direction clay-style, soft, dimensional, warm, and cat-centered.
-- Do not revert clay mascots to the old flat SVG cats.
-- The product should feel like an actual learning app, not a marketing landing page.
-- Because this may be linked from a resume, first-time user guidance matters.
-- Current decision: temporarily do not support custom cat appearance.
-- Kivi should be a stable clay cat across onboarding/home/shop/wardrobe for now.
-- Remove/hide fur color, eye color, pattern, breed, and gender choices.
-- Keep cat naming and Old Cat companion-style choice.
-- Old Cat companion style is currently five options: strict mentor, interview coach, gentle encourager, senior PM, and tsundere/sharp critic.
+- Do not revert clay mascots to flat SVG cats.
+- The product should feel like a real learning app, not a marketing landing page.
+- Input before practice matters: 小猫课堂 should be the first learning entry because the user is nearly zero-basic.
+- Recommended home module order: first row 小猫课堂 and 今日情报站; second row 委托任务 and 思维训练; third row 面试模拟 and 造物工坊.
+- Current decision: temporarily do not support custom cat appearance. Keep cat naming and outfit/shop ideas, but do not reintroduce full appearance customization without discussion.
 - Growth route should still show six different growth-stage cats.
-- Old Cat is a meaningful mentor interaction entry, not just decoration.
-- Homepage guided tour should feel like an interactive product guide: highlight what matters, allow the highlighted area to be clicked, auto-scroll to the target, and avoid blocking the area being introduced.
-- User dislikes the current text label on/near the cat and the current CSS paw pointer. The next design should use a cleaner clay-style pointer that glides like a mouse cursor from one target to the next.
-- Dark mode should be a true night mode, not a weak dimmed light mode: neutral dark grays, readable text, low saturation, and only small warm accents.
-- News summaries should stay short, useful, and PREP-structured.
-- News content should come from the fixed AI source whitelist where possible: OpenAI, Anthropic, Google DeepMind, Meta AI, Microsoft AI, MIT Technology Review, The Verge, TechCrunch, VentureBeat, and Ars Technica. Do not return to old year-based mock news or `example.com` links.
-- GPT handoff is intended behavior: copy prompt/open GPT actions should remain.
-- API keys are user-provided in settings/localStorage. Do not commit or hardcode private keys.
+- Old Cat is a useful mentor/tool entry, not decoration. Static Old Cat image is preferred where blinking creates artifacts.
+- Tools should live in a tool drawer rather than multiple floating side buttons, especially on mobile. Opening tools should not destroy the current page state.
+- Homepage guided tour should be interactive, but not annoying. It should run only for first-time users, continue across settings, and explain API/voice setup clearly.
+- User dislikes clutter and oversized mobile cards. Mobile should feel like an app: fixed top/bottom shell, one focused content area, minimal sideways floating elements.
+- News content should come from the trusted AI source whitelist where possible: OpenAI, Anthropic, Google DeepMind, Meta AI, Microsoft AI, MIT Technology Review, The Verge, TechCrunch, VentureBeat, and Ars Technica.
+- GPT handoff actions are intended behavior and should remain.
+- API keys are user-provided and stored locally. Do not commit or hardcode private keys.
+- AI chat/API and speech transcription API are separate settings by design, so speech can use a cheaper/non-OpenAI provider.
+- 小猫课堂 should be more than flashcards: include professional definition, plain explanation, example, mistake, exercise, and mentor guidance.
+- 造物工坊 trains full 0-to-1 product-development order. Daily tasks are smaller work simulations; do not merge these two concepts.
 - Reward economy should remain slow enough for long-term use.
-- 小猫课堂 is for input/learning before practice; lessons should stay beginner-friendly but must feel useful enough to study, with definitions, plain explanations, scenarios, mistakes, exercises, and mentor guidance.
-- 造物工坊 is for process practice from idea to product flow; it should complement daily tasks, not replace them. Daily tasks are small work simulations, while the workshop trains the full 0-to-1 product development order. Fixed random draw should skip completed fixed ideas, and AI impromptu ideas should be separate from the fixed 20题 pool.
 
 ## Known Issues
 
 - No automated tests are configured.
-- The app is frontend-only; all progress/settings live in browser `localStorage`.
-- OpenAI API calls are made directly from the browser. This is acceptable for a personal demo with user-entered keys, but not secure for shared production secrets.
-- Existing users may have old `miaotu_store` schemas with previous appearance fields. The current UI ignores them; clearing `miaotu_store` can help if state looks strange.
+- The app is frontend-first; most progress/settings live in browser `localStorage`.
+- Browser-side OpenAI calls are acceptable for a personal demo with user-entered keys, but not for shared production secrets.
+- Vite build warns that some chunks are larger than 500 kB.
 - PowerShell may display Chinese/emoji source text as mojibake. Use `Get-Content -Encoding UTF8` or verify in browser/editor.
-- `src/data/shopItems.js` may display mojibake in terminal. Be careful when editing text there.
-- A generated-image attempt for the paw pointer failed and produced an irrelevant tutorial screenshot. Do not use that generated output.
-- Homepage guided tour still needs mobile QA for spotlight alignment and card placement.
-- Mobile layout now has a more app-like pass: compact homepage hero/cat card, hidden side floating folder peeks, and a fixed bottom navigation. It still needs real-device QA after future content changes.
-- Dark mode still needs browser QA across pages; some pages may still have low contrast or inconsistent card colors.
-- Stage PNGs and interviewer PNGs still add build weight. Vite build warns that the main JS chunk is larger than 500 kB.
-- Non-transparent legacy stage PNGs and paused cat-customizer assets were moved to `archive_cleanup/` during cleanup; restore from there if the paused customization direction is revived.
-- Shop/wardrobe economy exists, but because appearance customization is paused, wearable overlay behavior should not be emphasized until a stable design is chosen.
-- Previously attempted layered cat appearance caused severe alignment problems. Do not restart that path casually.
-- Task page should still be QA-tested for the reported issue where the second task answer box can become unresponsive after submitting one task.
-- Training lock/unlock behavior should be QA-tested against the intended rule: same question type low score three times locks it, lists the three causing questions, and unlocks only after a five-question breakthrough drill with each answer above 80.
-- 小猫课堂 and 造物工坊 have expanded content, but still need browser visual QA and mobile adaptation.
+- Existing users may have old `miaotu_store` schemas. Clearing localStorage can help if state looks strange.
+- Mobile layout still has serious UX issues reported by the user: pages can feel too tall, some cards are oversized, and fixed bottom nav can overlap content or tour cards.
+- Mobile keyboard behavior is unresolved. On interview/treehole/text-answer pages, focusing an input can hide the question/context because the keyboard takes most of the viewport.
+- 新手指导 currently needs another pass: mobile tour card can be blocked by the bottom nav, and the settings/API/voice guide can be interrupted when navigating away and back.
+- Homepage module order is not yet changed to the newly agreed order.
+- Tool drawer direction is agreed, but QA is still needed to ensure link vault, Old Cat, and saved chats keep their original functions inside the drawer and preserve the current page state.
+- Old Cat blinking/static issue: user noticed two small black horizontal artifacts near Old Cat's face. Decision is to keep that mascot static to avoid blink artifacts.
+- 造物工坊 answer area still has layout issues on desktop/mobile. The "让老猫看流程" button can float awkwardly and should be fixed at the end of the answer form.
+- 造物工坊 should move from "topic list plus answer form below" toward a focused answer page/section after selecting a topic.
+- 小猫课堂 mobile flow should click a lesson and focus the lesson view, not make the user scroll down through the whole page.
+- News, Archive, Interview, Breakthrough, and task pages still need mobile layout QA.
+- On mobile, the old side folder/tool launchers should be fully absorbed into bottom nav/tool drawer; no floating peeks should block content.
+- Returning from a module to home currently may reset to the top. Desired behavior: return to the section/card the user entered from.
+- PWA is not implemented yet. User likes the idea because mobile web browser chrome is inconvenient.
+- Voice input may not work on all browsers. Chrome support is best for Web Speech; iOS/Safari behavior needs real-device testing.
+- Non-transparent legacy stage PNGs and paused cat-customizer assets were moved to `archive_cleanup/`; restore only if needed.
 
 ## Cat Growth And Reward Rules
 
@@ -225,65 +239,57 @@ Growth stages:
 
 ## Next Tasks
 
-1. Continue mobile browser QA for the 10-step homepage guided tour from a clean `localStorage` state.
-2. QA the settings API Key step again after any future settings layout changes.
-3. QA Old Cat, link vault, and saved Old Cat chat panels after any future overlay or z-index changes.
-4. Browser QA the simplified onboarding flow from a clean `localStorage` state.
-5. Continue dark-mode QA and adjust any remaining unreadable or inconsistent pages.
-6. Continue asset optimization later: interviewer PNGs, stage PNGs, and route-level code splitting.
-7. QA the task page second-input issue and training lock/unlock rules.
+1. Fix the home module order: 小猫课堂, 今日情报站, 委托任务, 思维训练, 面试模拟, 造物工坊.
+2. Convert Old Cat mascot rendering to static where blinking artifacts appear.
+3. Rework mobile layout into a more app-like shell: fixed top/bottom, only middle content scrolls where feasible, no floating side peeks covering content.
+4. Finish the tool drawer consolidation on desktop and mobile: link vault, Old Cat, and saved-chat archive should live there and keep their existing functions.
+5. Fix mobile keyboard UX on interview, treehole, training, tasks, and workshop answer inputs so the active question/context stays visible.
+6. Repair guided tour persistence and settings flow: first-time tour should continue through API and voice setup, not disappear after entering settings.
+7. Add explicit tour steps for OpenAI API Key, voice input mode, and optional backend speech API settings.
+8. Move 造物工坊 toward a focused selected-topic answer view and keep "让老猫看流程" fixed at the end of the form.
+9. Improve 小猫课堂 mobile flow so tapping a lesson focuses the lesson detail instead of requiring long scrolling.
+10. Preserve home scroll position when returning from modules such as shop, classroom, workshop, news, or training.
+11. Consider adding PWA support: manifest, icons, service worker strategy, and install guidance.
+12. QA reward logic after any new completion flows to ensure every XP/fish reward still uses `src/config/growthRules.js`.
+13. Continue dark-mode and mobile browser QA across all routes.
+14. Optional later cleanup: route-level code splitting and image optimization to reduce the 500 kB chunk warning.
 
 ## Recent Changes
 
-- Simplified onboarding to remove visual cat customization.
-- Added Old Cat companion-style selection to onboarding and saved it to settings; settings now uses the same five options.
-- Changed default `catConfig` to only keep `name` and `focus`.
-- Simplified `LayeredCat.jsx` back to a stable Kivi clay image wrapper.
-- Restored growth map previews to six fixed transparent stage-cat PNGs instead of the failed layered preview approach.
-- Updated settings so the cat section only edits the cat name and no longer exposes appearance fields.
-- Improved the homepage guided tour from 6 broad steps to 9 more specific steps, including separate introductions for the four learning entrances.
-- Added guided-tour auto-scroll to the active target and kept highlighted targets clickable.
-- Added a CSS-drawn paw pointer for the guided tour, but the current visual is not acceptable and should be replaced next.
-- Removed the text cue near the homepage cat after the user found it visually awkward.
-- Lifted Old Cat/link vault/saved-chat panels above the tutorial overlay when relevant.
-- Revised dark mode toward neutral gray and improved text contrast across home, growth route, breakthrough, and interview-related views.
-- Updated mock interview logic to generate adaptive follow-up questions based on transcript and answer quality.
-- Verified production builds after recent code changes with the bundled Node/Vite command.
-- Latest pushed commits include `fb3d145 Add guided tour paw pointer`, `bd75dda Improve home tour guidance`, `baf0f0e Refine neutral dark mode`, and `4ad05f5 Add adaptive interview followups`.
-- Replaced the homepage guided-tour paw with a Framer Motion-driven clay cat-paw cursor that glides between target coordinates, added right-edge-aware positioning for the floating-folder step, and fixed the React warning caused by writing store state inside the local tour-index updater.
-- Browser QA after the pointer update: clean onboarding-to-home path on desktop, homepage tour steps 1/5/9 captured, and console showed 0 errors after the updater fix. Existing React Router future-flag warnings remain.
-- Updated the homepage tour interaction model so selected steps have two phases: first highlight the clickable entry, then after the user clicks it, highlight the opened detail area. Implemented this for the hero cat/growth map, Mentor Cat panel, and right-side link vault panel. The paw prompt is now a normal clay paw without a cursor tip.
-- Added API Key setup as step 2 of the first-time guide: Home highlights the top-right settings gear, Settings highlights the OpenAI API Key field, and users can return home to continue the guide. News, tasks, training, and interview tour steps now support click-through page guides that highlight the core page area before returning home to continue.
-- Removed the module-page tour overlays for News, Tasks, Training, and Interview so those pages open normally during the guide; clicking the highlighted home module now advances the guide state before navigation.
-- Limited the "先跳过" action to the API Key setup step, retargeted tour paws to the kitten image, breakthrough card, and lower saved-chat folder, and made the Old Cat panel close on outside click, route changes, and tour-step changes.
-- Browser QA after this refinement: build passed; Playwright verified module pages have no guide overlay/skip button, paw targets align on desktop, and Old Cat closes on outside click plus route change. Existing React Router future-flag warnings remain.
+This round of development added or refined:
 
-- Refined the growth-map tour detail state so opening the map only keeps the map highlighted against the dimmed page, with no explanatory tour card or paw pointer; returning from the map advances the tour.
-- Made the link vault and saved Old Cat chat archive close naturally like the Old Cat panel: outside click, route change, repeated launcher click, and tour-step close events all collapse them.
-- Browser QA after the natural-close update: build passed; Playwright verified map-only highlight, map return advancing the tour, and both floating panels closing on outside click plus route changes. Existing React Router future-flag warnings remain.
-- Increased guided-tour paw contrast with stronger outlines, darker pads, and layered shadow so it stays visible on warm light cards.
-- Replaced the growth-map detail highlight with a softer spotlight-only class instead of the generic tutorial frame, added route-return tour-index syncing plus repeated delayed scrolling, and inserted a dedicated Kitten Corner/treehole step after Mentor Cat closes.
-- Browser QA after this polish: build passed; Playwright verified map spotlight-only mode, route-return auto-scroll from News to Tasks, Old Cat closing before the treehole step, and the paw landing on the treehole heart. Existing React Router future-flag warnings remain.
-- Simplified the growth-map detail highlight further: the map panel is only lifted above the dim layer with no extra frame, glow, or shadow. Homepage internal tour exits now advance immediately for wardrobe/shop/archive links in the cat card and the breakthrough card, and closing Mentor Cat advances to the treehole step.
-- Browser QA after this step-advance fix: build passed; Playwright verified plain-lit map styling, cat-to-wardrobe advancing to Mentor Cat, breakthrough advancing to the next step, and Mentor Cat outside-close advancing to the treehole highlight. Existing React Router future-flag warnings remain.
-- Project cleanup pass moved generated artifacts and unused legacy assets/components into ignored `archive_cleanup/`: historical `output/` screenshots, old `dist/` builds, `.miaotu-server.pid`, paused `src/assets/cat-customizer/`, non-transparent stage PNGs, and unused SVG/stage components (`CatSVG.jsx`, `OldCatSVG.jsx`, `CatStageImage.jsx`). Build still passes after cleanup; the verification build output was also archived as `archive_cleanup/dist_after_build_check/`.
-- Replaced the news page's old fallback mock news with a trusted-source RSS flow and source guide fallback. The right-side news card now explains sources instead of reading method. Link vault saves are deduped, news save buttons show saved state, and the floating link vault panel is constrained to the viewport with safer text wrapping.
-- Added 小猫课堂 and 造物工坊 as two new homepage learning entrances. 小猫课堂 introduces short AI/PM foundation lessons and records completed lessons into the growth archive. 造物工坊 gives product ideas, asks the user to write the full product development flow, provides AI or local fallback feedback, and saves sessions into the growth archive. Build passed after adding both routes.
-- Fixed repeat onboarding: direct visits or reloads on `/onboarding` now redirect completed users back to `/`, and persisted store migration marks existing users with cat setup/progress/rewards as `onboardingDone` so old local data does not get forced through onboarding again.
-- Expanded 造物工坊 from 4 to 20 fixed product ideas and added a random fixed-topic entry. Expanded 小猫课堂 from 3 paths/9 lessons to 5 paths/25 lessons, adding product development flow and AI PM work-method paths. Build passed after expansion.
-- Refined 造物工坊 random logic: random fixed-topic draw now skips fixed ideas that already have saved sessions, completed fixed ideas show an "已练习" badge, and a separate "老猫即兴出题" option uses the user's API Key to generate a fresh non-fixed practice idea.
-- Reworked 小猫课堂 lesson presentation into a deeper learning template: professional definition, plain-language explanation, key points, real scenario, common mistake, small exercise, mentor tip, and takeaway. Added matching data fields for all 25 lessons. Build passed after this update.
-- Added a shared voice-to-text button powered first by browser Web Speech API, with a new optional backend transcription path. Settings now lets users choose auto/browser/backend voice mode, and stores a separate speech transcription API key, endpoint, provider, and model from the OpenAI key used for Old Cat, feedback, and generation.
-- Added `api/transcribe.js` for Vercel backend transcription. Custom provider mode expects a JSON endpoint that accepts `{ audioBase64, mimeType, language, model }` and returns `text`/`transcript`; OpenAI provider mode posts multipart audio to the OpenAI transcription endpoint with default model `whisper-1`.
-- Added a stronger mobile responsive pass for the main app shell: fixed bottom navigation, hidden right-side floating folder peeks on small screens, compact homepage hero and cat stage card, and safer mobile positioning for voice-input hints. Production build passed after the update; the known 500 kB chunk warning remains.
-- Centralized the Cat Growth reward economy in `src/config/growthRules.js` and updated all reward entry points to use it: classroom, news, tasks, thinking training, mock interview, workshop, breakthrough, Old Cat, level calculation, and streak rewards.
+- 小猫课堂 as a dedicated learning/input module.
+- 造物工坊 as a product-development flow practice module.
+- Expanded 小猫课堂 content to 5 learning paths and 25 lessons.
+- Expanded 造物工坊 to 20 fixed ideas plus a separate AI impromptu-topic option.
+- Random fixed workshop topic selection now skips completed fixed ideas.
+- News source logic moved away from stale mock 2023/example.com content toward trusted AI source entries.
+- Link vault save state/deduping and viewport constraints were improved.
+- Voice input system added: browser speech mode, backend transcription mode, auto mode, and settings for separate speech API credentials.
+- `api/transcribe.js` added as the backend transcription proxy.
+- Mobile responsive pass added: bottom nav, compacted key sections, tool entry, and hidden side peeks on small screens.
+- Tool drawer component added for shared tools.
+- Reward economy centralized in `src/config/growthRules.js`.
+- Reward entry points updated to use centralized rules: classroom, news, tasks, training, interview, workshop, breakthrough, Old Cat, level calculation, and streak rewards.
+- `PROJECT_CONTEXT.md` updated with the current reward rules and current handoff state.
+
+Latest verified command before this handoff update:
+
+```powershell
+& 'C:\Users\11512\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' 'node_modules\vite\bin\vite.js' build
+```
+
+Build passed with the known 500 kB chunk warning.
 
 ## Notes For Next Codex
 
-- Start by reading this file, then inspect `src/pages/Home/Home.jsx`, `src/index.css`, `src/components/OldCat/OldCat.jsx`, `src/components/LinkVault/FloatingLinkVault.jsx`, and `src/components/OldCat/FloatingOldCatArchive.jsx`.
+- Start by reading this file, then inspect `src/pages/Home/Home.jsx`, `src/index.css`, `src/components/Layout/Layout.jsx`, `src/components/Tools/ToolDrawer.jsx`, `src/pages/Settings/Settings.jsx`, and `src/config/growthRules.js`.
 - Use `Get-Content -Encoding UTF8` when reading Chinese text in PowerShell.
-- Use `git grep` or `Select-String` to check for remaining user-facing appearance options before touching cat customization UI.
-- Do not revive the layered cat customization work unless the user explicitly asks; it caused visible misalignment and the product decision is now to pause it.
-- For the paw pointer, prefer a code-native CSS/SVG implementation over generated bitmap output. The user wants a polished clay-like pointer and smooth target-to-target motion.
+- Do not create another handoff file. Keep updating `PROJECT_CONTEXT.md`.
+- Do not revive full cat appearance customization unless the user explicitly asks.
+- Be careful with mobile changes: the user wants app-like behavior, not just smaller desktop cards.
+- When touching rewards, edit `src/config/growthRules.js` first and import from it.
+- When touching voice input, remember there are two separate API concepts: OpenAI chat/generation API and speech transcription API.
+- When touching the guided tour, test clean localStorage and a returning user state.
 - If testing locally in Codex desktop, Vite dev server may need the bundled Node command. If sandbox blocks esbuild child process spawning, request escalation rather than working around it.
-- After code changes, run the bundled build command shown above.
+- After code changes, run the bundled Vite build command above.
