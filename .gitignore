@@ -3,6 +3,7 @@ dist/
 output/
 archive_cleanup/
 .claude/
+.playwright-cli/
 .env
 .env.*
 *.local

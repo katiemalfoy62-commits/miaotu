@@ -1,5 +1,6 @@
 import React from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { BookOpen, GraduationCap, Home, Settings, Target } from 'lucide-react'
 import Navbar from './Navbar'
 import OldCat from '../OldCat/OldCat'
 import ClayIcon from '../UI/ClayIcon'
@@ -8,6 +9,13 @@ import FloatingOldCatArchive from '../OldCat/FloatingOldCatArchive'
 
 // Pages where old cat is NOT available
 const NO_OLDCAT_PATHS = ['/interview/session']
+const MOBILE_NAV = [
+  { to: '/', label: '首页', icon: Home },
+  { to: '/classroom', label: '课堂', icon: GraduationCap },
+  { to: '/tasks', label: '练习', icon: Target },
+  { to: '/archive', label: '档案', icon: BookOpen },
+  { to: '/settings', label: '设置', icon: Settings },
+]
 
 // Pages where old cat is restricted during first-attempt (handled inside Training page)
 export default function Layout({ children }) {
@@ -31,6 +39,18 @@ export default function Layout({ children }) {
       <FloatingLinkVault />
       <FloatingOldCatArchive />
       <OldCat visible={!hideOldCat} hideLauncher={isHome}/>
+      <nav className="mobile-bottom-nav" aria-label="移动端导航">
+        {MOBILE_NAV.map(item => {
+          const Icon = item.icon
+          const active = item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to)
+          return (
+            <Link key={item.to} to={item.to} className={active ? 'active' : ''}>
+              <Icon size={18} />
+              <span>{item.label}</span>
+            </Link>
+          )
+        })}
+      </nav>
     </div>
   )
 }

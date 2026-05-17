@@ -112,7 +112,8 @@ Current product state:
 - `src/utils/levelCalc.js`: level/growth calculation utilities.
 - `src/components/Layout/Layout.jsx`: app shell, navbar/back behavior, floating tools, Old Cat visibility.
 - `src/components/OldCat/OldCat.jsx`: Old Cat mentor chat panel; listens for `miaotu:open-oldcat`.
-- `src/components/VoiceInput/VoiceInputButton.jsx`: shared browser speech-to-text button using Chrome/Web Speech API when enabled in settings.
+- `src/components/VoiceInput/VoiceInputButton.jsx`: shared speech-to-text button. It supports browser Web Speech, backend recording transcription, and auto mode based on user settings.
+- `api/transcribe.js`: Vercel serverless transcription proxy. It accepts user-provided speech API credentials and supports OpenAI-style audio transcription or a custom JSON endpoint.
 - `src/components/OldCat/FloatingOldCatArchive.jsx`: right-side saved Old Cat chat folder.
 - `src/components/LinkVault/FloatingLinkVault.jsx`: right-side URL/prompt vault.
 - `src/components/Cat/BlinkingClayMascot.jsx`: blinking clay Kivi/Old Cat mascot.
@@ -122,7 +123,7 @@ Current product state:
 - `src/pages/Interview/Interview.jsx`: mock interview flow, adaptive follow-up logic, interview records.
 - `src/pages/Classroom/Classroom.jsx`: concept-learning page for AI basics, PM basics, and AI product basics.
 - `src/pages/Workshop/Workshop.jsx`: product-development process training page from idea to MVP/metrics/risks.
-- `src/pages/Settings/Settings.jsx`: settings page; Old Cat style options should match onboarding.
+- `src/pages/Settings/Settings.jsx`: settings page; Old Cat style options should match onboarding. AI chat API and speech transcription API are intentionally configured separately.
 - `src/pages/Shop/Shop.jsx` and `src/pages/Wardrobe/Wardrobe.jsx`: fish shop and wardrobe handling.
 - `src/data/shopItems.js`: shop item definitions; terminal may show Chinese/emoji as mojibake.
 - `src/data/newsSources.js`: trusted AI news sources used by the news page and source-introduction card.
@@ -169,7 +170,7 @@ Current product state:
 - `src/data/shopItems.js` may display mojibake in terminal. Be careful when editing text there.
 - A generated-image attempt for the paw pointer failed and produced an irrelevant tutorial screenshot. Do not use that generated output.
 - Homepage guided tour still needs mobile QA for spotlight alignment and card placement.
-- Mobile layout now has a first responsive pass for the main learning pages and floating panels, but still needs real-device visual QA.
+- Mobile layout now has a more app-like pass: compact homepage hero/cat card, hidden side floating folder peeks, and a fixed bottom navigation. It still needs real-device QA after future content changes.
 - Dark mode still needs browser QA across pages; some pages may still have low contrast or inconsistent card colors.
 - Stage PNGs and interviewer PNGs still add build weight. Vite build warns that the main JS chunk is larger than 500 kB.
 - Non-transparent legacy stage PNGs and paused cat-customizer assets were moved to `archive_cleanup/` during cleanup; restore from there if the paused customization direction is revived.
@@ -229,8 +230,9 @@ Current product state:
 - Expanded 造物工坊 from 4 to 20 fixed product ideas and added a random fixed-topic entry. Expanded 小猫课堂 from 3 paths/9 lessons to 5 paths/25 lessons, adding product development flow and AI PM work-method paths. Build passed after expansion.
 - Refined 造物工坊 random logic: random fixed-topic draw now skips fixed ideas that already have saved sessions, completed fixed ideas show an "已练习" badge, and a separate "老猫即兴出题" option uses the user's API Key to generate a fresh non-fixed practice idea.
 - Reworked 小猫课堂 lesson presentation into a deeper learning template: professional definition, plain-language explanation, key points, real scenario, common mistake, small exercise, mentor tip, and takeaway. Added matching data fields for all 25 lessons. Build passed after this update.
-- Added a shared voice-to-text button powered by the browser Web Speech API. It is enabled by the existing settings voice toggle and now appears on long-input flows: daily tasks, thinking training first/second answers, breakthrough seed/answers, mock interview answers, workshop step answers, Old Cat chat, and Kitten Corner.
-- Added a mobile responsive pass for homepage, classroom, workshop, breakthrough, interview setup/session, task detail modal, Old Cat panel, link vault, and saved Old Cat chat panel. Desktop styling should remain unchanged because the new rules are scoped to small viewports. Production build passed after the update; the known 500 kB chunk warning remains.
+- Added a shared voice-to-text button powered first by browser Web Speech API, with a new optional backend transcription path. Settings now lets users choose auto/browser/backend voice mode, and stores a separate speech transcription API key, endpoint, provider, and model from the OpenAI key used for Old Cat, feedback, and generation.
+- Added `api/transcribe.js` for Vercel backend transcription. Custom provider mode expects a JSON endpoint that accepts `{ audioBase64, mimeType, language, model }` and returns `text`/`transcript`; OpenAI provider mode posts multipart audio to the OpenAI transcription endpoint with default model `whisper-1`.
+- Added a stronger mobile responsive pass for the main app shell: fixed bottom navigation, hidden right-side floating folder peeks on small screens, compact homepage hero and cat stage card, and safer mobile positioning for voice-input hints. Production build passed after the update; the known 500 kB chunk warning remains.
 
 ## Notes For Next Codex
 

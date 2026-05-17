@@ -36,6 +36,11 @@ const defaultUser = {
     newsStyle: 'friend',
     catPersonality: 'teacher',
     voiceEnabled: false,
+    voiceMode: 'auto',
+    speechProvider: 'custom',
+    speechApiKey: '',
+    speechEndpoint: '',
+    speechModel: '',
     apiKey: '',
     modelMode: 'balanced',
   },
@@ -400,6 +405,7 @@ const useStore = create(
       migrate: (persistedState) => {
         if (!persistedState?.user) return persistedState
         const user = persistedState.user
+        const settings = { ...defaultUser.settings, ...(user.settings || {}) }
         const hasExistingProgress = Boolean(
           user.onboardingDone
           || user.catCustomized
@@ -408,11 +414,20 @@ const useStore = create(
           || (user.exp && user.exp > 0)
           || (user.fish && user.fish > 0)
         )
-        if (!hasExistingProgress || user.onboardingDone) return persistedState
+        if (!hasExistingProgress || user.onboardingDone) {
+          return {
+            ...persistedState,
+            user: {
+              ...user,
+              settings,
+            },
+          }
+        }
         return {
           ...persistedState,
           user: {
             ...user,
+            settings,
             onboardingDone: true,
           },
         }
